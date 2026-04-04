@@ -624,9 +624,10 @@ export function LandingPage() {
         <h2 className="mb-10 text-[3rem] leading-tight tracking-[-0.04em] text-ink sm:text-[4rem]">
           Ready to automate your travel procurement?
         </h2>
-        <button
-          type="button"
-          onClick={() => {}}
+        <a
+          href="http://localhost:5173"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group inline-flex items-center gap-4 rounded-full bg-ink px-10 py-5 text-[0.8rem] font-bold uppercase tracking-[0.2em] text-[#f8f4ec] transition-all hover:scale-105 hover:bg-ink/90 hover:shadow-xl"
         >
           <span>Launch dashboard</span>
@@ -644,7 +645,7 @@ export function LandingPage() {
               <path d="m12 5 7 7-7 7" />
             </svg>
           </span>
-        </button>
+        </a>
       </section>
 
       <footer id="footer" className="border-t border-ink/8 bg-[#f8f4ec]">
