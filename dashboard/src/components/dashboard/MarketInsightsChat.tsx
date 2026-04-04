@@ -18,13 +18,8 @@ export function MarketInsightsChat() {
         </div>
 
         <div className="flex max-w-[90%] items-start gap-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-container text-secondary shadow-lg">
-            <span
-              className="material-symbols-outlined text-base"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              auto_awesome
-            </span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm border border-outline-variant/20">
+            <span className="text-sm font-semibold tracking-tight text-on-surface" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>G</span>
           </div>
           <div className="rounded-3xl rounded-tl-none border border-surface-container bg-surface-container-lowest p-8 shadow-ambient-sm">
             <p className="text-sm leading-7 text-on-surface-variant">
@@ -126,7 +121,7 @@ export function MarketInsightsChat() {
         <input
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          placeholder="Ask Nexus-Procure about other markets..."
+          placeholder="Ask Galileo about when to host your next event..."
           className="flex-1 bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant"
         />
         <button

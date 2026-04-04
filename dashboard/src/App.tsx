@@ -15,7 +15,7 @@ export default function App() {
   return (
     <div className="flex min-h-screen bg-background text-on-surface font-sans antialiased">
       <SideNav />
-      <main className="min-h-screen flex-1 pl-64">
+      <main className="min-h-screen flex-1 pl-60">
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/all-agents" element={<AllAgentsPage />} />

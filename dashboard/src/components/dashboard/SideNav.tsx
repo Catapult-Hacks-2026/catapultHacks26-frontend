@@ -1,21 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 
 const primaryNav = [
-  { href: "/", label: "Dashboard", icon: "dashboard" },
-  { href: "/market-insights", label: "Market Insights", icon: "analytics" },
-  { href: "/companies", label: "Companies", icon: "business" },
+  { href: "/", label: "Dashboard", icon: "grid_view" },
+  { href: "/all-agents", label: "Agents", icon: "smart_toy" },
+  { href: "/market-insights", label: "Market Insights", icon: "bar_chart" },
+  { href: "/companies", label: "Companies", icon: "domain" },
 ];
 
 const utilityNav = [
   { href: "/settings", label: "Settings", icon: "settings" },
-  { href: "/support", label: "Support", icon: "help" },
+  { href: "/support", label: "Support", icon: "help_outline" },
 ];
 
 function matches(pathname: string, href: string) {
-  if (href === "/") {
-    return pathname === "/";
-  }
-
+  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -23,68 +21,69 @@ export default function SideNav() {
   const { pathname } = useLocation();
 
   return (
-    <aside className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-primary-container py-6 shadow-nav">
-      <div className="px-6">
-        <Link to="/" className="flex items-center gap-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-secondary text-white">
-            <span
-              className="material-symbols-outlined text-lg"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              dashboard
-            </span>
-          </div>
-          <div>
-            <div className="text-2xl font-black tracking-tight text-white">
-              Galileo
-            </div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">
-              Autonomous Procurement
-            </div>
-          </div>
+    <aside
+      className="fixed left-0 top-0 z-50 flex h-screen w-60 flex-col border-r border-outline-variant/20 bg-white py-5"
+      style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+    >
+      {/* Wordmark */}
+      <div className="px-5 pb-2">
+        <Link to="/" className="inline-block">
+          <span className="text-[32px] font-semibold tracking-tight text-on-surface">
+            Galileo
+          </span>
         </Link>
       </div>
 
-      <nav className="mt-10 space-y-2 px-2">
+      {/* Primary nav */}
+      <nav className="flex-1 space-y-0.5 px-3">
+
         {primaryNav.map((item) => {
           const active = matches(pathname, item.href);
-
           return (
             <Link
               key={item.href}
               to={item.href}
-              className={`mx-2 flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all ${
-                active
-                  ? "rounded-lg bg-secondary text-white shadow-lg shadow-secondary/20"
-                  : "text-slate-400 hover:bg-[#1C263D] hover:text-white"
-              }`}
+              className={`flex items-center gap-2.5 rounded-md px-2 py-2 text-[13.5px] transition-colors ${active
+                ? "bg-surface-container font-medium text-on-surface"
+                : "font-normal text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
+                }`}
             >
-              <span className="material-symbols-outlined text-lg">{item.icon}</span>
+              <span
+                className="material-symbols-outlined text-[18px] leading-none"
+                style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}
+              >
+                {item.icon}
+              </span>
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto space-y-2 px-4">
+      {/* Utility nav + CTA */}
+      <div className="space-y-0.5 border-t border-outline-variant/20 px-3 pt-4">
         {utilityNav.map((item) => (
           <Link
             key={item.href}
             to={item.href}
-            className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-[#1C263D] hover:text-white"
+            className="flex items-center gap-2.5 rounded-md px-2 py-2 text-[13.5px] font-normal text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-on-surface"
           >
-            <span className="material-symbols-outlined text-lg">{item.icon}</span>
+            <span className="material-symbols-outlined text-[18px] leading-none">
+              {item.icon}
+            </span>
             {item.label}
           </Link>
         ))}
 
-        <Link
-          to="/negotiations/configure"
-          className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg bg-secondary px-4 py-3 font-bold text-white transition-colors hover:bg-secondary-container"
-        >
-          <span className="material-symbols-outlined text-lg">add</span>
-          New Negotiation
-        </Link>
+        <div className="pt-3">
+          <Link
+            to="/negotiations/configure"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-secondary px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-secondary-container"
+          >
+            <span className="material-symbols-outlined text-[16px] leading-none">add</span>
+            Launch Negotiations
+          </Link>
+        </div>
       </div>
     </aside>
   );

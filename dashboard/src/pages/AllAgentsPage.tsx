@@ -72,19 +72,19 @@ export default function AllAgentsPage() {
 
       <AnimateIn delay={0.08}>
         <section className="mt-8 overflow-hidden rounded-3xl bg-surface-container-highest shadow-xl shadow-on-surface/5">
-          <div className="grid grid-cols-[1.6fr_0.85fr_1fr_0.9fr_0.7fr] gap-4 px-8 py-5 text-[11px] font-black uppercase tracking-[0.15em] text-on-primary-container">
+          <div className="grid grid-cols-[1.6fr_0.85fr_1fr_0.9fr] gap-4 px-8 py-5 text-[11px] font-black uppercase tracking-[0.15em] text-on-primary-container">
             <span>Company</span>
             <span>Target Price</span>
             <span>Negotiation Price</span>
             <span>Status</span>
-            <span>Action</span>
           </div>
 
           <div>
             {agentRows.map((row) => (
-              <div
+              <Link
                 key={row.id}
-                className="grid grid-cols-[1.6fr_0.85fr_1fr_0.9fr_0.7fr] items-center gap-4 border-t border-outline-variant/5 px-8 py-6 transition-colors hover:bg-surface-container"
+                to={`/negotiations/${row.id}/agent`}
+                className="grid grid-cols-[1.6fr_0.85fr_1fr_0.9fr] items-center gap-4 border-t border-outline-variant/5 px-8 py-6 transition-colors hover:bg-surface-container cursor-pointer"
               >
                 <div className="flex items-center gap-4">
                   <AvatarMark label={row.company[0]} />
@@ -119,15 +119,7 @@ export default function AllAgentsPage() {
                     {row.status}
                   </Chip>
                 </div>
-                <div>
-                  <Link
-                    to={`/negotiations/${row.id}/agent`}
-                    className="text-xs font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-secondary"
-                  >
-                    Details
-                  </Link>
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
 
