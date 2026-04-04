@@ -166,6 +166,7 @@ export function LandingPage() {
   const [marketError, setMarketError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [marketSource, setMarketSource] = useState<"cache" | "fresh" | null>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
 
   const loadMarket = useCallback(async (forceFresh = false) => {
     try {
@@ -238,13 +239,26 @@ export function LandingPage() {
   }, [primaryStays, avgSavings, marketSource]);
 
   return (
-    <main id="top" className="relative overflow-hidden bg-canvas text-ink">
-      <header className="sticky top-0 z-40 bg-canvas/20 backdrop-blur-sm">
+    <main id="top" className="relative overflow-hidden bg-canvas text-ink min-h-screen">
+      {/* Persist the background gradient unconditionally */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[75vh] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${HERO_IMAGE})`,
+            backgroundPosition: "center 34%",
+            transform: "scale(1.01)",
+          }}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,244,236,0.0)_0%,rgba(248,244,236,0.15)_30%,rgba(248,244,236,0.50)_65%,rgba(248,244,236,0.85)_85%,#f8f4ec_100%)]" />
+      </div>
+
+      <header className="relative z-40 bg-transparent pt-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
-          <Link href="#top" className="text-sm uppercase tracking-[0.22em] text-ink">
+          <Link href="#top" className="text-sm uppercase tracking-[0.22em] text-ink font-semibold">
             Galileo Enterprise
           </Link>
-          <nav className="ml-auto flex items-center gap-7 text-sm text-ink/62">
+          <nav className="ml-auto flex items-center gap-7 text-sm font-medium text-ink/70">
             {navItems.map((item) => (
               <Link key={item.label} href={item.href} className="transition hover:text-ink">
                 {item.label}
@@ -254,145 +268,152 @@ export function LandingPage() {
         </div>
       </header>
 
-      <section id="hero" className="relative isolate overflow-hidden">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[64rem] overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${HERO_IMAGE})`,
-              backgroundPosition: "center 34%",
-              transform: "scale(1.01)",
-            }}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,244,236,0.0)_0%,rgba(248,244,236,0.15)_30%,rgba(248,244,236,0.50)_65%,rgba(248,244,236,0.85)_85%,#f8f4ec_100%)]" />
-        </div>
-
-        <div className="mx-auto max-w-7xl px-6 pb-20 pt-10 lg:px-10 lg:pb-24 lg:pt-16">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={0}
-            className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start"
-          >
-            <div className="max-w-3xl">
-              <h1 className="hero-shadow mt-2 text-[2.8rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[3.9rem] lg:text-[4.7rem]">
-                Galileo: live enterprise travel sourcing without the manual chase.
-              </h1>
-              <p className="hero-shadow mt-6 max-w-2xl text-base leading-8 text-ink/66 sm:text-lg">
-                Corporate hotels, flights, and event blocks sourced continuously from one agentic workflow, with live market pricing wired directly into the decision layer.
-              </p>
-            </div>
-
-            <div className="relative lg:pl-8 lg:pt-3">
-              <p className="text-xl font-bold leading-tight text-ink">
-                Increase in hotel bookings when using automated follow-up methods.
-              </p>
-              <p className="mt-3 max-w-xl text-sm leading-7 text-ink/66">
-                A company leveraging HubSpot's speed-to-lead automation saw a 25% boost in qualified leads through immediate follow-up emails.
-              </p>
-
-              <div className="mt-5 rounded-[1.75rem] border-2 border-ink/20 bg-[#f8f4ec]/62 p-5 backdrop-blur-[1px]">
-                <div className="relative h-[17.5rem] overflow-hidden">
-                  <div className="absolute bottom-10 left-14 top-4 w-px bg-ink" />
-                  <div className="absolute bottom-10 left-14 right-5 h-px bg-ink" />
-                  <div className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink">
-                    Booking rate
-                  </div>
-                  <div className="absolute bottom-1 left-[6.4rem] text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
-                    Q4 2024
-                  </div>
-                  <div className="absolute bottom-1 right-7 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
-                    Q1 2025
-                  </div>
-                  <div className="absolute left-[4.35rem] top-[0.9rem] text-[0.74rem] font-bold text-ink">25%</div>
-                  <div className="absolute left-[4.35rem] top-[6.2rem] text-[0.68rem] font-bold text-ink/78">12%</div>
-                  <div className="absolute left-[4.75rem] bottom-[3.2rem] text-[0.68rem] font-bold text-ink/78">0%</div>
-
-                  <svg viewBox="0 0 420 260" className="absolute inset-0 h-full w-full overflow-visible">
-                    <motion.path
-                      d="M94 194 C150 186, 204 166, 258 134 S 338 88, 382 62"
-                      fill="none"
-                      stroke="#111111"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      initial={{ pathLength: 0, opacity: 0.4 }}
-                      animate={{ pathLength: 1, opacity: 1 }}
-                      transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                    <motion.circle
-                      cx="94"
-                      cy="194"
-                      r="6"
-                      fill="#111111"
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.2, duration: 0.35 }}
-                    />
-                    <motion.circle
-                      cx="382"
-                      cy="62"
-                      r="8"
-                      fill="#111111"
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 1.05, duration: 0.35 }}
-                    />
-                  </svg>
-                </div>
-
-                <p className="mt-2 text-right text-[0.72rem] italic text-ink">
-                  *Company data from HubSpot.
+      <section id="hero" className="relative z-20 isolate overflow-hidden pt-16">
+        <div className="mx-auto max-w-7xl px-6 pb-12 lg:px-10">
+          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start min-h-[60vh]">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              custom={0}
+              className="max-w-3xl flex flex-col justify-between h-full"
+            >
+              <div>
+                <h1 className="hero-shadow mt-2 text-[2.8rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[3.9rem] lg:text-[4.7rem]">
+                  Galileo: live enterprise travel sourcing without the manual chase.
+                </h1>
+                <p className="hero-shadow mt-6 max-w-2xl text-base leading-8 text-ink/66 sm:text-lg font-medium">
+                  Corporate hotels, flights, and event blocks sourced continuously from one agentic workflow, with live market pricing wired directly into the decision layer.
                 </p>
               </div>
-            </div>
-          </motion.div>
 
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={0.1}
-            className="flex min-h-[12rem] items-center justify-center py-10 lg:min-h-[16rem] lg:py-16"
-          >
-            <motion.a
-              href="#live-updates"
-              whileHover={{ y: -3, scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
-              className="group inline-flex items-center gap-4 rounded-full border-2 border-ink/18 bg-[#f8f4ec]/78 px-7 py-4 text-[0.8rem] font-bold uppercase tracking-[0.22em] text-ink shadow-[0_18px_50px_-30px_rgba(47,47,47,0.35)] backdrop-blur-sm"
-            >
-              <span>Show Me How It Works</span>
-              <span className="relative flex h-8 w-12 items-center justify-center overflow-hidden">
-                <motion.span
-                  className="absolute left-0 top-1/2 h-px w-5 -translate-y-1/2 bg-ink/35"
-                  animate={{ x: [0, 6, 0], opacity: [0.35, 0.8, 0.35] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <motion.svg
-                  viewBox="0 0 48 20"
-                  className="relative h-5 w-12"
-                  fill="none"
-                  animate={{ x: [0, 8, 0] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              {/* The Action Button */}
+              <div className="mt-16 sm:mt-24 mb-10 lg:mb-0">
+                <motion.a
+                  href="#live-updates-section"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsRevealed(true);
+                    setTimeout(() => {
+                      document.getElementById("live-updates-section")?.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
+                  }}
+                  whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -15px rgba(47,47,47,0.15)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`group inline-flex items-center gap-5 rounded-full border-2 border-ink/20 bg-[#f8f4ec]/80 px-8 py-5 text-[0.8rem] font-bold uppercase tracking-[0.2em] text-ink shadow-lg backdrop-blur-md transition-all duration-500`}
                 >
-                  <path d="M4 10h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" opacity="0.35" />
-                  <path
-                    d="M16 10L29 4L44 10L29 16L16 10Z"
-                    fill="currentColor"
-                    opacity="0.96"
-                  />
-                  <path d="M12 7l5 3-5 3" fill="currentColor" opacity="0.78" />
-                </motion.svg>
-              </span>
-            </motion.a>
-          </motion.div>
+                  <span>Show Me How It Works</span>
+                  <span className="relative flex h-6 w-6 items-center justify-center overflow-visible">
+                    <motion.svg
+                      viewBox="0 0 24 24"
+                      className="relative h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ transform: "rotate(90deg)" }}
+                      animate={isRevealed ? { y: 150, opacity: 0 } : { y: [0, 4, 0] }}
+                      transition={isRevealed ? { duration: 0.5 } : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <path d="M12 5v14" />
+                      <path d="m19 12-7 7-7-7" />
+                    </motion.svg>
+                  </span>
+                </motion.a>
+              </div>
+            </motion.div>
 
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={0.15}
-            id="live-updates"
+            {/* Right side graph pulls up after click */}
+            <div className="relative lg:pl-8 lg:pt-3">
+              {isRevealed && (
+                <motion.div
+                  initial={{ y: "40vh", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <p className="text-xl font-bold leading-tight text-ink">
+                    Increase in hotel bookings when using automated follow-up methods.
+                  </p>
+                  <p className="mt-3 max-w-xl text-sm leading-7 text-ink/66 font-medium">
+                    A company leveraging HubSpot's speed-to-lead automation saw a 25% boost in qualified leads through immediate follow-up emails.
+                  </p>
+
+                  <div className="mt-5 rounded-[1.75rem] border-2 border-ink/20 bg-[#f8f4ec]/62 p-5 backdrop-blur-[1px]">
+                    <div className="relative h-[17.5rem] overflow-hidden">
+                      <div className="absolute bottom-10 left-14 top-4 w-px bg-ink" />
+                      <div className="absolute bottom-10 left-14 right-5 h-px bg-ink" />
+                      <div className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink">
+                        Booking rate
+                      </div>
+                      <div className="absolute bottom-1 left-[6.4rem] text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                        Q4 2024
+                      </div>
+                      <div className="absolute bottom-1 right-7 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                        Q1 2025
+                      </div>
+                      <div className="absolute left-[4.35rem] top-[0.9rem] text-[0.74rem] font-bold text-ink">25%</div>
+                      <div className="absolute left-[4.35rem] top-[6.2rem] text-[0.68rem] font-bold text-ink/78">12%</div>
+                      <div className="absolute left-[4.75rem] bottom-[3.2rem] text-[0.68rem] font-bold text-ink/78">0%</div>
+
+                      <svg viewBox="0 0 420 260" className="absolute inset-0 h-full w-full overflow-visible">
+                        <motion.path
+                          d="M94 194 C150 186, 204 166, 258 134 S 338 88, 382 62"
+                          fill="none"
+                          stroke="#111111"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                          initial={{ pathLength: 0, opacity: 0.4 }}
+                          animate={{ pathLength: 1, opacity: 1 }}
+                          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                        />
+                        <motion.circle
+                          cx="94"
+                          cy="194"
+                          r="6"
+                          fill="#111111"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ delay: 0.2, duration: 0.35 }}
+                        />
+                        <motion.circle
+                          cx="382"
+                          cy="62"
+                          r="8"
+                          fill="#111111"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ delay: 1.05, duration: 0.35 }}
+                        />
+                      </svg>
+                    </div>
+
+                    <p className="mt-2 text-right text-[0.72rem] italic text-ink">
+                      *Company data from HubSpot.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {isRevealed && (
+        <motion.div
+          initial={{ y: "40vh", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="relative z-10 bg-transparent"
+        >
+
+          <section id="live-updates-section" className="mx-auto max-w-7xl px-6 pb-20 pt-10 lg:px-10 lg:pb-24 lg:pt-16">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              custom={0.15}
+              id="live-updates"
             className="mt-2 grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end"
           >
             <div>
@@ -528,8 +549,7 @@ export function LandingPage() {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
+        </section>
 
       <section id="capabilities" className="mx-auto max-w-7xl px-6 pb-24 pt-10 lg:px-10 lg:pt-16">
         <div className="flex flex-col gap-6">
@@ -636,6 +656,8 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+      </motion.div>
+      )}
     </main>
   );
 }
