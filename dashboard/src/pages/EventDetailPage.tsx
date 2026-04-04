@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getEvent, type EventAgent } from "@/lib/dashboard-data";
 import { NegotiationPricePath, type PricePoint } from "@/components/dashboard/NegotiationPricePath";
 import { Chip } from "@/components/ui/Chip";
+import { useEvents } from "@/context/EventsContext";
+import type { EventAgent } from "@/lib/dashboard-data";
 
 const winnerPricePath: PricePoint[] = [
   { label: "Anchor", price: 310, type: "offer" },
@@ -16,14 +16,25 @@ const winnerPricePath: PricePoint[] = [
 function agentStatusChip(status: EventAgent["status"]) {
   if (status === "Negotiating") return <Chip variant="negotiating">Negotiating</Chip>;
   if (status === "Reviewing") return <Chip variant="neutral">Reviewing</Chip>;
+  if (status === "Cancelled") return <Chip variant="error">Cancelled</Chip>;
   return <Chip variant="success">Completed</Chip>;
+}
+
+function agentTypeIcon(type: EventAgent["type"]) {
+  return type === "Hotel" ? "hotel" : "flight";
+}
+
+function acceptedProgressLabel(service: "Hotel" | "Airline" | "Both", acceptedCount: number) {
+  if (service === "Both") {
+    return `${acceptedCount}/2 offers accepted`;
+  }
+  return acceptedCount === 0 ? "No offer accepted yet" : "Offer accepted";
 }
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { getEvent, canAcceptAgent, acceptOffer } = useEvents();
   const event = getEvent(id ?? "");
-  const [selectedWinner, setSelectedWinner] = useState<string | null>(null);
-  const [markedDone, setMarkedDone] = useState(false);
 
   if (!event) {
     return (
@@ -33,13 +44,13 @@ export default function EventDetailPage() {
     );
   }
 
-  const allAgentsDone = event.agents.every((a) => a.status === "Completed");
-  const isCompleted = event.status === "Completed" || markedDone;
-  const winners = event.agents.filter((a) => a.isWinner);
+  const isCompleted = event.status === "Completed";
+  const acceptedAgents = event.agents.filter((agent) => agent.isAccepted);
+  const winners = acceptedAgents;
+  const firstWinner = winners[0];
 
   return (
     <div className="min-h-screen bg-surface" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      {/* Header */}
       <div className="border-b border-outline-variant/20 bg-white px-10 py-5">
         <p className="text-xs text-on-surface-variant">
           <Link to="/events" className="hover:text-on-surface">Events</Link>
@@ -64,9 +75,7 @@ export default function EventDetailPage() {
         </div>
       </div>
 
-      <div className="px-10 py-8 space-y-6">
-
-        {/* Event meta */}
+      <div className="space-y-6 px-10 py-8">
         <div className="flex gap-6 text-sm text-on-surface-variant">
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[15px]">location_on</span>
@@ -74,7 +83,7 @@ export default function EventDetailPage() {
           </span>
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[15px]">calendar_today</span>
-            {event.startDate} – {event.endDate}
+            {event.startDate} - {event.endDate}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[15px]">group</span>
@@ -82,109 +91,137 @@ export default function EventDetailPage() {
           </span>
         </div>
 
-        {/* Active: agent cards */}
-        {!isCompleted && (
+        {!isCompleted ? (
           <>
+            <section className="rounded-xl border border-secondary/20 bg-secondary/5 px-6 py-5">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="text-sm font-semibold text-on-surface">Accept completed offers</p>
+                  <p className="mt-0.5 text-xs text-on-surface-variant">
+                    {event.service === "Both"
+                      ? "Accept one hotel and one airline offer to complete this event. Once a type is accepted, other offers of that type are locked."
+                      : `Accept one ${event.service.toLowerCase()} offer to complete this event.`}
+                  </p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-on-surface-variant">
+                  {acceptedProgressLabel(event.service, acceptedAgents.length)}
+                </span>
+              </div>
+
+              {acceptedAgents.length > 0 ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {acceptedAgents.map((agent) => (
+                    <span
+                      key={agent.negotiationId}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-secondary"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">{agentTypeIcon(agent.type)}</span>
+                      {agent.company} accepted
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+
             <section>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                 Agents Working This Event
               </p>
               <div className="grid grid-cols-3 gap-4">
-                {event.agents.map((agent) => (
-                  <Link
-                    key={agent.negotiationId}
-                    to={`/negotiations/${agent.negotiationId}/agent`}
-                    className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5 transition-colors hover:bg-surface-container-low"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
-                          <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            {agent.type === "Hotel" ? "hotel" : "flight"}
-                          </span>
-                          {agent.type}
-                        </span>
-                        <p className="mt-2 font-semibold text-on-surface">{agent.company}</p>
-                      </div>
-                      {agentStatusChip(agent.status)}
-                    </div>
-                    <div className="mt-4 grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">Original</p>
-                        <p className="mt-0.5 text-base font-semibold text-on-surface">{agent.originalPrice}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">Current</p>
-                        <p className="mt-0.5 text-base font-semibold text-secondary">{agent.negotiatedPrice}</p>
-                      </div>
-                    </div>
-                    <p className="mt-3 text-[11px] text-on-surface-variant">
-                      Potential savings: <span className="font-semibold text-on-tertiary-container">{agent.savings}</span>
-                    </p>
-                    <p className="mt-3 text-[11px] font-medium text-on-surface-variant">View agent →</p>
-                  </Link>
-                ))}
-              </div>
-            </section>
+                {event.agents.map((agent) => {
+                  const canAccept = canAcceptAgent(event, agent);
+                  const sameTypeAccepted = event.agents.some(
+                    (item) => item.type === agent.type && item.isAccepted,
+                  );
+                  const sameTypeLocked =
+                    agent.status === "Completed" &&
+                    !agent.isAccepted &&
+                    !canAccept &&
+                    sameTypeAccepted;
 
-            {/* Select winner if all done */}
-            {allAgentsDone && !markedDone && (
-              <section className="rounded-xl border border-secondary/20 bg-secondary/5 px-6 py-5">
-                <p className="text-sm font-semibold text-on-surface">All agents have finished — select the winning suppliers</p>
-                <p className="mt-0.5 text-xs text-on-surface-variant">Choose one hotel and one airline (if applicable) to finalise the event.</p>
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {event.agents.map((agent) => (
-                    <button
+                  return (
+                    <div
                       key={agent.negotiationId}
-                      type="button"
-                      onClick={() => setSelectedWinner(agent.negotiationId)}
-                      className={`rounded-xl border px-4 py-3 text-left transition-colors ${
-                        selectedWinner === agent.negotiationId
-                          ? "border-secondary bg-white shadow-sm"
-                          : "border-outline-variant/20 bg-white hover:border-secondary/40"
-                      }`}
+                      className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-on-surface">{agent.company}</span>
-                        {selectedWinner === agent.negotiationId && (
-                          <span className="material-symbols-outlined text-[18px] text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            check_circle
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
+                            <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                              {agentTypeIcon(agent.type)}
+                            </span>
+                            {agent.type}
                           </span>
+                          <p className="mt-2 font-semibold text-on-surface">{agent.company}</p>
+                        </div>
+                        {agent.isAccepted ? (
+                          <span className="rounded-full bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">
+                            Accepted
+                          </span>
+                        ) : (
+                          agentStatusChip(agent.status)
                         )}
                       </div>
-                      <p className="mt-1 text-xs text-on-surface-variant">{agent.negotiatedPrice} · saved {agent.savings}</p>
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    type="button"
-                    disabled={!selectedWinner}
-                    onClick={() => setMarkedDone(true)}
-                    className="inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-secondary-container disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Mark Event as Done
-                    <span className="material-symbols-outlined text-[16px]">check</span>
-                  </button>
-                </div>
-              </section>
-            )}
-          </>
-        )}
 
-        {/* Completed: contract summary */}
-        {isCompleted && (
+                      <div className="mt-4 grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">Original</p>
+                          <p className="mt-0.5 text-base font-semibold text-on-surface">{agent.originalPrice}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">Current</p>
+                          <p className="mt-0.5 text-base font-semibold text-secondary">{agent.negotiatedPrice}</p>
+                        </div>
+                      </div>
+
+                      <p className="mt-3 text-[11px] text-on-surface-variant">
+                        Potential savings: <span className="font-semibold text-on-tertiary-container">{agent.savings}</span>
+                      </p>
+
+                      <div className="mt-4 flex items-center justify-between gap-3">
+                        <Link
+                          to={`/negotiations/${agent.negotiationId}/agent`}
+                          className="text-[11px] font-medium text-on-surface-variant hover:text-secondary"
+                        >
+                          View agent →
+                        </Link>
+
+                        {canAccept ? (
+                          <button
+                            type="button"
+                            onClick={() => acceptOffer(event.id, agent.negotiationId)}
+                            className="inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-secondary-container"
+                          >
+                            Accept offer
+                            <span className="material-symbols-outlined text-[14px]">check</span>
+                          </button>
+                        ) : agent.status === "Cancelled" ? (
+                          <span className="text-[11px] font-medium text-error">Cancelled</span>
+                        ) : sameTypeLocked ? (
+                          <span className="text-[11px] font-medium text-on-surface-variant">Type already accepted</span>
+                        ) : agent.status !== "Completed" ? (
+                          <span className="text-[11px] font-medium text-on-surface-variant">Waiting for completion</span>
+                        ) : agent.isAccepted ? (
+                          <span className="text-[11px] font-medium text-secondary">Offer accepted</span>
+                        ) : null}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          </>
+        ) : (
           <>
-            {/* Winners row */}
             <div className="grid grid-cols-2 gap-4">
               {winners.map((agent) => (
                 <div key={agent.negotiationId} className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[16px] text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      {agent.type === "Hotel" ? "hotel" : "flight"}
+                      {agentTypeIcon(agent.type)}
                     </span>
                     <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                      Winning {agent.type}
+                      Accepted {agent.type} Offer
                     </p>
                   </div>
                   <p className="text-lg font-semibold text-on-surface">{agent.company}</p>
@@ -206,65 +243,66 @@ export default function EventDetailPage() {
               ))}
             </div>
 
-            {/* Price path of first winner */}
-            <div className="rounded-xl border border-outline-variant/20 bg-white px-8 py-6">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Negotiation Path</p>
-                  <p className="mt-0.5 text-lg font-semibold text-on-surface">{winners[0]?.company}</p>
+            {firstWinner ? (
+              <>
+                <div className="rounded-xl border border-outline-variant/20 bg-white px-8 py-6">
+                  <div className="mb-2 flex items-start justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Negotiation Path</p>
+                      <p className="mt-0.5 text-lg font-semibold text-on-surface">{firstWinner.company}</p>
+                    </div>
+                    <Link
+                      to={`/negotiations/${firstWinner.negotiationId}/agent`}
+                      className="text-xs font-semibold text-secondary hover:underline"
+                    >
+                      View full agent →
+                    </Link>
+                  </div>
+                  <NegotiationPricePath points={winnerPricePath} marketPrice={310} targetPrice={200} />
                 </div>
-                <Link
-                  to={`/negotiations/${winners[0]?.negotiationId}/agent`}
-                  className="text-xs font-semibold text-secondary hover:underline"
-                >
-                  View full agent →
-                </Link>
-              </div>
-              <NegotiationPricePath points={winnerPricePath} marketPrice={310} targetPrice={200} />
-            </div>
 
-            {/* Transcript */}
-            <div className="rounded-xl border border-outline-variant/20 bg-white px-8 py-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Negotiation Transcript</p>
-              <div className="space-y-5">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-container">
-                    <span className="text-sm font-semibold text-secondary" style={{ fontFamily: "system-ui" }}>G</span>
-                  </div>
-                  <div className="rounded-2xl rounded-tl-none bg-surface-container-low px-5 py-3 max-w-2xl">
-                    <p className="text-sm leading-6 text-on-surface">
-                      Based on 450 projected room nights and current weekday compression, Galileo is targeting a structured rate below the published corporate floor with breakfast and transfer concessions.
-                    </p>
-                    <p className="mt-2 text-[10px] text-on-surface-variant">Agent Nexus-7 · 14:02:11</p>
+                <div className="rounded-xl border border-outline-variant/20 bg-white px-8 py-6">
+                  <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Negotiation Transcript</p>
+                  <div className="space-y-5">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-container">
+                        <span className="text-sm font-semibold text-secondary" style={{ fontFamily: "system-ui" }}>G</span>
+                      </div>
+                      <div className="max-w-2xl rounded-2xl rounded-tl-none bg-surface-container-low px-5 py-3">
+                        <p className="text-sm leading-6 text-on-surface">
+                          Based on 450 projected room nights and current weekday compression, Galileo is targeting a structured rate below the published corporate floor with breakfast and transfer concessions.
+                        </p>
+                        <p className="mt-2 text-[10px] text-on-surface-variant">Agent Nexus-7 · 14:02:11</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-row-reverse items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-container-highest">
+                        <span className="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+                      </div>
+                      <div className="max-w-2xl rounded-2xl rounded-tr-none border border-outline-variant/20 bg-white px-5 py-3">
+                        <p className="text-sm leading-6 text-on-surface">
+                          We acknowledge the volume and can review incremental meeting spend if the room-night commitment remains firm through Q4.
+                        </p>
+                        <p className="mt-2 text-[10px] text-right text-on-surface-variant">{firstWinner.company} · 14:02:45</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-container">
+                        <span className="text-sm font-semibold text-secondary" style={{ fontFamily: "system-ui" }}>G</span>
+                      </div>
+                      <div className="max-w-2xl rounded-2xl rounded-tl-none bg-surface-container-low px-5 py-3">
+                        <p className="text-sm leading-6 text-on-surface">
+                          Confirmed. Galileo proposes locking the rate at <strong className="text-secondary">{firstWinner.negotiatedPrice}</strong> with the agreed concessions and executive arrival support.
+                        </p>
+                        <p className="mt-2 text-[10px] text-on-surface-variant">Agent Nexus-7 · 14:48:03</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-row-reverse items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-container-highest">
-                    <span className="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
-                  </div>
-                  <div className="rounded-2xl rounded-tr-none bg-white border border-outline-variant/20 px-5 py-3 max-w-2xl">
-                    <p className="text-sm leading-6 text-on-surface">
-                      We acknowledge the volume and can review incremental meeting spend if the room-night commitment remains firm through Q4.
-                    </p>
-                    <p className="mt-2 text-[10px] text-on-surface-variant text-right">{winners[0]?.company} · 14:02:45</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-container">
-                    <span className="text-sm font-semibold text-secondary" style={{ fontFamily: "system-ui" }}>G</span>
-                  </div>
-                  <div className="rounded-2xl rounded-tl-none bg-surface-container-low px-5 py-3 max-w-2xl">
-                    <p className="text-sm leading-6 text-on-surface">
-                      Confirmed. Galileo proposes locking the Q4 block at <strong className="text-secondary">{winners[0]?.negotiatedPrice}</strong> with a 10% attrition allowance and complimentary airport transfers for executive arrivals.
-                    </p>
-                    <p className="mt-2 text-[10px] text-on-surface-variant">Agent Nexus-7 · 14:48:03</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </>
+            ) : null}
           </>
         )}
-
       </div>
     </div>
   );

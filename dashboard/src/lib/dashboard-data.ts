@@ -269,7 +269,7 @@ export const activityStream = [
   },
 ];
 
-export type EventAgentStatus = "Negotiating" | "Reviewing" | "Completed";
+export type EventAgentStatus = "Negotiating" | "Reviewing" | "Completed" | "Cancelled";
 export type EventStatus = "Active" | "Completed";
 
 export type EventAgent = {
@@ -280,7 +280,7 @@ export type EventAgent = {
   originalPrice: string;
   negotiatedPrice: string;
   savings: string;
-  isWinner?: boolean;
+  isAccepted?: boolean;
 };
 
 export type GalileoEvent = {
@@ -295,7 +295,7 @@ export type GalileoEvent = {
   agents: EventAgent[];
 };
 
-export const events: GalileoEvent[] = [
+export const initialEvents: GalileoEvent[] = [
   {
     id: "q3-sales-kickoff",
     name: "Q3 Sales Kickoff",
@@ -314,7 +314,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$245/night",
         negotiatedPrice: "$192/night",
         savings: "$6,360",
-        isWinner: false,
+        isAccepted: false,
       },
       {
         negotiationId: "marriott",
@@ -324,7 +324,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$260/night",
         negotiatedPrice: "$208/night",
         savings: "$8,320",
-        isWinner: false,
+        isAccepted: false,
       },
       {
         negotiationId: "delta",
@@ -334,7 +334,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$520/seat",
         negotiatedPrice: "$455/seat",
         savings: "$7,800",
-        isWinner: false,
+        isAccepted: false,
       },
     ],
   },
@@ -356,7 +356,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$310/night",
         negotiatedPrice: "$201/night",
         savings: "$13,104",
-        isWinner: true,
+        isAccepted: true,
       },
       {
         negotiationId: "ihg",
@@ -366,7 +366,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$295/night",
         negotiatedPrice: "$220/night",
         savings: "$10,800",
-        isWinner: false,
+        isAccepted: false,
       },
       {
         negotiationId: "american",
@@ -376,7 +376,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$480/seat",
         negotiatedPrice: "$382/seat",
         savings: "$4,704",
-        isWinner: true,
+        isAccepted: true,
       },
     ],
   },
@@ -398,7 +398,7 @@ export const events: GalileoEvent[] = [
         originalPrice: "$380/night",
         negotiatedPrice: "$310/night",
         savings: "$17,850",
-        isWinner: false,
+        isAccepted: false,
       },
       {
         negotiationId: "accor",
@@ -408,18 +408,18 @@ export const events: GalileoEvent[] = [
         originalPrice: "$350/night",
         negotiatedPrice: "$290/night",
         savings: "$15,300",
-        isWinner: false,
+        isAccepted: false,
       },
     ],
   },
 ];
 
 export function getEvent(id: string) {
-  return events.find((e) => e.id === id);
+  return initialEvents.find((e) => e.id === id);
 }
 
 export function getEventForNegotiation(negotiationId: string) {
-  return events.find((e) => e.agents.some((a) => a.negotiationId === negotiationId));
+  return initialEvents.find((e) => e.agents.some((a) => a.negotiationId === negotiationId));
 }
 
 export function getSupplierProfile(id: string) {
