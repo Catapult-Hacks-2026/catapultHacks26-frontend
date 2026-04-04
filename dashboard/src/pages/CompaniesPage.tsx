@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { companyCards } from "@/lib/dashboard-data";
@@ -112,7 +112,7 @@ export default function CompaniesPage() {
                 {companyCards.map((company) => (
                   <Link
                     key={company.id}
-                    href={`/companies/${company.id}`}
+                    to={`/companies/${company.id}`}
                     className="group rounded-xl border border-transparent bg-surface-container-lowest p-8 transition-all duration-500 hover:border-surface-container-highest hover:shadow-ambient"
                   >
                     <div className="mb-8 flex items-start justify-between">

@@ -15,13 +15,7 @@ const pricePath: PricePoint[] = [
   { label: "Current", price: 245, type: "current" },
 ];
 
-export default async function AgentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  await params;
-
+export default function NegotiationAgentPage() {
   return (
     <div className="h-screen overflow-y-auto bg-surface">
       <div className="mx-auto max-w-7xl space-y-8 p-8">

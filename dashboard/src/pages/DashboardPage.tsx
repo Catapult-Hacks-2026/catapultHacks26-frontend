@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Button } from "@/components/ui/Button";
@@ -102,7 +102,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <Link
-                    href={`/negotiations/${row.id}/agent`}
+                    to={`/negotiations/${row.id}/agent`}
                     className="text-xs font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-secondary"
                   >
                     Details
@@ -117,7 +117,7 @@ export default function DashboardPage() {
               Showing 3 of 12 active Galileo cycles
             </p>
             <Link
-              href="/all-agents"
+              to="/all-agents"
               className="text-sm font-bold text-on-surface transition-colors hover:text-secondary"
             >
               View All Agents →

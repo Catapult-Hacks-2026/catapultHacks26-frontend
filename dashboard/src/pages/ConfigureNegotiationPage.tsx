@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { AgentPreviewCard } from "@/components/dashboard/AgentPreviewCard";
 import { ServiceTypeToggle } from "@/components/dashboard/ServiceTypeToggle";
 
@@ -68,7 +68,7 @@ export default function ConfigureNegotiationPage() {
 
           <div className="mt-8 flex justify-end">
             <Link
-              href="/negotiations/new"
+              to="/negotiations/new"
               className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-3 font-bold text-white transition-colors hover:bg-secondary-container"
             >
               Next Step

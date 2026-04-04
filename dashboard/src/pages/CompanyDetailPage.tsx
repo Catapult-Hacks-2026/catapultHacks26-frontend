@@ -1,13 +1,10 @@
+import { useParams } from "react-router-dom";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
 import { getSupplierProfile, supplierNegotiations } from "@/lib/dashboard-data";
 
-export default async function SupplierProfilePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+export default function CompanyDetailPage() {
+  const { id = "" } = useParams<{ id: string }>();
   const profile = getSupplierProfile(id);
 
   return (
@@ -133,18 +130,8 @@ export default async function SupplierProfilePage({
           <h2 className="text-2xl font-bold text-on-surface">Booking Window Heatmap</h2>
           <div className="mt-6 grid grid-cols-4 gap-3">
             {[
-              "JAN",
-              "FEB",
-              "MAR",
-              "APR",
-              "MAY",
-              "JUN",
-              "JUL",
-              "AUG",
-              "SEP",
-              "OCT",
-              "NOV",
-              "DEC",
+              "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+              "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
             ].map((month) => {
               const best = ["FEB", "JUL", "DEC"].includes(month);
               const mid = ["MAR", "JUN", "SEP"].includes(month);

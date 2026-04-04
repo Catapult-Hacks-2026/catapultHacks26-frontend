@@ -1,12 +1,6 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
-export default async function NegotiationShellPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  await params;
-
+export default function NegotiationShellPage() {
   return (
     <div className="mx-auto max-w-5xl p-10">
       <p className="text-[10px] font-bold uppercase tracking-widest text-on-primary-container">
@@ -102,7 +96,7 @@ export default async function NegotiationShellPage({
         </div>
 
         <Link
-          href="/negotiations/new/agent"
+          to="/negotiations/new/agent"
           className="mt-8 inline-flex w-full max-w-md items-center justify-center gap-2 rounded-xl bg-secondary px-10 py-5 font-bold text-white shadow-lg transition-all hover:bg-secondary/90 active:scale-[0.98]"
         >
           Start Negotiations

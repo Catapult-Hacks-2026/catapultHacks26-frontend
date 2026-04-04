@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type ButtonVariant = "primary" | "ghost";
@@ -40,11 +40,11 @@ export function Button(props: ButtonAsButton | ButtonAsLink) {
   const { children, className = "", icon, variant = "primary" } = props;
   const classes = `inline-flex items-center justify-center gap-3 ${getVariantClasses(variant)} ${className}`.trim();
 
-  if ("href" in props) {
+  if ("href" in props && props.href !== undefined) {
     const { href } = props;
 
     return (
-      <Link href={href} className={classes}>
+      <Link to={href} className={classes}>
         {content(icon, children)}
       </Link>
     );
@@ -57,7 +57,7 @@ export function Button(props: ButtonAsButton | ButtonAsLink) {
     icon: _icon,
     variant: _variant,
     ...buttonProps
-  } = props;
+  } = props as ButtonAsButton;
 
   return (
     <button {...buttonProps} type={type} className={classes}>

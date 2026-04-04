@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
@@ -26,7 +26,7 @@ export default function AllAgentsPage() {
             </p>
           </div>
           <Link
-            href="/"
+            to="/"
             className="mb-1 text-sm font-bold text-on-surface-variant transition-colors hover:text-secondary"
           >
             ← Back to Dashboard
@@ -121,7 +121,7 @@ export default function AllAgentsPage() {
                 </div>
                 <div>
                   <Link
-                    href={`/negotiations/${row.id}/agent`}
+                    to={`/negotiations/${row.id}/agent`}
                     className="text-xs font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-secondary"
                   >
                     Details

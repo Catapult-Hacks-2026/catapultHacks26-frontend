@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 export type DataPointType = "offer" | "negotiated" | "current";
@@ -61,7 +59,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
 
   return (
     <div>
-      {/* Legend */}
       <div className="mb-5 flex flex-wrap items-center gap-5 text-[11px] font-semibold text-on-surface-variant">
         <span className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
@@ -100,7 +97,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
         className="h-60 w-full"
         aria-label="Negotiation Price Path"
       >
-        {/* Market price — solid slate horizontal line */}
         <line
           x1={PAD_L}
           y1={marketY}
@@ -127,7 +123,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
           ${marketPrice} MARKET
         </text>
 
-        {/* Target price — dashed green horizontal line */}
         <line
           x1={PAD_L}
           y1={targetY}
@@ -156,7 +151,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
           ${targetPrice} TARGET
         </text>
 
-        {/* Connecting polyline */}
         {points.length > 1 && (
           <path
             d={linePath}
@@ -168,7 +162,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
           />
         )}
 
-        {/* Data points */}
         {points.map((point, i) => {
           const x = px(i);
           const y = py(point.price);
@@ -189,7 +182,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
               <circle cx={x} cy={y} r={6} fill={color} />
               <circle cx={x} cy={y} r={2.5} fill="white" />
 
-              {/* Tooltip */}
               {isHov && (
                 <g>
                   <rect
@@ -223,7 +215,6 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
                 </g>
               )}
 
-              {/* X-axis label */}
               <text
                 x={x}
                 y={VH - 4}

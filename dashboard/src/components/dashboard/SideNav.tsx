@@ -1,7 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 
 const primaryNav = [
   { href: "/", label: "Dashboard", icon: "dashboard" },
@@ -23,12 +20,12 @@ function matches(pathname: string, href: string) {
 }
 
 export default function SideNav() {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   return (
     <aside className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-primary-container py-6 shadow-nav">
       <div className="px-6">
-        <Link href="/" className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-4">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-secondary text-white">
             <span
               className="material-symbols-outlined text-lg"
@@ -55,7 +52,7 @@ export default function SideNav() {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              to={item.href}
               className={`mx-2 flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all ${
                 active
                   ? "rounded-lg bg-secondary text-white shadow-lg shadow-secondary/20"
@@ -73,7 +70,7 @@ export default function SideNav() {
         {utilityNav.map((item) => (
           <Link
             key={item.href}
-            href={item.href}
+            to={item.href}
             className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-[#1C263D] hover:text-white"
           >
             <span className="material-symbols-outlined text-lg">{item.icon}</span>
@@ -82,7 +79,7 @@ export default function SideNav() {
         ))}
 
         <Link
-          href="/negotiations/configure"
+          to="/negotiations/configure"
           className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg bg-secondary px-4 py-3 font-bold text-white transition-colors hover:bg-secondary-container"
         >
           <span className="material-symbols-outlined text-lg">add</span>
