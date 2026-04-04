@@ -268,7 +268,7 @@ export function LandingPage() {
         </div>
       </header>
 
-      <section id="hero" className="relative z-20 isolate overflow-hidden pt-16">
+      <section id="hero" className="relative z-20 isolate overflow-hidden pt-28 lg:pt-40">
         <div className="mx-auto max-w-7xl px-6 pb-12 lg:px-10">
           <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start min-h-[60vh]">
             <motion.div
@@ -288,7 +288,7 @@ export function LandingPage() {
               </div>
 
               {/* The Action Button */}
-              <div className="mt-16 sm:mt-24 mb-10 lg:mb-0">
+              <div className="mt-16 sm:mt-32 mb-20 lg:mb-24">
                 <motion.a
                   href="#live-updates-section"
                   onClick={(e) => {
@@ -304,96 +304,92 @@ export function LandingPage() {
                 >
                   <span>Show Me How It Works</span>
                   <span className="relative flex h-6 w-6 items-center justify-center overflow-visible">
-                    <motion.svg
+                    <svg
                       viewBox="0 0 24 24"
-                      className="relative h-5 w-5"
+                      className="relative h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      style={{ transform: "rotate(90deg)" }}
-                      animate={isRevealed ? { y: 150, opacity: 0 } : { y: [0, 4, 0] }}
-                      transition={isRevealed ? { duration: 0.5 } : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      <path d="M12 5v14" />
-                      <path d="m19 12-7 7-7-7" />
-                    </motion.svg>
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
                   </span>
                 </motion.a>
               </div>
             </motion.div>
 
-            {/* Right side graph pulls up after click */}
+            {/* Right side graph shown on load */}
             <div className="relative lg:pl-8 lg:pt-3">
-              {isRevealed && (
-                <motion.div
-                  initial={{ y: "40vh", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <p className="text-xl font-bold leading-tight text-ink">
-                    Increase in hotel bookings when using automated follow-up methods.
-                  </p>
-                  <p className="mt-3 max-w-xl text-sm leading-7 text-ink/66 font-medium">
-                    A company leveraging HubSpot's speed-to-lead automation saw a 25% boost in qualified leads through immediate follow-up emails.
-                  </p>
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+                custom={0.1}
+              >
+                <p className="text-xl font-bold leading-tight text-ink">
+                  Increase in hotel bookings when using automated follow-up methods.
+                </p>
+                <p className="mt-3 max-w-xl text-sm leading-7 text-ink/66 font-medium">
+                  A company leveraging HubSpot's speed-to-lead automation saw a 25% boost in qualified leads through immediate follow-up emails.
+                </p>
 
-                  <div className="mt-5 rounded-[1.75rem] border-2 border-ink/20 bg-[#f8f4ec]/62 p-5 backdrop-blur-[1px]">
-                    <div className="relative h-[17.5rem] overflow-hidden">
-                      <div className="absolute bottom-10 left-14 top-4 w-px bg-ink" />
-                      <div className="absolute bottom-10 left-14 right-5 h-px bg-ink" />
-                      <div className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink">
-                        Booking rate
-                      </div>
-                      <div className="absolute bottom-1 left-[6.4rem] text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
-                        Q4 2024
-                      </div>
-                      <div className="absolute bottom-1 right-7 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
-                        Q1 2025
-                      </div>
-                      <div className="absolute left-[4.35rem] top-[0.9rem] text-[0.74rem] font-bold text-ink">25%</div>
-                      <div className="absolute left-[4.35rem] top-[6.2rem] text-[0.68rem] font-bold text-ink/78">12%</div>
-                      <div className="absolute left-[4.75rem] bottom-[3.2rem] text-[0.68rem] font-bold text-ink/78">0%</div>
-
-                      <svg viewBox="0 0 420 260" className="absolute inset-0 h-full w-full overflow-visible">
-                        <motion.path
-                          d="M94 194 C150 186, 204 166, 258 134 S 338 88, 382 62"
-                          fill="none"
-                          stroke="#111111"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                          initial={{ pathLength: 0, opacity: 0.4 }}
-                          animate={{ pathLength: 1, opacity: 1 }}
-                          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                        />
-                        <motion.circle
-                          cx="94"
-                          cy="194"
-                          r="6"
-                          fill="#111111"
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 0.2, duration: 0.35 }}
-                        />
-                        <motion.circle
-                          cx="382"
-                          cy="62"
-                          r="8"
-                          fill="#111111"
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: 1.05, duration: 0.35 }}
-                        />
-                      </svg>
+                <div className="mt-5 rounded-[1.75rem] border-2 border-ink/20 bg-[#f8f4ec]/62 p-5 backdrop-blur-[1px]">
+                  <div className="relative h-[17.5rem] overflow-hidden">
+                    <div className="absolute bottom-10 left-14 top-4 w-px bg-ink" />
+                    <div className="absolute bottom-10 left-14 right-5 h-px bg-ink" />
+                    <div className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink">
+                      Booking rate
                     </div>
+                    <div className="absolute bottom-1 left-[6.4rem] text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                      Q4 2024
+                    </div>
+                    <div className="absolute bottom-1 right-7 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                      Q1 2025
+                    </div>
+                    <div className="absolute left-[4.35rem] top-[0.9rem] text-[0.74rem] font-bold text-ink">25%</div>
+                    <div className="absolute left-[4.35rem] top-[6.2rem] text-[0.68rem] font-bold text-ink/78">12%</div>
+                    <div className="absolute left-[4.75rem] bottom-[3.2rem] text-[0.68rem] font-bold text-ink/78">0%</div>
 
-                    <p className="mt-2 text-right text-[0.72rem] italic text-ink">
-                      *Company data from HubSpot.
-                    </p>
+                    <svg viewBox="0 0 420 260" className="absolute inset-0 h-full w-full overflow-visible">
+                      <motion.path
+                        d="M94 194 C150 186, 204 166, 258 134 S 338 88, 382 62"
+                        fill="none"
+                        stroke="#111111"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0, opacity: 0.4 }}
+                        animate={{ pathLength: 1, opacity: 1 }}
+                        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                      <motion.circle
+                        cx="94"
+                        cy="194"
+                        r="6"
+                        fill="#111111"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.35 }}
+                      />
+                      <motion.circle
+                        cx="382"
+                        cy="62"
+                        r="8"
+                        fill="#111111"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 1.05, duration: 0.35 }}
+                      />
+                    </svg>
                   </div>
-                </motion.div>
-              )}
+
+                  <p className="mt-2 text-right text-[0.72rem] italic text-ink">
+                    *Company data from HubSpot.
+                  </p>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -407,7 +403,7 @@ export function LandingPage() {
           className="relative z-10 bg-transparent"
         >
 
-          <section id="live-updates-section" className="mx-auto max-w-7xl px-6 pb-20 pt-10 lg:px-10 lg:pb-24 lg:pt-16">
+          <section id="live-updates-section" className="scroll-mt-20 mx-auto max-w-7xl px-6 pb-20 pt-16 mt-8 lg:px-10 lg:pb-24 lg:pt-24 lg:mt-12">
             <motion.div
               initial="hidden"
               animate="visible"
@@ -456,22 +452,6 @@ export function LandingPage() {
                 >
                   {isRefreshing ? "Refreshing..." : "Refresh live data"}
                 </button>
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-3 text-[0.76rem] uppercase tracking-[0.18em] text-ink/78">
-                {[
-                  { label: "Chicago ADR", value: avgPublic ? `$${avgPublic}` : "—" },
-                  { label: "Galileo ADR", value: avgArbiter ? `$${avgArbiter}` : "—" },
-                  { label: "Avg Savings", value: avgSavings ? `$${avgSavings}` : "—" },
-                  {
-                    label: "Rate Move",
-                    value: rateMovement === null ? "—" : `${rateMovement > 0 ? "+" : ""}${rateMovement.toFixed(1)}%`,
-                  },
-                ].map((stat) => (
-                  <div key={stat.label} className="translate-y-1 rounded-full border-2 border-[#f8f4ec] bg-[#f8f4ec]/52 px-5 py-2.5 font-bold shadow-[0_10px_30px_-20px_rgba(47,47,47,0.65)]">
-                    <span className="text-ink/56">{stat.label}</span> {stat.value}
-                  </div>
-                ))}
               </div>
 
               <div className="mt-6 h-64 lg:h-72">
@@ -638,6 +618,33 @@ export function LandingPage() {
             </motion.article>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto flex max-w-7xl flex-col items-center justify-center px-6 pb-32 pt-10 text-center lg:px-10">
+        <h2 className="mb-10 text-[3rem] leading-tight tracking-[-0.04em] text-ink sm:text-[4rem]">
+          Ready to automate your travel procurement?
+        </h2>
+        <button
+          type="button"
+          onClick={() => {}}
+          className="group inline-flex items-center gap-4 rounded-full bg-ink px-10 py-5 text-[0.8rem] font-bold uppercase tracking-[0.2em] text-[#f8f4ec] transition-all hover:scale-105 hover:bg-ink/90 hover:shadow-xl"
+        >
+          <span>Launch dashboard</span>
+          <span className="relative flex h-5 w-5 items-center justify-center">
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </span>
+        </button>
       </section>
 
       <footer id="footer" className="border-t border-ink/8 bg-[#f8f4ec]">
