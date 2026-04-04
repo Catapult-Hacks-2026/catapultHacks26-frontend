@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
-import { agentRows, getEventForNegotiation } from "@/lib/dashboard-data";
+import { agentRows } from "@/lib/dashboard-data";
+import { useEvents } from "@/context/EventsContext";
 
 export default function AllAgentsPage() {
+  const { getEventForNegotiation } = useEvents();
   const negotiating = agentRows.filter((r) => r.status === "Negotiating").length;
   const optimized = agentRows.filter((r) => r.status === "Optimized").length;
   const reviewing = agentRows.filter((r) => r.status === "Reviewing").length;

@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
-import { agentRows, getEventForNegotiation } from "@/lib/dashboard-data";
+import { agentRows } from "@/lib/dashboard-data";
+import { useEvents } from "@/context/EventsContext";
 
 export default function DashboardPage() {
+  const { getEventForNegotiation } = useEvents();
+
   return (
     <div className="min-h-screen bg-surface px-10 pb-12 pt-12">
       <AnimateIn>
