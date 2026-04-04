@@ -2,121 +2,9 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
-import { getSupplierProfile, initialEvents } from "@/lib/dashboard-data";
+import { getSupplierProfile, getFullCompanyProfile, initialEvents } from "@/lib/dashboard-data";
 
-const locationAnalytics = {
-  all: {
-    label: "All Locations",
-    subtitle: "Portfolio-wide view across every negotiated property and market",
-    currentLocation: "Global portfolio coverage",
-    lifetimeSavings: "$1.2M",
-    savingsDelta: "+14%",
-    agreements: "Negotiated across 14 master service agreements.",
-    pricing: {
-      "1Y": [
-        { label: "JAN", negotiated: 462, market: 498 },
-        { label: "MAR", negotiated: 448, market: 472 },
-        { label: "MAY", negotiated: 474, market: 489 },
-        { label: "JUL", negotiated: 438, market: 468 },
-        { label: "SEP", negotiated: 452, market: 479 },
-        { label: "NOV", negotiated: 485, market: 512 },
-      ],
-      ALL: [
-        { label: "JAN", negotiated: 498, market: 536 },
-        { label: "MAR", negotiated: 472, market: 511 },
-        { label: "MAY", negotiated: 489, market: 528 },
-        { label: "JUL", negotiated: 438, market: 468 },
-        { label: "SEP", negotiated: 456, market: 491 },
-        { label: "NOV", negotiated: 485, market: 522 },
-      ],
-    },
-    eventIds: initialEvents.map((event) => event.id),
-  },
-  london: {
-    label: "London Executive Campus",
-    subtitle: "Flagship UK corporate and executive-stay inventory",
-    currentLocation: "London, United Kingdom",
-    lifetimeSavings: "$428K",
-    savingsDelta: "+11%",
-    agreements: "Negotiated across 5 London-based commercial agreements.",
-    pricing: {
-      "1Y": [
-        { label: "JAN", negotiated: 438, market: 467 },
-        { label: "MAR", negotiated: 421, market: 452 },
-        { label: "MAY", negotiated: 446, market: 474 },
-        { label: "JUL", negotiated: 417, market: 448 },
-        { label: "SEP", negotiated: 433, market: 462 },
-        { label: "NOV", negotiated: 451, market: 481 },
-      ],
-      ALL: [
-        { label: "JAN", negotiated: 452, market: 483 },
-        { label: "MAR", negotiated: 439, market: 468 },
-        { label: "MAY", negotiated: 461, market: 492 },
-        { label: "JUL", negotiated: 417, market: 448 },
-        { label: "SEP", negotiated: 441, market: 471 },
-        { label: "NOV", negotiated: 451, market: 481 },
-      ],
-    },
-    eventIds: ["emea-partner-summit"],
-  },
-  chicago: {
-    label: "Chicago River North",
-    subtitle: "Midwest conference and transient corporate inventory",
-    currentLocation: "Chicago, IL",
-    lifetimeSavings: "$286K",
-    savingsDelta: "+9%",
-    agreements: "Negotiated across 4 Chicago program agreements.",
-    pricing: {
-      "1Y": [
-        { label: "JAN", negotiated: 312, market: 344 },
-        { label: "MAR", negotiated: 298, market: 327 },
-        { label: "MAY", negotiated: 325, market: 356 },
-        { label: "JUL", negotiated: 302, market: 332 },
-        { label: "SEP", negotiated: 316, market: 347 },
-        { label: "NOV", negotiated: 329, market: 361 },
-      ],
-      ALL: [
-        { label: "JAN", negotiated: 326, market: 359 },
-        { label: "MAR", negotiated: 309, market: 339 },
-        { label: "MAY", negotiated: 334, market: 366 },
-        { label: "JUL", negotiated: 302, market: 332 },
-        { label: "SEP", negotiated: 321, market: 351 },
-        { label: "NOV", negotiated: 329, market: 361 },
-      ],
-    },
-    eventIds: ["annual-leadership-retreat"],
-  },
-  singapore: {
-    label: "Singapore Marina District",
-    subtitle: "APAC executive travel and logistics lodging footprint",
-    currentLocation: "Singapore",
-    lifetimeSavings: "$351K",
-    savingsDelta: "+18%",
-    agreements: "Negotiated across 5 APAC lodging and logistics agreements.",
-    pricing: {
-      "1Y": [
-        { label: "JAN", negotiated: 356, market: 389 },
-        { label: "MAR", negotiated: 344, market: 377 },
-        { label: "MAY", negotiated: 371, market: 405 },
-        { label: "JUL", negotiated: 338, market: 369 },
-        { label: "SEP", negotiated: 349, market: 382 },
-        { label: "NOV", negotiated: 365, market: 399 },
-      ],
-      ALL: [
-        { label: "JAN", negotiated: 372, market: 405 },
-        { label: "MAR", negotiated: 356, market: 389 },
-        { label: "MAY", negotiated: 381, market: 417 },
-        { label: "JUL", negotiated: 338, market: 369 },
-        { label: "SEP", negotiated: 358, market: 392 },
-        { label: "NOV", negotiated: 365, market: 399 },
-      ],
-    },
-    eventIds: ["q3-sales-kickoff"],
-  },
-} as const;
-
-type LocationScope = keyof typeof locationAnalytics;
-type PricingRange = keyof (typeof locationAnalytics)["all"]["pricing"];
+type PricingRange = "1Y" | "ALL";
 
 function formatCurrency(value: number) {
   return `$${value} / night avg`;
@@ -169,17 +57,21 @@ function buildAreaPath(points: Array<{ x: number; y: number }>) {
 export default function CompanyDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
   const profile = getSupplierProfile(id);
-  const [locationScope, setLocationScope] = useState<LocationScope>("all");
+  const fullProfile = getFullCompanyProfile(id);
+
+  const locationKeys = Object.keys(fullProfile.locations);
+  const [locationScope, setLocationScope] = useState<string>(locationKeys[0] ?? "all");
   const [pricingRange, setPricingRange] = useState<PricingRange>("ALL");
-  const activeLocation = locationAnalytics[locationScope];
   const [activePointIndex, setActivePointIndex] = useState<number | null>(null);
+
+  const activeLocation = fullProfile.locations[locationScope] ?? fullProfile.locations[locationKeys[0]];
   const activeSeries = activeLocation.pricing[pricingRange];
   const safeActiveIndex =
     activePointIndex === null ? null : Math.min(activePointIndex, activeSeries.length - 1);
   const activePoint = safeActiveIndex === null ? null : activeSeries[safeActiveIndex];
   const allValues = activeSeries.flatMap((point) => [point.negotiated, point.market]);
-  const minChartValue = Math.min(...allValues) - 14;
-  const maxChartValue = Math.max(...allValues) + 14;
+  const minChartValue = allValues.length > 0 ? Math.min(...allValues) - 14 : 0;
+  const maxChartValue = allValues.length > 0 ? Math.max(...allValues) + 14 : 100;
   const negotiatedPoints = buildChartPoints(
     activeSeries.map((point) => ({ label: point.label, value: point.negotiated })),
     minChartValue,
@@ -202,6 +94,14 @@ export default function CompanyDetailPage() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
+      <Link
+        to="/companies"
+        className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-on-surface"
+      >
+        <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+        Companies
+      </Link>
+
       <section className="grid grid-cols-1 items-end gap-8 xl:grid-cols-12">
         <div className="flex flex-col gap-6 sm:flex-row sm:gap-8 xl:col-span-8">
           <div className="relative">
@@ -210,7 +110,6 @@ export default function CompanyDetailPage() {
               size="xl"
               className="bg-primary-container text-4xl text-secondary"
             />
-
           </div>
 
           <div className="max-w-2xl space-y-4">
@@ -219,7 +118,7 @@ export default function CompanyDetailPage() {
             </h1>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-highest px-3 py-1 text-[10px] font-black uppercase tracking-widest text-secondary">
               <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                {profile.type === "Hotel" ? "hotel" : "flight"}
+                hotel
               </span>
               {profile.type}
             </span>
@@ -239,33 +138,38 @@ export default function CompanyDetailPage() {
           <div className="mt-4 text-[3.5rem] font-extrabold leading-none tracking-tighter text-on-surface">
             {activeLocation.lifetimeSavings}
           </div>
-
+          <p className="mt-2 text-sm font-semibold text-secondary">{activeLocation.savingsDelta} avg savings rate</p>
         </div>
       </section>
 
-      <div className="flex flex-wrap gap-2">
-        {Object.entries(locationAnalytics).map(([key, item]) => {
-          const selected = locationScope === key;
+      {locationKeys.length > 1 && (
+        <div className="flex flex-wrap gap-2">
+          {locationKeys.map((key) => {
+            const item = fullProfile.locations[key];
+            const selected = locationScope === key;
 
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => {
-                setLocationScope(key as LocationScope);
-                setPricingRange("ALL");
-                setActivePointIndex(null);
-              }}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${selected
-                ? "bg-secondary font-bold text-white"
-                : "bg-surface-container text-on-surface-variant"
-                }`}
-            >
-              {item.label}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => {
+                  setLocationScope(key);
+                  setPricingRange("ALL");
+                  setActivePointIndex(null);
+                }}
+                className={`rounded-full px-4 py-2 text-sm transition-colors ${selected
+                  ? "bg-secondary font-bold text-white"
+                  : "bg-surface-container text-on-surface-variant"
+                  }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <p className="text-xs text-on-surface-variant">{activeLocation.agreements}</p>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         <div className="rounded-3xl bg-surface-container-lowest p-5 sm:p-6 lg:p-8 xl:col-span-2">
@@ -287,32 +191,22 @@ export default function CompanyDetailPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setPricingRange("1Y");
-                  setActivePointIndex(null);
-                }}
-                className={`rounded-full px-4 py-2 text-sm transition-colors ${pricingRange === "1Y"
-                  ? "bg-secondary font-bold text-white"
-                  : "bg-surface-container text-on-surface-variant"
-                  }`}
-              >
-                1Y
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPricingRange("ALL");
-                  setActivePointIndex(null);
-                }}
-                className={`rounded-full px-4 py-2 text-sm transition-colors ${pricingRange === "ALL"
-                  ? "bg-secondary font-bold text-white"
-                  : "bg-surface-container text-on-surface-variant"
-                  }`}
-              >
-                ALL
-              </button>
+              {(["1Y", "ALL"] as PricingRange[]).map((range) => (
+                <button
+                  key={range}
+                  type="button"
+                  onClick={() => {
+                    setPricingRange(range);
+                    setActivePointIndex(null);
+                  }}
+                  className={`rounded-full px-4 py-2 text-sm transition-colors ${pricingRange === range
+                    ? "bg-secondary font-bold text-white"
+                    : "bg-surface-container text-on-surface-variant"
+                    }`}
+                >
+                  {range}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -320,107 +214,106 @@ export default function CompanyDetailPage() {
             className="relative mt-8"
             onMouseLeave={() => setActivePointIndex(null)}
           >
-            <svg viewBox="0 0 800 200" className="h-[220px] w-full">
-              <defs>
-                <linearGradient id="pricing-fill" x1="0%" x2="0%" y1="0%" y2="100%">
-                  <stop offset="0%" stopColor="#0f9f6e" stopOpacity="0.1" />
-                  <stop offset="100%" stopColor="#0f9f6e" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="gradient-line" x1="0%" x2="100%" y1="0%" y2="0%">
-                  <stop offset="0%" stopColor="#0f9f6e" />
-                  <stop offset="100%" stopColor="#0b7a58" />
-                </linearGradient>
-              </defs>
-              {negotiatedPoints.map((point) => (
-                <line
-                  key={`${pricingRange}-${point.label}-grid`}
-                  x1={point.x}
-                  y1={24}
-                  x2={point.x}
-                  y2={168}
-                  stroke="rgba(15, 159, 110, 0.08)"
-                  strokeDasharray="4 8"
+            {activeSeries.length > 0 ? (
+              <svg viewBox="0 0 800 200" className="h-[220px] w-full">
+                <defs>
+                  <linearGradient id="pricing-fill" x1="0%" x2="0%" y1="0%" y2="100%">
+                    <stop offset="0%" stopColor="#0f9f6e" stopOpacity="0.1" />
+                    <stop offset="100%" stopColor="#0f9f6e" stopOpacity="0" />
+                  </linearGradient>
+                  <linearGradient id="gradient-line" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stopColor="#0f9f6e" />
+                    <stop offset="100%" stopColor="#0b7a58" />
+                  </linearGradient>
+                </defs>
+                {negotiatedPoints.map((point) => (
+                  <line
+                    key={`${pricingRange}-${locationScope}-${point.label}-grid`}
+                    x1={point.x}
+                    y1={24}
+                    x2={point.x}
+                    y2={168}
+                    stroke="rgba(15, 159, 110, 0.08)"
+                    strokeDasharray="4 8"
+                  />
+                ))}
+                <path d={negotiatedAreaPath} fill="url(#pricing-fill)" />
+                <path
+                  d={marketLinePath}
+                  fill="none"
+                  stroke="rgba(17, 24, 39, 0.55)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray="8 8"
                 />
-              ))}
-              <path
-                d={negotiatedAreaPath}
-                fill="url(#pricing-fill)"
-              />
-              <path
-                d={marketLinePath}
-                fill="none"
-                stroke="rgba(17, 24, 39, 0.55)"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeDasharray="8 8"
-              />
-              <path
-                d={negotiatedLinePath}
-                fill="none"
-                stroke="url(#gradient-line)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              {marketPoints.map((point, index) => {
-                const isActive = safeActiveIndex !== null && index === safeActiveIndex;
-
-                return (
-                  <g key={`${pricingRange}-${point.label}-market`}>
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={isActive ? 6 : 4}
-                      fill="rgba(17, 24, 39, 0.7)"
-                      stroke="white"
-                      strokeWidth={isActive ? 3 : 2}
-                    />
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r="18"
-                      fill="transparent"
-                      className="cursor-pointer"
-                      onMouseEnter={() => setActivePointIndex(index)}
-                    />
-                  </g>
-                );
-              })}
-              {negotiatedPoints.map((point, index) => {
-                const isActive = safeActiveIndex !== null && index === safeActiveIndex;
-
-                return (
-                  <g key={`${pricingRange}-${point.label}`}>
-                    {isActive ? (
-                      <circle cx={point.x} cy={point.y} r="18" fill="#0f9f6e" opacity="0.18" />
-                    ) : null}
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={isActive ? 7 : 5}
-                      fill="#0f9f6e"
-                      stroke="white"
-                      strokeWidth={isActive ? 3 : 2}
-                    />
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r="18"
-                      fill="transparent"
-                      className="cursor-pointer"
-                      onMouseEnter={() => setActivePointIndex(index)}
-                    />
-                  </g>
-                );
-              })}
-            </svg>
+                <path
+                  d={negotiatedLinePath}
+                  fill="none"
+                  stroke="url(#gradient-line)"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {marketPoints.map((point, index) => {
+                  const isActive = safeActiveIndex !== null && index === safeActiveIndex;
+                  return (
+                    <g key={`${pricingRange}-${locationScope}-${point.label}-market`}>
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={isActive ? 6 : 4}
+                        fill="rgba(17, 24, 39, 0.7)"
+                        stroke="white"
+                        strokeWidth={isActive ? 3 : 2}
+                      />
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r="18"
+                        fill="transparent"
+                        className="cursor-pointer"
+                        onMouseEnter={() => setActivePointIndex(index)}
+                      />
+                    </g>
+                  );
+                })}
+                {negotiatedPoints.map((point, index) => {
+                  const isActive = safeActiveIndex !== null && index === safeActiveIndex;
+                  return (
+                    <g key={`${pricingRange}-${locationScope}-${point.label}`}>
+                      {isActive ? (
+                        <circle cx={point.x} cy={point.y} r="18" fill="#0f9f6e" opacity="0.18" />
+                      ) : null}
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={isActive ? 7 : 5}
+                        fill="#0f9f6e"
+                        stroke="white"
+                        strokeWidth={isActive ? 3 : 2}
+                      />
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r="18"
+                        fill="transparent"
+                        className="cursor-pointer"
+                        onMouseEnter={() => setActivePointIndex(index)}
+                      />
+                    </g>
+                  );
+                })}
+              </svg>
+            ) : (
+              <div className="flex h-[220px] items-center justify-center text-sm text-on-surface-variant">
+                No pricing data available for this view.
+              </div>
+            )}
             {activePoint && activeNegotiatedPoint ? (
               <div
                 className="glass-panel absolute top-4 w-[90%] max-w-xs -translate-x-1/2 rounded-xl border border-white p-3 shadow-xl transition-all duration-200"
-                style={{
-                  left: `${activeNegotiatedPoint.x / 8}%`,
-                }}
+                style={{ left: `${activeNegotiatedPoint.x / 8}%` }}
               >
                 <p className="text-xs font-bold uppercase tracking-wider text-on-primary-container">
                   {activePoint.label} Pricing
@@ -436,7 +329,7 @@ export default function CompanyDetailPage() {
             <div className="mt-4 grid grid-cols-3 gap-2 text-[10px] font-bold uppercase tracking-widest text-on-primary-container sm:grid-cols-6">
               {activeSeries.map((point, index) => (
                 <button
-                  key={`${pricingRange}-${point.label}-label`}
+                  key={`${pricingRange}-${locationScope}-${point.label}-label`}
                   type="button"
                   onMouseEnter={() => setActivePointIndex(index)}
                   onFocus={() => setActivePointIndex(index)}
@@ -459,20 +352,7 @@ export default function CompanyDetailPage() {
             Optimal months to negotiate based on historical rate compression.
           </p>
           <div className="mt-6 grid grid-cols-4 gap-2">
-            {[
-              { label: "JAN", score: 15 },
-              { label: "FEB", score: 95 },
-              { label: "MAR", score: 55 },
-              { label: "APR", score: 20 },
-              { label: "MAY", score: 25 },
-              { label: "JUN", score: 62 },
-              { label: "JUL", score: 90 },
-              { label: "AUG", score: 18 },
-              { label: "SEP", score: 50 },
-              { label: "OCT", score: 28 },
-              { label: "NOV", score: 32 },
-              { label: "DEC", score: 85 },
-            ].map(({ label, score }) => (
+            {fullProfile.bookingWindowScores.map(({ label, score }) => (
               <div key={label} className="flex flex-col gap-2 rounded-2xl bg-surface-container p-3">
                 <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                   {label}
@@ -517,90 +397,97 @@ export default function CompanyDetailPage() {
               </p>
             </div>
           </div>
-          {/* Mobile: stacked cards */}
-          <div className="flex flex-col gap-3 sm:hidden">
-            {visibleEvents.map((event) => (
-              <div key={event.id} className="rounded-2xl bg-surface-container-low p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <Link
-                    to={`/events/${event.id}`}
-                    className="font-bold text-on-surface transition-colors hover:text-secondary"
-                  >
-                    {event.name}
-                  </Link>
-                  <Chip variant={event.status === "Active" ? "success" : "neutral"}>
-                    {event.status === "Active" ? "Current" : "Past"}
-                  </Chip>
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                  <div>
-                    <p className="font-bold uppercase tracking-wider text-on-primary-container">Location</p>
-                    <p className="mt-0.5 text-on-surface-variant">{event.location}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold uppercase tracking-wider text-on-primary-container">Service</p>
-                    <p className="mt-0.5 text-on-surface">{event.service}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold uppercase tracking-wider text-on-primary-container">Dates</p>
-                    <p className="mt-0.5 text-on-surface-variant">{event.startDate} – {event.endDate}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold uppercase tracking-wider text-on-primary-container">Attendees</p>
-                    <p className="mt-0.5 text-on-surface">{event.attendees}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
 
-          {/* sm+: table */}
-          <div className="hidden overflow-x-auto sm:block">
-            <table className="w-full border-separate border-spacing-y-3">
-              <thead>
-                <tr className="text-left text-[10px] font-black uppercase tracking-[0.2em] text-on-primary-container">
-                  <th className="pb-1 pl-4">Event</th>
-                  <th className="pb-1 pl-4">Location</th>
-                  <th className="pb-1 pl-4">Dates</th>
-                  <th className="pb-1 pl-4">Service</th>
-                  <th className="pb-1 pl-4">Attendees</th>
-                  <th className="pb-1 pl-4">Status</th>
-                </tr>
-              </thead>
-              <tbody>
+          {visibleEvents.length === 0 ? (
+            <p className="text-sm text-on-surface-variant">No events linked to this location scope.</p>
+          ) : (
+            <>
+              {/* Mobile: stacked cards */}
+              <div className="flex flex-col gap-3 sm:hidden">
                 {visibleEvents.map((event) => (
-                  <tr key={event.id}>
-                    <td className="rounded-l-2xl bg-surface-container-low px-4 py-3 font-bold text-on-surface">
+                  <div key={event.id} className="rounded-2xl bg-surface-container-low p-4">
+                    <div className="flex items-start justify-between gap-3">
                       <Link
                         to={`/events/${event.id}`}
-                        className="inline-flex items-center gap-1.5 transition-colors hover:text-secondary"
+                        className="font-bold text-on-surface transition-colors hover:text-secondary"
                       >
                         {event.name}
-                        <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
                       </Link>
-                    </td>
-                    <td className="bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
-                      {event.location}
-                    </td>
-                    <td className="bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
-                      {event.startDate} – {event.endDate}
-                    </td>
-                    <td className="bg-surface-container-low px-4 py-3 text-sm font-medium text-on-surface">
-                      {event.service}
-                    </td>
-                    <td className="bg-surface-container-low px-4 py-3 text-sm font-medium text-on-surface">
-                      {event.attendees}
-                    </td>
-                    <td className="rounded-r-2xl bg-surface-container-low px-4 py-3">
                       <Chip variant={event.status === "Active" ? "success" : "neutral"}>
                         {event.status === "Active" ? "Current" : "Past"}
                       </Chip>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                      <div>
+                        <p className="font-bold uppercase tracking-wider text-on-primary-container">Location</p>
+                        <p className="mt-0.5 text-on-surface-variant">{event.location}</p>
+                      </div>
+                      <div>
+                        <p className="font-bold uppercase tracking-wider text-on-primary-container">Service</p>
+                        <p className="mt-0.5 text-on-surface">{event.service}</p>
+                      </div>
+                      <div>
+                        <p className="font-bold uppercase tracking-wider text-on-primary-container">Dates</p>
+                        <p className="mt-0.5 text-on-surface-variant">{event.startDate} – {event.endDate}</p>
+                      </div>
+                      <div>
+                        <p className="font-bold uppercase tracking-wider text-on-primary-container">Attendees</p>
+                        <p className="mt-0.5 text-on-surface">{event.attendees}</p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+
+              {/* sm+: table */}
+              <div className="hidden overflow-x-auto sm:block">
+                <table className="w-full border-separate border-spacing-y-3">
+                  <thead>
+                    <tr className="text-left text-[10px] font-black uppercase tracking-[0.2em] text-on-primary-container">
+                      <th className="pb-1 pl-4">Event</th>
+                      <th className="pb-1 pl-4">Location</th>
+                      <th className="pb-1 pl-4">Dates</th>
+                      <th className="pb-1 pl-4">Service</th>
+                      <th className="pb-1 pl-4">Attendees</th>
+                      <th className="pb-1 pl-4">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleEvents.map((event) => (
+                      <tr key={event.id}>
+                        <td className="rounded-l-2xl bg-surface-container-low px-4 py-3 font-bold text-on-surface">
+                          <Link
+                            to={`/events/${event.id}`}
+                            className="inline-flex items-center gap-1.5 transition-colors hover:text-secondary"
+                          >
+                            {event.name}
+                            <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                          </Link>
+                        </td>
+                        <td className="bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
+                          {event.location}
+                        </td>
+                        <td className="bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
+                          {event.startDate} – {event.endDate}
+                        </td>
+                        <td className="bg-surface-container-low px-4 py-3 text-sm font-medium text-on-surface">
+                          {event.service}
+                        </td>
+                        <td className="bg-surface-container-low px-4 py-3 text-sm font-medium text-on-surface">
+                          {event.attendees}
+                        </td>
+                        <td className="rounded-r-2xl bg-surface-container-low px-4 py-3">
+                          <Chip variant={event.status === "Active" ? "success" : "neutral"}>
+                            {event.status === "Active" ? "Current" : "Past"}
+                          </Chip>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </div>
       </section>
     </div>

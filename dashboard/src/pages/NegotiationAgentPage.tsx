@@ -13,13 +13,13 @@ import {
 import { useEvents } from "@/context/EventsContext";
 
 const pricePath: PricePoint[] = [
-  { label: "Anchor", price: 300, type: "offer" },
-  { label: "Round 1", price: 272, type: "negotiated" },
-  { label: "Counter", price: 281, type: "offer" },
-  { label: "Round 2", price: 260, type: "negotiated" },
-  { label: "Counter 2", price: 268, type: "offer" },
-  { label: "Round 3", price: 252, type: "negotiated" },
-  { label: "Current", price: 245, type: "current" },
+  { label: "Market Rate", price: 380, type: "offer" },
+  { label: "Initial Bid", price: 285, type: "negotiated" },
+  { label: "Counter", price: 340, type: "offer" },
+  { label: "Round 2", price: 315, type: "negotiated" },
+  { label: "Counter 2", price: 325, type: "offer" },
+  { label: "Round 3", price: 310, type: "negotiated" },
+  { label: "Current", price: 310, type: "current" },
 ];
 
 export default function NegotiationAgentPage() {
@@ -30,7 +30,7 @@ export default function NegotiationAgentPage() {
   const canAccept = event && agent ? canAcceptAgent(event, agent) : false;
   const isNegotiating = agent?.status === "Negotiating";
   const displayStatus = agent ? getAgentDisplayStatus(agent) : "Negotiating";
-  const repLabel = agent?.type === "Airline" ? "airline sales rep" : "hotel sales rep";
+  const repLabel = "hotel sales rep";
 
   const agentStatus = (() => {
     if (!agent) return "Live Negotiation";
@@ -174,7 +174,7 @@ export default function NegotiationAgentPage() {
                       className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100"
                     >
                       <span className="material-symbols-outlined text-lg">call</span>
-                      Talk to {agent?.type === "Airline" ? "Airline" : "Hotel"} Rep
+                      Talk to Hotel Rep
                     </button>
                   ) : (
                     <div className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/10 py-4 text-sm font-black text-slate-200">

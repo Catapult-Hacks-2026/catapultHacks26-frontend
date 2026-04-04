@@ -20,9 +20,9 @@ export default function DashboardPage() {
                 </p>
                 <div className="mt-4 flex flex-wrap items-baseline gap-3">
                   <h1 className="text-5xl font-bold tracking-tight text-on-surface sm:text-6xl lg:text-7xl">
-                    $1.2M
+                    $686K
                   </h1>
-                  <span className="text-sm font-medium text-secondary">↑ 14.2%</span>
+                  <span className="text-sm font-medium text-secondary">↑ 17.3%</span>
                 </div>
               </div>
               <Link
@@ -32,20 +32,13 @@ export default function DashboardPage() {
                 Start Negotiations
               </Link>
             </div>
-            <div className="mt-6 grid grid-cols-1 gap-4 border-t border-outline-variant/20 pt-6 sm:grid-cols-2">
+            <div className="mt-6 border-t border-outline-variant/20 pt-6">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">
                   Hotels
                 </p>
-                <p className="mt-1.5 text-2xl font-semibold text-on-surface">$740K</p>
-                <p className="mt-0.5 text-xs text-on-surface-variant">across 8 contracts</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">
-                  Flights
-                </p>
-                <p className="mt-1.5 text-2xl font-semibold text-on-surface">$460K</p>
-                <p className="mt-0.5 text-xs text-on-surface-variant">across 4 contracts</p>
+                <p className="mt-1.5 text-2xl font-semibold text-on-surface">$686K</p>
+                <p className="mt-0.5 text-xs text-on-surface-variant">across 7 contracts</p>
               </div>
             </div>
           </div>

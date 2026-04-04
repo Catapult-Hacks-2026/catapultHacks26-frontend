@@ -23,8 +23,7 @@ export default function AllAgentsPage() {
               All Agents
             </h1>
             <p className="mt-3 text-sm text-on-surface-variant">
-              {agentRows.length} active sourcing cycles across hotels, aviation,
-              and corporate events.
+              {agentRows.length} active sourcing cycles across hotels and corporate events.
             </p>
           </div>
 

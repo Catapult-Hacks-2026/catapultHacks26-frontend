@@ -20,8 +20,8 @@ function statusDot(status: GalileoEvent["status"]) {
   return <span className="h-2 w-2 rounded-full bg-outline-variant" />;
 }
 
-function agentTypeIcon(type: EventAgent["type"]) {
-  return type === "Hotel" ? "hotel" : "flight";
+function agentTypeIcon(_type: EventAgent["type"]) {
+  return "hotel";
 }
 
 function agentBadgeClass(agent: EventAgent) {

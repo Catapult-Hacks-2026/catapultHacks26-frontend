@@ -57,7 +57,7 @@ export default function CompaniesPage() {
                       </h3>
                       <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
                         <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                          {company.type === "Hotel" ? "hotel" : "flight"}
+                          hotel
                         </span>
                         {company.type}
                       </span>

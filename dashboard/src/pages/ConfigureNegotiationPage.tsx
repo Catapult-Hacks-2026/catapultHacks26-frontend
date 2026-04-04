@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 
 const serviceTypes = [
   { id: "Hotel", icon: "hotel" },
-  { id: "Airline", icon: "flight" },
-  { id: "Both", icon: "sync_alt" },
 ];
 
 export default function ConfigureNegotiationPage() {

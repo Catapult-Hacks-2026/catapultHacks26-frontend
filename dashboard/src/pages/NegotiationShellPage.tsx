@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function MarketCard({ label, market, predicted, unit }: { label: string; market: string; predicted: string; unit: string }) {
   return (
@@ -58,9 +58,6 @@ function GuardrailRow({ label }: { label: string }) {
 }
 
 export default function NegotiationShellPage() {
-  const [searchParams] = useSearchParams();
-  const service = searchParams.get("service") ?? "Hotel";
-  const isBoth = service === "Both";
 
   return (
     <div className="-mt-16 min-h-screen bg-surface lg:mt-0" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
@@ -72,57 +69,38 @@ export default function NegotiationShellPage() {
 
       <div className="space-y-4 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
 
-        {isBoth ? (
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            <MarketCard label="Hotel" market="$245" predicted="$198" unit="per night" />
-            <MarketCard label="Airline" market="$520" predicted="$410" unit="per seat" />
-          </div>
-        ) : (
-          <MarketCard
-            label={service}
-            market={service === "Airline" ? "$520" : "$245"}
-            predicted={service === "Airline" ? "$410" : "$198"}
-            unit={service === "Airline" ? "per seat" : "per night"}
-          />
-        )}
+        <MarketCard label="Hotel" market="$382" predicted="$318" unit="per night" />
 
-        {isBoth ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <GuardrailRow label="Hotel Guardrails" />
-            <GuardrailRow label="Airline Guardrails" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Ideal Price</span>
+              <p className="mt-0.5 text-xs text-outline">Target anchor for the agent's opening position</p>
+              <div className="relative mt-3">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
+                <input
+                  type="number"
+                  placeholder="185.00"
+                  className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                />
+              </div>
+            </label>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
-              <label className="block">
-                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Ideal Price</span>
-                <p className="mt-0.5 text-xs text-outline">Target anchor for the agent's opening position</p>
-                <div className="relative mt-3">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-                  <input
-                    type="number"
-                    placeholder="185.00"
-                    className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
-                  />
-                </div>
-              </label>
-            </div>
-            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
-              <label className="block">
-                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Ceiling Price</span>
-                <p className="mt-0.5 text-xs text-outline">Guardrail to prevent overpayment during escalation</p>
-                <div className="relative mt-3">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-                  <input
-                    type="number"
-                    placeholder="215.00"
-                    className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
-                  />
-                </div>
-              </label>
-            </div>
+          <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Ceiling Price</span>
+              <p className="mt-0.5 text-xs text-outline">Guardrail to prevent overpayment during escalation</p>
+              <div className="relative mt-3">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
+                <input
+                  type="number"
+                  placeholder="215.00"
+                  className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                />
+              </div>
+            </label>
           </div>
-        )}
+        </div>
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
           <Link to="/negotiations/configure" className="text-sm text-on-surface-variant hover:text-on-surface">

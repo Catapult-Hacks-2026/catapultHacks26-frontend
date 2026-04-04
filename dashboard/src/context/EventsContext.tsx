@@ -32,9 +32,7 @@ function isEventComplete(event: GalileoEvent) {
     event.agents.filter((agent) => agent.isAccepted).map((agent) => agent.type),
   );
 
-  if (event.service === "Hotel") return acceptedTypes.has("Hotel");
-  if (event.service === "Airline") return acceptedTypes.has("Airline");
-  return acceptedTypes.has("Hotel") && acceptedTypes.has("Airline");
+  return acceptedTypes.has("Hotel");
 }
 
 export function EventsProvider({ children }: { children: ReactNode }) {
