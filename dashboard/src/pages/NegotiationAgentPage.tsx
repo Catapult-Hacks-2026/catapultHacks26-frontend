@@ -1,5 +1,6 @@
+import { Link, useParams } from "react-router-dom";
 import { Chip } from "@/components/ui/Chip";
-import { activityStream } from "@/lib/dashboard-data";
+import { activityStream, getEventForNegotiation } from "@/lib/dashboard-data";
 import {
   NegotiationPricePath,
   type PricePoint,
@@ -16,9 +17,21 @@ const pricePath: PricePoint[] = [
 ];
 
 export default function NegotiationAgentPage() {
+  const { id } = useParams<{ id: string }>();
+  const event = getEventForNegotiation(id ?? "");
+
   return (
     <div className="h-screen overflow-y-auto bg-surface">
       <div className="mx-auto max-w-7xl space-y-8 p-8">
+        {event && (
+          <Link
+            to={`/events/${event.id}`}
+            className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-on-surface"
+          >
+            <span className="material-symbols-outlined text-[14px]">arrow_back</span>
+            {event.name}
+          </Link>
+        )}
         <section className="grid grid-cols-12 items-end gap-8">
           <div className="col-span-8">
             <div className="flex items-center gap-3">
@@ -32,8 +45,8 @@ export default function NegotiationAgentPage() {
               Hilton London
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-on-surface-variant">
-              Autonomous Agent <span className="font-bold text-secondary">Nexus-7</span> is
-              currently processing volume discounts for Q4 corporate travel.
+              Autonomous Agent <span className="font-bold text-secondary">Galileo</span> is
+              currently processing volume discounts for travel.
             </p>
           </div>
           <div className="col-span-4 grid grid-cols-2 gap-4">
@@ -102,9 +115,8 @@ export default function NegotiationAgentPage() {
                     className="relative pl-6 before:absolute before:bottom-[-24px] before:left-0 before:top-2 before:w-[2px] before:bg-slate-100 last:before:hidden"
                   >
                     <span
-                      className={`absolute left-[-4px] top-1 h-2.5 w-2.5 rounded-full ring-4 ring-white ${
-                        item.active ? "bg-secondary" : "bg-slate-300"
-                      }`}
+                      className={`absolute left-[-4px] top-1 h-2.5 w-2.5 rounded-full ring-4 ring-white ${item.active ? "bg-secondary" : "bg-slate-300"
+                        }`}
                     />
                     <div className="flex items-center gap-3">
                       <p className="font-bold text-on-surface">{item.price}</p>
@@ -159,7 +171,7 @@ export default function NegotiationAgentPage() {
                   breakfast and transfer concessions included.
                 </p>
                 <p className="mt-3 text-[10px] text-slate-400">
-                  Agent Nexus-7 • 14:02:11
+                  Agent Galileo • 14:02:11
                 </p>
               </div>
             </div>

@@ -269,6 +269,159 @@ export const activityStream = [
   },
 ];
 
+export type EventAgentStatus = "Negotiating" | "Reviewing" | "Completed";
+export type EventStatus = "Active" | "Completed";
+
+export type EventAgent = {
+  negotiationId: string;
+  company: string;
+  type: "Hotel" | "Airline";
+  status: EventAgentStatus;
+  originalPrice: string;
+  negotiatedPrice: string;
+  savings: string;
+  isWinner?: boolean;
+};
+
+export type GalileoEvent = {
+  id: string;
+  name: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  attendees: number;
+  service: "Hotel" | "Airline" | "Both";
+  status: EventStatus;
+  agents: EventAgent[];
+};
+
+export const events: GalileoEvent[] = [
+  {
+    id: "q3-sales-kickoff",
+    name: "Q3 Sales Kickoff",
+    location: "Las Vegas, NV",
+    startDate: "Oct 22, 2024",
+    endDate: "Oct 26, 2024",
+    attendees: 120,
+    service: "Both",
+    status: "Active",
+    agents: [
+      {
+        negotiationId: "hilton",
+        company: "Hilton Worldwide",
+        type: "Hotel",
+        status: "Negotiating",
+        originalPrice: "$245/night",
+        negotiatedPrice: "$192/night",
+        savings: "$6,360",
+        isWinner: false,
+      },
+      {
+        negotiationId: "marriott",
+        company: "Marriott Intl.",
+        type: "Hotel",
+        status: "Completed",
+        originalPrice: "$260/night",
+        negotiatedPrice: "$208/night",
+        savings: "$8,320",
+        isWinner: false,
+      },
+      {
+        negotiationId: "delta",
+        company: "Delta Air Lines",
+        type: "Airline",
+        status: "Reviewing",
+        originalPrice: "$520/seat",
+        negotiatedPrice: "$455/seat",
+        savings: "$7,800",
+        isWinner: false,
+      },
+    ],
+  },
+  {
+    id: "annual-leadership-retreat",
+    name: "Annual Leadership Retreat",
+    location: "Miami, FL",
+    startDate: "Nov 4, 2024",
+    endDate: "Nov 7, 2024",
+    attendees: 48,
+    service: "Both",
+    status: "Completed",
+    agents: [
+      {
+        negotiationId: "hyatt",
+        company: "Hyatt Hotels",
+        type: "Hotel",
+        status: "Completed",
+        originalPrice: "$310/night",
+        negotiatedPrice: "$201/night",
+        savings: "$13,104",
+        isWinner: true,
+      },
+      {
+        negotiationId: "ihg",
+        company: "IHG Hotels & Resorts",
+        type: "Hotel",
+        status: "Completed",
+        originalPrice: "$295/night",
+        negotiatedPrice: "$220/night",
+        savings: "$10,800",
+        isWinner: false,
+      },
+      {
+        negotiationId: "american",
+        company: "American Airlines",
+        type: "Airline",
+        status: "Completed",
+        originalPrice: "$480/seat",
+        negotiatedPrice: "$382/seat",
+        savings: "$4,704",
+        isWinner: true,
+      },
+    ],
+  },
+  {
+    id: "emea-partner-summit",
+    name: "EMEA Partner Summit",
+    location: "London, UK",
+    startDate: "Dec 9, 2024",
+    endDate: "Dec 12, 2024",
+    attendees: 85,
+    service: "Hotel",
+    status: "Active",
+    agents: [
+      {
+        negotiationId: "lufthansa",
+        company: "Lufthansa Group",
+        type: "Hotel",
+        status: "Negotiating",
+        originalPrice: "$380/night",
+        negotiatedPrice: "$310/night",
+        savings: "$17,850",
+        isWinner: false,
+      },
+      {
+        negotiationId: "accor",
+        company: "Accor Hotels",
+        type: "Hotel",
+        status: "Negotiating",
+        originalPrice: "$350/night",
+        negotiatedPrice: "$290/night",
+        savings: "$15,300",
+        isWinner: false,
+      },
+    ],
+  },
+];
+
+export function getEvent(id: string) {
+  return events.find((e) => e.id === id);
+}
+
+export function getEventForNegotiation(negotiationId: string) {
+  return events.find((e) => e.agents.some((a) => a.negotiationId === negotiationId));
+}
+
 export function getSupplierProfile(id: string) {
   const fallbackName = id.charAt(0).toUpperCase() + id.slice(1);
   const company = companyCards.find((item) => item.id === id);

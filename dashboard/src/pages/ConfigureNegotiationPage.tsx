@@ -1,100 +1,165 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { AgentPreviewCard } from "@/components/dashboard/AgentPreviewCard";
-import { ServiceTypeToggle } from "@/components/dashboard/ServiceTypeToggle";
+
+const serviceTypes = [
+  { id: "Hotel", icon: "hotel" },
+  { id: "Airline", icon: "flight" },
+  { id: "Both", icon: "sync_alt" },
+];
 
 export default function ConfigureNegotiationPage() {
+  const [service, setService] = useState("Hotel");
+
   return (
-    <div className="min-h-screen bg-surface px-10 pb-12 pt-12">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-on-primary-container">
-        Negotiations &gt; <span className="text-secondary">Deploy Agent</span>
-      </p>
-
-      <header className="mt-6">
-        <h1 className="text-5xl font-black tracking-tighter text-on-surface">
-          Configure Negotiation
+    <div className="min-h-screen bg-surface" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      {/* Header */}
+      <div className="border-b border-outline-variant/20 bg-white px-10 py-5">
+        <h1 className="text-3xl font-semibold tracking-tight text-on-surface">
+          New Negotiation
         </h1>
-        <p className="mt-3 text-sm text-on-surface-variant">
-          Phase 1: Define parameters and intent for the autonomous sourcing
-          engine.
-        </p>
-      </header>
-      <br />
+      </div>
 
-      {/* <div className="mt-10 grid grid-cols-12 gap-8"> */}
-      <section className="col-span-7 rounded-xl bg-surface-container-lowest p-8 shadow-ambient-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-container text-xs font-bold text-white">
-            01
-          </div>
-          <h2 className="text-2xl font-bold text-on-surface">Event Parameters</h2>
-        </div>
+      <div className="px-10 py-8">
+        <div className="space-y-4">
 
-        <div className="mt-8 space-y-6">
-          <label className="block">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-primary-container">
-              Location
-            </span>
-            <div className="relative mt-3">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
-                location_on
-              </span>
-              <input
-                placeholder="e.g., New York, NY"
-                className="w-full rounded-lg border-none bg-surface-container-low py-4 pl-12 pr-4 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/20"
-              />
+          {/* Row 1: Event Name + Service Type */}
+          <div className="grid grid-cols-[1fr_auto] gap-4 items-stretch">
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Event Name</span>
+                <input
+                  type="text"
+                  placeholder="e.g. Q3 Sales Kickoff, Annual Leadership Retreat"
+                  className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                />
+              </label>
             </div>
-          </label>
 
-          <label className="block">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-primary-container">
-              Time Range
-            </span>
-            <div className="relative mt-3">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
-                calendar_today
-              </span>
-              <input
-                defaultValue="Oct 12, 2024 - Oct 18, 2024"
-                className="w-full rounded-lg border-none bg-surface-container-low py-4 pl-12 pr-4 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/20"
-              />
-            </div>
-          </label>
-
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-primary-container">
-              Type of Service
-            </span>
-            <div className="mt-3">
-              <ServiceTypeToggle />
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Service</p>
+              <div className="mt-2 flex gap-2">
+                {serviceTypes.map(({ id, icon }) => {
+                  const selected = service === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setService(id)}
+                      className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                        selected
+                          ? "border-secondary bg-secondary/5 text-secondary"
+                          : "border-outline-variant/30 bg-surface-container-low text-on-surface-variant hover:text-on-surface"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: selected ? "'FILL' 1" : "'FILL' 0" }}>
+                        {icon}
+                      </span>
+                      {id}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          <label className="block">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-primary-container">
-              Specific Requirements
-            </span>
-            <textarea
-              rows={4}
-              defaultValue="120 Deluxe Rooms, 5 Suites, Group Baggage Handling"
-              placeholder="e.g., '120 Deluxe Rooms, 5 Suites, Group Baggage Handling'"
-              className="mt-3 w-full rounded-lg border-none bg-surface-container-low p-4 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/20"
-            />
-          </label>
+          {/* Row 2: Dates + Location */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Start Date</span>
+                <div className="relative mt-2">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">calendar_today</span>
+                  <input
+                    type="date"
+                    className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/30"
+                  />
+                </div>
+              </label>
+            </div>
+
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">End Date</span>
+                <div className="relative mt-2">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">calendar_today</span>
+                  <input
+                    type="date"
+                    className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/30"
+                  />
+                </div>
+              </label>
+            </div>
+
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Location</span>
+                <div className="relative mt-2">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">location_on</span>
+                  <input
+                    type="text"
+                    placeholder="City or airport code"
+                    className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                  />
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Row 3: Attendees + Budget + Requirements */}
+          <div className="grid grid-cols-[1fr_1fr_2fr] gap-4">
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Attendees</span>
+                <input
+                  type="number"
+                  placeholder="120"
+                  className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                />
+              </label>
+            </div>
+
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Budget / Person</span>
+                <div className="relative mt-2">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-outline">$</span>
+                  <input
+                    type="number"
+                    placeholder="0.00"
+                    className="w-full rounded-lg bg-surface-container-low py-3 pl-7 pr-3 text-sm text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                  />
+                </div>
+              </label>
+            </div>
+
+            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Specific Requirements</span>
+                <input
+                  type="text"
+                  placeholder="Room types, meal plans, AV, baggage handling..."
+                  className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-between pt-2">
+            <Link to="/" className="text-sm text-on-surface-variant hover:text-on-surface">
+              Cancel
+            </Link>
+            <Link
+              to={`/negotiations/setup?service=${service}`}
+              className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary-container"
+            >
+              Review & Launch
+              <span className="material-symbols-outlined text-[17px]">arrow_forward</span>
+            </Link>
+          </div>
+
         </div>
-
-        <div className="mt-8 flex justify-end">
-          <Link
-            to="/negotiations/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-secondary px-8 py-3 font-bold text-white transition-colors hover:bg-secondary-container"
-          >
-            Next Step
-            <span className="material-symbols-outlined text-lg">arrow_forward</span>
-          </Link>
-        </div>
-      </section>
-
-
-      {/* </div> */}
+      </div>
     </div>
   );
 }

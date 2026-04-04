@@ -8,6 +8,8 @@ import MarketInsightsPage from '@/pages/MarketInsightsPage'
 import ConfigureNegotiationPage from '@/pages/ConfigureNegotiationPage'
 import NegotiationShellPage from '@/pages/NegotiationShellPage'
 import NegotiationAgentPage from '@/pages/NegotiationAgentPage'
+import EventsPage from '@/pages/EventsPage'
+import EventDetailPage from '@/pages/EventDetailPage'
 import SettingsPage from '@/pages/SettingsPage'
 import SupportPage from '@/pages/SupportPage'
 
@@ -23,8 +25,11 @@ export default function App() {
           <Route path="/companies/:id" element={<CompanyDetailPage />} />
           <Route path="/market-insights" element={<MarketInsightsPage />} />
           <Route path="/negotiations/configure" element={<ConfigureNegotiationPage />} />
+          <Route path="/negotiations/setup" element={<NegotiationShellPage />} />
           <Route path="/negotiations/:id" element={<NegotiationShellPage />} />
           <Route path="/negotiations/:id/agent" element={<NegotiationAgentPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/support" element={<SupportPage />} />
         </Routes>

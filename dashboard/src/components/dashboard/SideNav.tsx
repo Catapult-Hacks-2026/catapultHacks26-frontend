@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const primaryNav = [
   { href: "/", label: "Dashboard", icon: "grid_view" },
+  { href: "/events", label: "Events", icon: "event" },
   { href: "/all-agents", label: "Agents", icon: "smart_toy" },
   { href: "/market-insights", label: "Market Insights", icon: "bar_chart" },
   { href: "/companies", label: "Companies", icon: "domain" },
