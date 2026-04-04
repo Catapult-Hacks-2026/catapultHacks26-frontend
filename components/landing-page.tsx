@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { label: "Capabilities", href: "#capabilities" },
@@ -55,6 +55,16 @@ const fadeUp = {
 };
 
 export function LandingPage() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
+
   return (
     <main id="top" className="relative overflow-hidden">
       <div className="absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_top_right,_rgba(17,24,39,0.08),_transparent_32rem)] dark:bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.05),_transparent_32rem)]" />
@@ -76,7 +86,21 @@ export function LandingPage() {
             ))}
           </nav>
           <div className="flex items-center gap-4">
-            <ThemeToggle />
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="rounded-full border border-black/10 bg-white p-2 text-ink shadow-card transition hover:-translate-y-0.5 hover:shadow-float dark:border-white/10 dark:bg-slate-800 dark:text-white"
+              aria-label="Toggle dark mode"
+            >
+              {isDark ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
             <Link
               href="#hero"
               className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-ink shadow-card transition hover:-translate-y-0.5 hover:shadow-float dark:border-white/10 dark:bg-slate-800 dark:text-white"
@@ -128,9 +152,6 @@ export function LandingPage() {
             custom={0.1}
             className="relative"
           >
-            <div className="absolute -left-6 top-16 h-24 w-24 rounded-full bg-[#dce9e1] blur-3xl dark:bg-emerald/20" />
-            <div className="absolute -right-8 bottom-12 h-28 w-28 rounded-full bg-[#ece7db] blur-3xl dark:bg-amber/20" />
-
             <div className="panel-shell dashboard-grid relative rounded-[2rem] border border-black/8 bg-white/85 p-5 shadow-float backdrop-blur-sm dark:border-white/10 dark:bg-slate-800/85 sm:p-6">
               <div className="rounded-[1.6rem] border border-black/7 bg-canvas p-4 shadow-card dark:border-white/10 dark:bg-slate-900 sm:p-5">
                 <div className="flex items-center justify-between border-b border-black/6 pb-4 dark:border-white/10">
