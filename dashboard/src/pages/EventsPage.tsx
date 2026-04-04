@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/context/EventsContext";
 import {
   getAgentDisplayStatus,
@@ -37,7 +38,7 @@ function agentBadgeClass(agent: EventAgent) {
 }
 
 export default function EventsPage() {
-  const { events } = useEvents();
+  const { error, events, isLoading } = useEvents();
   const active = events.filter((event) => event.status === "Active");
   const past = events.filter((event) => event.status === "Completed");
 
@@ -58,7 +59,19 @@ export default function EventsPage() {
         <section>
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Active - {active.length}</p>
           <div className="space-y-2">
-            {active.map((event) => (
+            {isLoading
+              ? Array.from({ length: 2 }).map((_, index) => (
+                  <div key={index} className="rounded-xl border border-outline-variant/20 bg-white px-5 py-6 sm:px-6">
+                    <Skeleton className="h-6 w-48" />
+                    <div className="mt-4 grid gap-3 lg:grid-cols-4">
+                      <Skeleton className="h-5 w-32" />
+                      <Skeleton className="h-5 w-28" />
+                      <Skeleton className="h-5 w-40" />
+                      <Skeleton className="h-5 w-24" />
+                    </div>
+                  </div>
+                ))
+              : active.map((event) => (
               <EventRow key={event.id} event={event} />
             ))}
           </div>
@@ -72,6 +85,11 @@ export default function EventsPage() {
             ))}
           </div>
         </section>
+        {error ? (
+          <p className="text-sm text-error">
+            {(error as Error)?.message ?? "Unable to load events."}
+          </p>
+        ) : null}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { NegotiationPricePath, type PricePoint } from "@/components/dashboard/NegotiationPricePath";
 import { Chip } from "@/components/ui/Chip";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/context/EventsContext";
 import {
   getAgentDisplayStatus,
@@ -34,13 +35,28 @@ function acceptedProgressLabel(_service: "Hotel", acceptedCount: number) {
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { getEvent, canAcceptAgent, acceptOffer } = useEvents();
+  const { error, getEvent, canAcceptAgent, acceptOffer, isLoading } = useEvents();
   const event = getEvent(id ?? "");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-surface px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="mt-4 h-10 w-72" />
+        <Skeleton className="mt-8 h-28 rounded-xl" />
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className="h-64 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!event) {
     return (
       <div className="flex h-screen items-center justify-center text-on-surface-variant">
-        Event not found.
+        {(error as Error)?.message ?? "Event not found."}
       </div>
     );
   }

@@ -1,6 +1,6 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { useAcceptEventOffer, useEventsList } from "@/hooks/useEvents";
 import {
-  initialEvents,
   isClosedDeal,
   type EventAgent,
   type GalileoEvent,
@@ -8,20 +8,15 @@ import {
 
 type EventsContextValue = {
   events: GalileoEvent[];
+  error: unknown;
   getEvent: (id: string) => GalileoEvent | undefined;
   getEventForNegotiation: (negotiationId: string) => GalileoEvent | undefined;
+  isLoading: boolean;
   canAcceptAgent: (event: GalileoEvent, agent: EventAgent) => boolean;
   acceptOffer: (eventId: string, negotiationId: string) => void;
 };
 
 const EventsContext = createContext<EventsContextValue | null>(null);
-
-function cloneInitialEvents() {
-  return initialEvents.map((event) => ({
-    ...event,
-    agents: event.agents.map((agent) => ({ ...agent })),
-  }));
-}
 
 function hasAcceptedType(event: GalileoEvent, type: EventAgent["type"]) {
   return event.agents.some((agent) => agent.type === type && agent.isAccepted);
@@ -36,7 +31,8 @@ function isEventComplete(event: GalileoEvent) {
 }
 
 export function EventsProvider({ children }: { children: ReactNode }) {
-  const [events, setEvents] = useState<GalileoEvent[]>(cloneInitialEvents);
+  const { data: events = [], error, isLoading } = useEventsList();
+  const acceptMutation = useAcceptEventOffer();
 
   const value = useMemo<EventsContextValue>(() => {
     const getEvent = (id: string) => events.find((event) => event.id === id);
@@ -51,48 +47,30 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       !hasAcceptedType(event, agent.type);
 
     const acceptOffer = (eventId: string, negotiationId: string) => {
-      setEvents((currentEvents) =>
-        currentEvents.map((event) => {
-          if (event.id !== eventId || event.status === "Completed") {
-            return event;
-          }
+      const event = getEvent(eventId);
+      const targetAgent = event?.agents.find((agent) => agent.negotiationId === negotiationId);
 
-          const targetAgent = event.agents.find((agent) => agent.negotiationId === negotiationId);
-          if (!targetAgent) {
-            return event;
-          }
+      if (!event || !targetAgent) {
+        return;
+      }
 
-          if (!isClosedDeal(targetAgent) || targetAgent.isAccepted || hasAcceptedType(event, targetAgent.type)) {
-            return event;
-          }
+      if (!isClosedDeal(targetAgent) || targetAgent.isAccepted || hasAcceptedType(event, targetAgent.type)) {
+        return;
+      }
 
-          const updatedAgents: EventAgent[] = event.agents.map((agent) =>
-            agent.negotiationId === negotiationId
-              ? { ...agent, isAccepted: true }
-              : agent,
-          );
-
-          const updatedEvent: GalileoEvent = {
-            ...event,
-            agents: updatedAgents,
-          };
-
-          return {
-            ...updatedEvent,
-            status: isEventComplete(updatedEvent) ? "Completed" : "Active",
-          };
-        }),
-      );
+      acceptMutation.mutate({ agentId: negotiationId, eventId });
     };
 
     return {
+      error,
       events,
       getEvent,
       getEventForNegotiation,
+      isLoading,
       canAcceptAgent,
       acceptOffer,
     };
-  }, [events]);
+  }, [acceptMutation, error, events, isLoading]);
 
   return <EventsContext.Provider value={value}>{children}</EventsContext.Provider>;
 }

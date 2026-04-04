@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
-import { getSupplierProfile, getFullCompanyProfile, initialEvents } from "@/lib/dashboard-data";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { useEvents } from "@/context/EventsContext";
+import { useCompanyNegotiations, useCompanyProfile } from "@/hooks/useCompanies";
 
 type PricingRange = "1Y" | "ALL";
 
@@ -56,15 +58,57 @@ function buildAreaPath(points: Array<{ x: number; y: number }>) {
 
 export default function CompanyDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
-  const profile = getSupplierProfile(id);
-  const fullProfile = getFullCompanyProfile(id);
-
-  const locationKeys = Object.keys(fullProfile.locations);
-  const [locationScope, setLocationScope] = useState<string>(locationKeys[0] ?? "all");
+  const { events } = useEvents();
+  const {
+    data: profile,
+    error,
+    isError,
+    isLoading,
+  } = useCompanyProfile(id);
+  const {
+    data: negotiations = [],
+    isLoading: isNegotiationsLoading,
+  } = useCompanyNegotiations(id);
+  const [locationScope, setLocationScope] = useState<string>("all");
   const [pricingRange, setPricingRange] = useState<PricingRange>("ALL");
   const [activePointIndex, setActivePointIndex] = useState<number | null>(null);
 
-  const activeLocation = fullProfile.locations[locationScope] ?? fullProfile.locations[locationKeys[0]];
+  if (isLoading || !profile) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
+        <Skeleton className="h-5 w-28" />
+        <section className="grid grid-cols-1 items-end gap-8 xl:grid-cols-12">
+          <div className="flex flex-col gap-6 sm:flex-row sm:gap-8 xl:col-span-8">
+            <Skeleton className="h-28 w-28 rounded-full" />
+            <div className="flex-1 space-y-4">
+              <Skeleton className="h-12 w-64" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          </div>
+          <Skeleton className="h-40 rounded-3xl xl:col-span-4" />
+        </section>
+        <Skeleton className="h-10 w-80 rounded-full" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <Skeleton className="h-[380px] rounded-3xl xl:col-span-2" />
+          <Skeleton className="h-[380px] rounded-3xl xl:col-span-1" />
+          <Skeleton className="h-[300px] rounded-3xl xl:col-span-3" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="mx-auto max-w-7xl p-4 text-sm text-error sm:p-6 lg:p-8">
+        {(error as Error)?.message ?? "Unable to load company profile."}
+      </div>
+    );
+  }
+
+  const locationKeys = Object.keys(profile.locations);
+  const resolvedLocationScope = profile.locations[locationScope] ? locationScope : (locationKeys[0] ?? "all");
+  const activeLocation = profile.locations[resolvedLocationScope] ?? profile.locations[locationKeys[0]];
   const activeSeries = activeLocation.pricing[pricingRange];
   const safeActiveIndex =
     activePointIndex === null ? null : Math.min(activePointIndex, activeSeries.length - 1);
@@ -88,7 +132,7 @@ export default function CompanyDetailPage() {
   const negotiatedAreaPath = buildAreaPath(negotiatedPoints);
   const marketLinePath = buildLinePath(marketPoints);
   const visibleEventIds = activeLocation.eventIds as readonly string[];
-  const visibleEvents = initialEvents.filter((event) =>
+  const visibleEvents = events.filter((event) =>
     visibleEventIds.includes(event.id),
   );
 
@@ -127,6 +171,11 @@ export default function CompanyDetailPage() {
             </p>
             <div className="flex flex-wrap gap-3 text-sm sm:gap-6">
               <span className="text-on-surface-variant">{activeLocation.currentLocation}</span>
+              {!isNegotiationsLoading ? (
+                <span className="text-on-surface-variant">
+                  {negotiations.length} negotiations on file
+                </span>
+              ) : null}
             </div>
           </div>
         </div>
@@ -145,7 +194,7 @@ export default function CompanyDetailPage() {
       {locationKeys.length > 1 && (
         <div className="flex flex-wrap gap-2">
           {locationKeys.map((key) => {
-            const item = fullProfile.locations[key];
+            const item = profile.locations[key];
             const selected = locationScope === key;
 
             return (
@@ -228,7 +277,7 @@ export default function CompanyDetailPage() {
                 </defs>
                 {negotiatedPoints.map((point) => (
                   <line
-                    key={`${pricingRange}-${locationScope}-${point.label}-grid`}
+                    key={`${pricingRange}-${resolvedLocationScope}-${point.label}-grid`}
                     x1={point.x}
                     y1={24}
                     x2={point.x}
@@ -258,7 +307,7 @@ export default function CompanyDetailPage() {
                 {marketPoints.map((point, index) => {
                   const isActive = safeActiveIndex !== null && index === safeActiveIndex;
                   return (
-                    <g key={`${pricingRange}-${locationScope}-${point.label}-market`}>
+                    <g key={`${pricingRange}-${resolvedLocationScope}-${point.label}-market`}>
                       <circle
                         cx={point.x}
                         cy={point.y}
@@ -281,7 +330,7 @@ export default function CompanyDetailPage() {
                 {negotiatedPoints.map((point, index) => {
                   const isActive = safeActiveIndex !== null && index === safeActiveIndex;
                   return (
-                    <g key={`${pricingRange}-${locationScope}-${point.label}`}>
+                    <g key={`${pricingRange}-${resolvedLocationScope}-${point.label}`}>
                       {isActive ? (
                         <circle cx={point.x} cy={point.y} r="18" fill="#0f9f6e" opacity="0.18" />
                       ) : null}
@@ -329,7 +378,7 @@ export default function CompanyDetailPage() {
             <div className="mt-4 grid grid-cols-3 gap-2 text-[10px] font-bold uppercase tracking-widest text-on-primary-container sm:grid-cols-6">
               {activeSeries.map((point, index) => (
                 <button
-                  key={`${pricingRange}-${locationScope}-${point.label}-label`}
+                  key={`${pricingRange}-${resolvedLocationScope}-${point.label}-label`}
                   type="button"
                   onMouseEnter={() => setActivePointIndex(index)}
                   onFocus={() => setActivePointIndex(index)}
@@ -352,7 +401,7 @@ export default function CompanyDetailPage() {
             Optimal months to negotiate based on historical rate compression.
           </p>
           <div className="mt-6 grid grid-cols-4 gap-2">
-            {fullProfile.bookingWindowScores.map(({ label, score }) => (
+            {profile.bookingWindowScores.map(({ label, score }) => (
               <div key={label} className="flex flex-col gap-2 rounded-2xl bg-surface-container p-3">
                 <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
                   {label}
