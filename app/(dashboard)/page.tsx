@@ -68,7 +68,7 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            {agentRows.map((row) => (
+            {agentRows.slice(0, 3).map((row) => (
               <div
                 key={row.id}
                 className="grid grid-cols-[1.6fr_0.85fr_1fr_0.9fr_0.7fr] items-center gap-4 border-t border-outline-variant/5 px-8 py-6 transition-colors hover:bg-surface-container"
@@ -102,7 +102,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <Link
-                    href="/negotiations/hilton/agent"
+                    href={`/negotiations/${row.id}/agent`}
                     className="text-xs font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-secondary"
                   >
                     Details
@@ -117,10 +117,10 @@ export default function DashboardPage() {
               Showing 3 of 12 active Galileo cycles
             </p>
             <Link
-              href="/market-insights"
+              href="/all-agents"
               className="text-sm font-bold text-on-surface transition-colors hover:text-secondary"
             >
-              View All Agents
+              View All Agents →
             </Link>
           </div>
         </section>

@@ -1,5 +1,19 @@
 import { Chip } from "@/components/ui/Chip";
 import { activityStream } from "@/lib/dashboard-data";
+import {
+  NegotiationPricePath,
+  type PricePoint,
+} from "@/components/dashboard/NegotiationPricePath";
+
+const pricePath: PricePoint[] = [
+  { label: "Anchor", price: 300, type: "offer" },
+  { label: "Round 1", price: 272, type: "negotiated" },
+  { label: "Counter", price: 281, type: "offer" },
+  { label: "Round 2", price: 260, type: "negotiated" },
+  { label: "Counter 2", price: 268, type: "offer" },
+  { label: "Round 3", price: 252, type: "negotiated" },
+  { label: "Current", price: 245, type: "current" },
+];
 
 export default async function AgentDetailPage({
   params,
@@ -46,7 +60,7 @@ export default async function AgentDetailPage({
 
         <section className="grid grid-cols-3 gap-8">
           <div className="col-span-2 rounded-xl bg-surface-container-low p-8">
-            <div className="flex items-start justify-between gap-6">
+            <div className="mb-6 flex items-start justify-between gap-6">
               <div>
                 <h2 className="text-2xl font-bold text-on-surface">
                   Negotiation Price Path
@@ -55,71 +69,18 @@ export default async function AgentDetailPage({
                   Real-time progression from supplier anchor to Galileo target.
                 </p>
               </div>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1.5 text-sm">
                 <p className="font-bold text-on-tertiary-container">
                   Savings to Date: $55.00
                 </p>
                 <p className="font-bold text-error">Distance to Goal: $25.00</p>
-                <div className="flex items-center gap-4 text-on-surface-variant">
-                  <span className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-secondary" />
-                    Current
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-tertiary-container" />
-                    Target
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                    Supplier
-                  </span>
-                </div>
               </div>
             </div>
-
-            <div className="relative mt-8 h-64">
-              <div className="absolute inset-0">
-                <div className="absolute left-0 right-0 top-0 border-t-2 border-slate-300">
-                  <span className="inline-block -translate-y-1/2 rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                    $300 Market Price
-                  </span>
-                </div>
-                <div className="absolute left-0 right-0 top-[45%] border-t-2 border-dashed border-on-tertiary-container/30">
-                  <span className="inline-block -translate-y-1/2 rounded-full bg-tertiary-fixed px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-tertiary-container">
-                    $220 Target
-                  </span>
-                </div>
-                <div className="absolute left-0 right-0 top-[68%] border-t border-slate-100 opacity-50">
-                  <span className="inline-block -translate-y-1/2 rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-                    $200
-                  </span>
-                </div>
-              </div>
-
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-full w-full">
-                <defs>
-                  <linearGradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(159,232,202,0.3)" />
-                    <stop offset="100%" stopColor="rgba(159,232,202,0)" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M 0 0 L 100 0 L 100 55 L 75 45 L 50 35 Q 25 20, 0 0 Z"
-                  fill="url(#grad1)"
-                />
-                <path
-                  d="M 0 0 Q 25 20, 50 35 L 75 45 L 100 55"
-                  fill="none"
-                  stroke="#0f9f6e"
-                  strokeLinecap="round"
-                  strokeWidth="2.5"
-                />
-                <circle cx="100" cy="55" r="8" fill="#0f9f6e" opacity="0.2" />
-                <circle cx="100" cy="55" r="4" fill="#0f9f6e" />
-                <circle cx="75" cy="45" r="3" fill="#0b6b4d" />
-                <circle cx="25" cy="20" r="3" fill="#f59e0b" />
-              </svg>
-            </div>
+            <NegotiationPricePath
+              points={pricePath}
+              marketPrice={300}
+              targetPrice={220}
+            />
           </div>
 
           <div className="space-y-6">
