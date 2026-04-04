@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Galileo Dashboard",
   description:
     "Autonomous procurement command center for enterprise travel sourcing, supplier intelligence, and live negotiations.",
+  icons: {
+    icon: "/Galileo.png",
+  },
 };
 
 export default function RootLayout({

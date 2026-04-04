@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -255,8 +256,11 @@ export function LandingPage() {
 
       <header className="relative z-40 bg-transparent pt-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
-          <Link href="#top" className="text-sm uppercase tracking-[0.22em] text-ink font-semibold">
-            Galileo Enterprise
+          <Link href="#top" className="inline-flex items-center gap-2.5">
+            <Image src="/Galileo.png" alt="Galileo" width={32} height={32} />
+            <span className="text-sm uppercase tracking-[0.22em] text-ink font-semibold">
+              Galileo Enterprise
+            </span>
           </Link>
           <nav className="ml-auto flex items-center gap-7 text-sm font-medium text-ink/70">
             {navItems.map((item) => (
