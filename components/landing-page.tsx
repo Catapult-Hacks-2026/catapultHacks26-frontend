@@ -143,81 +143,18 @@ export function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-                  <div className="space-y-4 rounded-[1.5rem] border border-black/6 bg-white p-5">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/45">
-                          Rate movement
-                        </p>
-                        <p className="mt-2 text-3xl font-semibold tracking-[-0.05em] text-ink">
-                          -18.4%
-                        </p>
-                      </div>
-                      <div className="rounded-full border border-[#bfe0d1] bg-[#edf8f2] px-3 py-2 text-xs font-semibold text-[#14694a] whitespace-nowrap">
-                        renegotiating
-                      </div>
-                    </div>
-                    <div className="flex h-36 items-end gap-3 rounded-[1.2rem] bg-[#f4f3ef] px-4 pb-4 pt-6">
-                      {[44, 58, 40, 70, 63, 88, 74].map((height, index) => (
-                        <motion.div
-                          key={height}
-                          initial={{ scaleY: 0.45, opacity: 0.4 }}
-                          animate={{ scaleY: 1, opacity: 1 }}
-                          transition={{ duration: 0.7, delay: 0.14 + index * 0.05 }}
-                          className="w-full origin-bottom rounded-full bg-ink"
-                          style={{ height: `${height}%` }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="rounded-[1.5rem] border border-black/6 bg-white p-5">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/45">
-                          Active vendors
-                        </p>
-                        <p className="text-sm font-semibold text-ink">09</p>
-                      </div>
-                      <div className="mt-4 space-y-3">
-                        {[
-                          ["Hilton Americas", "Offer improved by 7 rooms"],
-                          ["United Corporate", "Status tier preserved"],
-                          ["Sands Expo", "Catering concession added"],
-                        ].map(([vendor, note]) => (
-                          <div
-                            key={vendor}
-                            className="flex items-start justify-between rounded-2xl bg-[#f6f5f1] px-4 py-3"
-                          >
-                            <div className="min-w-0 flex-1 pr-2">
-                              <p className="font-semibold text-ink truncate">{vendor}</p>
-                              <p className="mt-1 text-sm leading-6 text-ink/58 truncate">{note}</p>
-                            </div>
-                            <div className="flex-shrink-0 mt-1 h-2.5 w-2.5 rounded-full bg-emerald" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="rounded-[1.5rem] border border-black/6 bg-white p-4">
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/45">
-                          Calls closed
-                        </p>
-                        <p className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-ink">
-                          41
-                        </p>
-                      </div>
-                      <div className="rounded-[1.5rem] border border-black/6 bg-white p-4">
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/45">
-                          Savings captured
-                        </p>
-                        <p className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-ink">
-                          $2.8M
-                        </p>
-                      </div>
-                    </div>
+                <div className="mt-5 h-64 rounded-[1.5rem] border border-black/6 bg-white p-5">
+                  <div className="flex h-full items-end gap-3 rounded-[1.2rem] bg-[#f4f3ef] px-4 pb-4 pt-6">
+                    {[0, 0, 0, 0, 0, 0, 0].map((_, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ scaleY: 0, opacity: 0 }}
+                        animate={{ scaleY: 0, opacity: 0.3 }}
+                        transition={{ duration: 0.7, delay: 0.14 + index * 0.05 }}
+                        className="w-full origin-bottom rounded-full bg-ink/20"
+                        style={{ height: "0%" }}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
