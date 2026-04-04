@@ -1,17 +1,29 @@
-export type AgentStatus = "Negotiating" | "Reviewing" | "Optimized";
+export type AgentLifecycleStatus =
+  | "Queued"
+  | "Ringing"
+  | "Negotiating"
+  | "Finalizing"
+  | "Completed"
+  | "Failed";
+
+export type NegotiationOutcome =
+  | "Deal Closed"
+  | "Callback requested"
+  | "No Availability"
+  | "Moved to higher up"
+  | "Failure"
+  | "Timed Out";
+
+export type AgentStatus = AgentLifecycleStatus | NegotiationOutcome;
 
 export type CompanyCard = {
   id: string;
   name: string;
   initials: string;
-  segment: string;
+  type: "Hotel" | "Airline";
   totalSavings: string;
-  yoy: string;
   positive: boolean;
-  avgDelta: string;
   bookings: string;
-  badge: string;
-  badgeClassName: string;
 };
 
 export type SupplierNegotiation = {
@@ -42,7 +54,7 @@ export const agentRows: Array<{
     negotiated: "$192.50",
     delta: "(-3.4%)",
     deltaTone: "text-secondary",
-    status: "Negotiating",
+    status: "Queued",
   },
   {
     id: "delta",
@@ -52,7 +64,7 @@ export const agentRows: Array<{
     negotiated: "$455.00",
     delta: "(-1.1%)",
     deltaTone: "text-on-surface",
-    status: "Reviewing",
+    status: "Ringing",
   },
   {
     id: "marriott",
@@ -62,7 +74,7 @@ export const agentRows: Array<{
     negotiated: "$208.00",
     delta: "(+0.9%)",
     deltaTone: "text-on-tertiary-container",
-    status: "Optimized",
+    status: "Deal Closed",
   },
   {
     id: "hyatt",
@@ -82,7 +94,7 @@ export const agentRows: Array<{
     negotiated: "$510.00",
     delta: "(+2.0%)",
     deltaTone: "text-on-tertiary-container",
-    status: "Optimized",
+    status: "Moved to higher up",
   },
   {
     id: "ihg",
@@ -92,7 +104,7 @@ export const agentRows: Array<{
     negotiated: "$172.00",
     delta: "(-4.1%)",
     deltaTone: "text-secondary",
-    status: "Negotiating",
+    status: "Finalizing",
   },
   {
     id: "american",
@@ -102,7 +114,7 @@ export const agentRows: Array<{
     negotiated: "$382.00",
     delta: "(-0.5%)",
     deltaTone: "text-on-surface",
-    status: "Reviewing",
+    status: "Completed",
   },
   {
     id: "wyndham",
@@ -112,7 +124,7 @@ export const agentRows: Array<{
     negotiated: "$118.00",
     delta: "(+1.7%)",
     deltaTone: "text-on-tertiary-container",
-    status: "Optimized",
+    status: "Callback requested",
   },
   {
     id: "southwest",
@@ -122,7 +134,7 @@ export const agentRows: Array<{
     negotiated: "$295.00",
     delta: "(-1.7%)",
     deltaTone: "text-secondary",
-    status: "Negotiating",
+    status: "Failed",
   },
   {
     id: "accor",
@@ -132,7 +144,7 @@ export const agentRows: Array<{
     negotiated: "$235.00",
     delta: "(-2.1%)",
     deltaTone: "text-on-surface",
-    status: "Reviewing",
+    status: "Timed Out",
   },
   {
     id: "radisson",
@@ -142,7 +154,7 @@ export const agentRows: Array<{
     negotiated: "$153.00",
     delta: "(+1.3%)",
     deltaTone: "text-on-tertiary-container",
-    status: "Optimized",
+    status: "No Availability",
   },
   {
     id: "lufthansa",
@@ -161,53 +173,37 @@ export const companyCards: CompanyCard[] = [
     id: "hilton",
     name: "Hilton",
     initials: "H",
-    segment: "Global hospitality portfolio",
+    type: "Hotel",
     totalSavings: "$1,240,500",
-    yoy: "+12% YoY",
     positive: true,
-    avgDelta: "18.4%",
     bookings: "4,821",
-    badge: "Strategic Partner",
-    badgeClassName: "bg-tertiary-fixed text-on-tertiary-fixed-variant",
   },
   {
     id: "marriott",
     name: "Marriott",
     initials: "M",
-    segment: "Luxury and extended stay",
+    type: "Hotel",
     totalSavings: "$842,200",
-    yoy: "+8% YoY",
     positive: true,
-    avgDelta: "15.2%",
     bookings: "3,102",
-    badge: "Preferred Supplier",
-    badgeClassName: "bg-surface-container-highest text-on-secondary-fixed-variant",
   },
   {
     id: "delta",
     name: "Delta",
     initials: "D",
-    segment: "Corporate aviation and logistics",
+    type: "Airline",
     totalSavings: "$2,105,800",
-    yoy: "+21% YoY",
     positive: true,
-    avgDelta: "24.1%",
     bookings: "12,544",
-    badge: "Strategic Partner",
-    badgeClassName: "bg-tertiary-fixed text-on-tertiary-fixed-variant",
   },
   {
     id: "hyatt",
     name: "Hyatt",
     initials: "H",
-    segment: "Upper-upscale hospitality",
+    type: "Hotel",
     totalSavings: "$412,000",
-    yoy: "-2% YoY",
     positive: false,
-    avgDelta: "9.2%",
     bookings: "1,850",
-    badge: "Preferred Supplier",
-    badgeClassName: "bg-surface-container-highest text-on-secondary-fixed-variant",
   },
 ];
 
@@ -269,7 +265,7 @@ export const activityStream = [
   },
 ];
 
-export type EventAgentStatus = "Negotiating" | "Reviewing" | "Completed" | "Cancelled";
+export type EventAgentStatus = AgentLifecycleStatus;
 export type EventStatus = "Active" | "Completed";
 
 export type EventAgent = {
@@ -277,6 +273,7 @@ export type EventAgent = {
   company: string;
   type: "Hotel" | "Airline";
   status: EventAgentStatus;
+  outcome?: NegotiationOutcome;
   originalPrice: string;
   negotiatedPrice: string;
   savings: string;
@@ -321,6 +318,7 @@ export const initialEvents: GalileoEvent[] = [
         company: "Marriott Intl.",
         type: "Hotel",
         status: "Completed",
+        outcome: "Deal Closed",
         originalPrice: "$260/night",
         negotiatedPrice: "$208/night",
         savings: "$8,320",
@@ -330,7 +328,7 @@ export const initialEvents: GalileoEvent[] = [
         negotiationId: "delta",
         company: "Delta Air Lines",
         type: "Airline",
-        status: "Reviewing",
+        status: "Ringing",
         originalPrice: "$520/seat",
         negotiatedPrice: "$455/seat",
         savings: "$7,800",
@@ -353,6 +351,7 @@ export const initialEvents: GalileoEvent[] = [
         company: "Hyatt Hotels",
         type: "Hotel",
         status: "Completed",
+        outcome: "Deal Closed",
         originalPrice: "$310/night",
         negotiatedPrice: "$201/night",
         savings: "$13,104",
@@ -363,6 +362,7 @@ export const initialEvents: GalileoEvent[] = [
         company: "IHG Hotels & Resorts",
         type: "Hotel",
         status: "Completed",
+        outcome: "Callback requested",
         originalPrice: "$295/night",
         negotiatedPrice: "$220/night",
         savings: "$10,800",
@@ -373,6 +373,7 @@ export const initialEvents: GalileoEvent[] = [
         company: "American Airlines",
         type: "Airline",
         status: "Completed",
+        outcome: "Deal Closed",
         originalPrice: "$480/seat",
         negotiatedPrice: "$382/seat",
         savings: "$4,704",
@@ -394,7 +395,7 @@ export const initialEvents: GalileoEvent[] = [
         negotiationId: "lufthansa",
         company: "Lufthansa Group",
         type: "Hotel",
-        status: "Negotiating",
+        status: "Queued",
         originalPrice: "$380/night",
         negotiatedPrice: "$310/night",
         savings: "$17,850",
@@ -404,7 +405,8 @@ export const initialEvents: GalileoEvent[] = [
         negotiationId: "accor",
         company: "Accor Hotels",
         type: "Hotel",
-        status: "Negotiating",
+        status: "Completed",
+        outcome: "Moved to higher up",
         originalPrice: "$350/night",
         negotiatedPrice: "$290/night",
         savings: "$15,300",
@@ -422,6 +424,30 @@ export function getEventForNegotiation(negotiationId: string) {
   return initialEvents.find((e) => e.agents.some((a) => a.negotiationId === negotiationId));
 }
 
+export function getAgentDisplayStatus(agent: Pick<EventAgent, "status" | "outcome">) {
+  return agent.outcome ?? agent.status;
+}
+
+export function isClosedDeal(agent: Pick<EventAgent, "status" | "outcome">) {
+  return agent.status === "Completed" && agent.outcome === "Deal Closed";
+}
+
+export function getStatusVariant(status: AgentStatus): "success" | "negotiating" | "neutral" | "error" {
+  if (status === "Deal Closed" || status === "Completed") {
+    return "success";
+  }
+
+  if (status === "Ringing" || status === "Negotiating") {
+    return "negotiating";
+  }
+
+  if (status === "Failed" || status === "Failure" || status === "Timed Out") {
+    return "error";
+  }
+
+  return "neutral";
+}
+
 export function getSupplierProfile(id: string) {
   const fallbackName = id.charAt(0).toUpperCase() + id.slice(1);
   const company = companyCards.find((item) => item.id === id);
@@ -431,10 +457,8 @@ export function getSupplierProfile(id: string) {
     name: company?.name ?? fallbackName,
     displayName: "Lumina Hospitality Group",
     initials: company?.initials ?? fallbackName.slice(0, 1).toUpperCase(),
+    type: (company?.type ?? "Hotel") as "Hotel" | "Airline",
     description:
       "A long-term hospitality procurement partner with dense urban inventory, resilient corporate rate structures, and consistent service-level compliance across managed travel programs.",
-    phone: "+1 (415) 555-0198",
-    website: "luminahospitality.com",
-    location: "London, United Kingdom",
   };
 }

@@ -1,5 +1,10 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import { initialEvents, type EventAgent, type GalileoEvent } from "@/lib/dashboard-data";
+import {
+  initialEvents,
+  isClosedDeal,
+  type EventAgent,
+  type GalileoEvent,
+} from "@/lib/dashboard-data";
 
 type EventsContextValue = {
   events: GalileoEvent[];
@@ -43,7 +48,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
 
     const canAcceptAgent = (event: GalileoEvent, agent: EventAgent) =>
       event.status === "Active" &&
-      agent.status === "Completed" &&
+      isClosedDeal(agent) &&
       !agent.isAccepted &&
       !hasAcceptedType(event, agent.type);
 
@@ -59,20 +64,14 @@ export function EventsProvider({ children }: { children: ReactNode }) {
             return event;
           }
 
-          if (
-            targetAgent.status !== "Completed" ||
-            targetAgent.isAccepted ||
-            hasAcceptedType(event, targetAgent.type)
-          ) {
+          if (!isClosedDeal(targetAgent) || targetAgent.isAccepted || hasAcceptedType(event, targetAgent.type)) {
             return event;
           }
 
           const updatedAgents: EventAgent[] = event.agents.map((agent) =>
             agent.negotiationId === negotiationId
-              ? { ...agent, isAccepted: true, status: "Completed" }
-              : agent.type === targetAgent.type
-                ? { ...agent, isAccepted: false, status: "Cancelled" }
-                : agent,
+              ? { ...agent, isAccepted: true }
+              : agent,
           );
 
           const updatedEvent: GalileoEvent = {
