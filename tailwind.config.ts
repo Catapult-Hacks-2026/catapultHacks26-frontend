@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "media",
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,21 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: "#fbfbfb",
-        ink: "#111827",
-        mist: "#e7e5df",
-        emerald: "#0e9f6e",
-        sage: "#dce9e1",
+        canvas: "#f8f4ec",
+        ink: "#2f2f2f",
+        mist: "#eee7db",
+        charcoal: "#474747",
+        smoke: "#8c857c",
       },
       boxShadow: {
-        float: "0 18px 50px -28px rgba(17, 24, 39, 0.28)",
-        card: "0 12px 34px -22px rgba(17, 24, 39, 0.22)",
+        float: "0 24px 60px -34px rgba(47, 47, 47, 0.22)",
+        card: "0 16px 42px -26px rgba(47, 47, 47, 0.18)",
       },
       borderRadius: {
         "4xl": "2rem",
       },
       fontFamily: {
-        sans: ["Avenir Next", "Avenir", "Segoe UI", "sans-serif"],
+        sans: ['"Libre Baskerville"', "Georgia", "serif"],
+        serif: ['"Libre Baskerville"', "Georgia", "serif"],
       },
     },
   },
