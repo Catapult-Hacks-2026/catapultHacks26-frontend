@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { MarketIntelligenceResult } from "@/app/actions/travel-intelligence";
 
 const navItems = [
@@ -96,7 +96,7 @@ function ChartTooltip({ active, payload }: ChartTooltipProps) {
   const point = payload[0].payload;
 
   return (
-    <div className="rounded-[1.5rem] border border-ink/10 bg-[#fffdf8]/92 px-4 py-3 text-left shadow-card backdrop-blur-[2px]">
+    <div className="rounded-[1.5rem] border border-ink/10 bg-[#f8f4ec]/92 px-4 py-3 text-left shadow-card backdrop-blur-[2px]">
       <p className="text-[0.68rem] uppercase tracking-[0.2em] text-ink/45">{point.label}</p>
       <div className="mt-2 space-y-1.5 text-sm text-ink/72">
         <div className="flex items-center justify-between gap-8">
@@ -152,7 +152,7 @@ function PerformanceBars() {
       {[0.28, 0.62, 0.42, 0.86].map((height, index) => (
         <div key={height} className="relative h-44 w-4 overflow-hidden rounded-full bg-[#3f3f3f]">
           <div
-            className={`absolute bottom-0 w-full rounded-full ${index === 3 ? "bg-[#f8f4ec]" : "bg-[#d7cfbf]"}`}
+            className="absolute bottom-0 w-full rounded-full bg-[#f8f4ec]"
             style={{ height: `${height * 100}%` }}
           />
         </div>
@@ -255,7 +255,7 @@ export function LandingPage() {
       </header>
 
       <section id="hero" className="relative isolate overflow-hidden">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[54rem] overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[64rem] overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
@@ -264,20 +264,88 @@ export function LandingPage() {
               transform: "scale(1.01)",
             }}
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,244,236,0.10)_0%,rgba(248,244,236,0.24)_26%,rgba(248,244,236,0.54)_56%,rgba(248,244,236,0.78)_80%,#f8f4ec_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,244,236,0.0)_0%,rgba(248,244,236,0.15)_30%,rgba(248,244,236,0.50)_65%,rgba(248,244,236,0.85)_85%,#f8f4ec_100%)]" />
         </div>
 
         <div className="mx-auto max-w-7xl px-6 pb-20 pt-10 lg:px-10 lg:pb-24 lg:pt-16">
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0} className="max-w-3xl">
-            <p className="hero-shadow text-[0.78rem] uppercase tracking-[0.28em] text-ink/68">
-              Backed by Catapult Hacks 2026
-            </p>
-            <h1 className="hero-shadow mt-5 text-[2.8rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[3.9rem] lg:text-[4.7rem]">
-              Galileo: live enterprise travel sourcing without the manual chase.
-            </h1>
-            <p className="hero-shadow mt-6 max-w-2xl text-base leading-8 text-ink/66 sm:text-lg">
-              Corporate hotels, flights, and event blocks sourced continuously from one agentic workflow, with live market pricing wired directly into the decision layer.
-            </p>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={0}
+            className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start"
+          >
+            <div className="max-w-3xl">
+              <h1 className="hero-shadow mt-2 text-[2.8rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[3.9rem] lg:text-[4.7rem]">
+                Galileo: live enterprise travel sourcing without the manual chase.
+              </h1>
+              <p className="hero-shadow mt-6 max-w-2xl text-base leading-8 text-ink/66 sm:text-lg">
+                Corporate hotels, flights, and event blocks sourced continuously from one agentic workflow, with live market pricing wired directly into the decision layer.
+              </p>
+            </div>
+
+            <div className="relative lg:pl-8 lg:pt-3">
+              <p className="text-xl font-bold leading-tight text-ink">
+                Increase in hotel bookings when using automated follow-up methods.
+              </p>
+              <p className="mt-3 max-w-xl text-sm leading-7 text-ink/66">
+                A company leveraging HubSpot's speed-to-lead automation saw a 25% boost in qualified leads through immediate follow-up emails.
+              </p>
+
+              <div className="mt-5 rounded-[1.75rem] border-2 border-ink/20 bg-[#f8f4ec]/62 p-5 backdrop-blur-[1px]">
+                <div className="relative h-[17.5rem] overflow-hidden">
+                  <div className="absolute bottom-10 left-14 top-4 w-px bg-ink" />
+                  <div className="absolute bottom-10 left-14 right-5 h-px bg-ink" />
+                  <div className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink">
+                    Booking rate
+                  </div>
+                  <div className="absolute bottom-1 left-[6.4rem] text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                    Q4 2024
+                  </div>
+                  <div className="absolute bottom-1 right-7 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                    Q1 2025
+                  </div>
+                  <div className="absolute left-[4.35rem] top-[0.9rem] text-[0.74rem] font-bold text-ink">25%</div>
+                  <div className="absolute left-[4.35rem] top-[6.2rem] text-[0.68rem] font-bold text-ink/78">12%</div>
+                  <div className="absolute left-[4.75rem] bottom-[3.2rem] text-[0.68rem] font-bold text-ink/78">0%</div>
+
+                  <svg viewBox="0 0 420 260" className="absolute inset-0 h-full w-full overflow-visible">
+                    <motion.path
+                      d="M94 194 C150 186, 204 166, 258 134 S 338 88, 382 62"
+                      fill="none"
+                      stroke="#111111"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      initial={{ pathLength: 0, opacity: 0.4 }}
+                      animate={{ pathLength: 1, opacity: 1 }}
+                      transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                    <motion.circle
+                      cx="94"
+                      cy="194"
+                      r="6"
+                      fill="#111111"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2, duration: 0.35 }}
+                    />
+                    <motion.circle
+                      cx="382"
+                      cy="62"
+                      r="8"
+                      fill="#111111"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 1.05, duration: 0.35 }}
+                    />
+                  </svg>
+                </div>
+
+                <p className="mt-2 text-right text-[0.72rem] italic text-ink">
+                  *Company data from HubSpot.
+                </p>
+              </div>
+            </div>
           </motion.div>
 
           <motion.div
@@ -285,7 +353,7 @@ export function LandingPage() {
             animate="visible"
             variants={fadeUp}
             custom={0.15}
-            className="mt-14 grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end"
+            className="mt-10 grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end"
           >
             <div>
               <div className="flex items-center gap-3 text-[0.72rem] uppercase tracking-[0.22em] text-ink/58">
@@ -323,13 +391,13 @@ export function LandingPage() {
                   type="button"
                   onClick={() => loadMarket(true)}
                   disabled={isRefreshing}
-                  className="rounded-full border border-ink/14 bg-[#fffdf8]/34 px-4 py-2 text-[0.72rem] uppercase tracking-[0.18em] text-ink transition hover:bg-[#fffdf8]/48 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="translate-y-1 rounded-full border-2 border-[#f8f4ec] bg-[#f8f4ec]/52 px-5 py-2.5 text-[0.76rem] font-bold uppercase tracking-[0.18em] text-ink shadow-[0_10px_30px_-20px_rgba(47,47,47,0.65)] transition hover:bg-[#f8f4ec]/70 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isRefreshing ? "Refreshing..." : "Refresh live data"}
                 </button>
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-3 text-[0.72rem] uppercase tracking-[0.18em] text-ink/62">
+              <div className="mt-6 flex flex-wrap gap-3 text-[0.76rem] uppercase tracking-[0.18em] text-ink/78">
                 {[
                   { label: "Chicago ADR", value: avgPublic ? `$${avgPublic}` : "—" },
                   { label: "Galileo ADR", value: avgArbiter ? `$${avgArbiter}` : "—" },
@@ -339,8 +407,8 @@ export function LandingPage() {
                     value: rateMovement === null ? "—" : `${rateMovement > 0 ? "+" : ""}${rateMovement.toFixed(1)}%`,
                   },
                 ].map((stat) => (
-                  <div key={stat.label} className="rounded-full border border-ink/12 bg-[#fffdf8]/26 px-4 py-2">
-                    <span className="text-ink/48">{stat.label}</span> {stat.value}
+                  <div key={stat.label} className="translate-y-1 rounded-full border-2 border-[#f8f4ec] bg-[#f8f4ec]/52 px-5 py-2.5 font-bold shadow-[0_10px_30px_-20px_rgba(47,47,47,0.65)]">
+                    <span className="text-ink/56">{stat.label}</span> {stat.value}
                   </div>
                 ))}
               </div>
@@ -348,44 +416,54 @@ export function LandingPage() {
               <div className="mt-6 h-64 lg:h-72">
                 {chartData.length ? (
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 14, right: 10, left: -18, bottom: 8 }}>
+                    <AreaChart data={chartData} margin={{ top: 14, right: 10, left: 10, bottom: 24 }}>
                       <defs>
                         <linearGradient id="publicRateFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="rgba(140,133,124,0.22)" />
-                          <stop offset="100%" stopColor="rgba(140,133,124,0)" />
+                          <stop offset="0%" stopColor="rgba(17,17,17,0.12)" />
+                          <stop offset="100%" stopColor="rgba(17,17,17,0)" />
                         </linearGradient>
                         <linearGradient id="galileoRateFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="rgba(47,47,47,0.2)" />
-                          <stop offset="100%" stopColor="rgba(47,47,47,0)" />
+                          <stop offset="0%" stopColor="rgba(17,17,17,0.2)" />
+                          <stop offset="100%" stopColor="rgba(17,17,17,0.03)" />
                         </linearGradient>
                       </defs>
-                      <XAxis
-                        dataKey="shortLabel"
-                        tick={{ fill: "rgba(47,47,47,0.56)", fontSize: 10 }}
+                      <YAxis
+                        tick={{ fill: "rgba(17,17,17,0.88)", fontSize: 11, fontWeight: 700 }}
                         tickLine={false}
                         axisLine={false}
+                        width={52}
+                        tickMargin={8}
+                        tickFormatter={(value) => `$${value}`}
+                      />
+                      <XAxis
+                        dataKey="shortLabel"
+                        tick={{ fill: "rgba(17,17,17,0.88)", fontSize: 10, fontWeight: 700 }}
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={16}
+                        interval="preserveStartEnd"
                       />
                       <Tooltip cursor={false} content={<ChartTooltip />} />
                       <Area
                         type="monotone"
                         dataKey="publicRate"
-                        stroke="#8c857c"
-                        strokeWidth={1.5}
+                        stroke="#111111"
+                        strokeWidth={2}
                         strokeDasharray="5 6"
                         fill="url(#publicRateFill)"
                         fillOpacity={1}
-                        dot={{ r: 2.5, fill: "#8c857c", strokeWidth: 0 }}
-                        activeDot={{ r: 4, fill: "#8c857c", strokeWidth: 0 }}
+                        dot={{ r: 2.5, fill: "#111111", strokeWidth: 0 }}
+                        activeDot={{ r: 4, fill: "#111111", strokeWidth: 0 }}
                       />
                       <Area
                         type="monotone"
                         dataKey="arbiterRate"
-                        stroke="#2f2f2f"
-                        strokeWidth={2.4}
+                        stroke="#111111"
+                        strokeWidth={3}
                         fill="url(#galileoRateFill)"
                         fillOpacity={1}
-                        dot={{ r: 3, fill: "#2f2f2f", strokeWidth: 0 }}
-                        activeDot={{ r: 4.5, fill: "#2f2f2f", strokeWidth: 0 }}
+                        dot={{ r: 3, fill: "#111111", strokeWidth: 0 }}
+                        activeDot={{ r: 4.5, fill: "#111111", strokeWidth: 0 }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -414,41 +492,26 @@ export function LandingPage() {
       </section>
 
       <section id="capabilities" className="mx-auto max-w-7xl px-6 pb-24 pt-10 lg:px-10 lg:pt-16">
-        <div className="grid gap-6 lg:grid-cols-[1.85fr_0.9fr]">
+        <div className="flex flex-col gap-6">
           <motion.article
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={fadeUp}
-            className="rounded-[2rem] bg-ink px-8 py-10 text-canvas shadow-float lg:px-10 lg:py-12"
+            className="w-full rounded-[2rem] bg-[#f8f4ec] px-8 py-10 text-ink shadow-float lg:px-10 lg:py-12"
           >
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-sm uppercase tracking-[0.24em] text-[#d7cfbf]">Performance Metrics</p>
-                <h2 className="mt-5 max-w-3xl text-[2.8rem] leading-[1.04] tracking-[-0.04em] text-canvas sm:text-[4rem]">
-                  Save $120,000 and 10 weeks of time
-                </h2>
-                <p className="mt-6 max-w-2xl text-base leading-8 text-[#c7beb0]">
-                  According to engine.com, the leading travel management website.
-                </p>
-              </div>
-              <svg viewBox="0 0 24 24" className="mt-2 hidden h-12 w-12 flex-shrink-0 text-[#d7cfbf] lg:block" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M4 16v4h16" />
-                <path d="M7 14l3-3 3 2 5-7" />
-                <path d="M8 18V9M13 18v-5M18 18V6" />
-              </svg>
-            </div>
-
-            <div className="mt-16 flex items-end justify-between gap-8">
-              <PerformanceBars />
-              <div className="text-right">
-                <div className="text-6xl leading-none text-canvas sm:text-7xl">84%</div>
-                <div className="mt-3 text-[0.72rem] uppercase tracking-[0.24em] text-[#9f9689]">Efficiency Delta</div>
-              </div>
+            <div className="space-y-6">
+              <p className="text-sm uppercase tracking-[0.24em] text-ink/62">Performance Metrics</p>
+              <h2 className="max-w-4xl text-[2.9rem] leading-[1.05] tracking-[-0.04em] text-ink sm:text-[4.1rem]">
+                Save $120,000 and 10 weeks of time
+              </h2>
+              <p className="max-w-3xl text-base leading-8 text-ink/62">
+                According to engine.com, the leading travel management website.
+              </p>
             </div>
           </motion.article>
 
-          <div className="flex flex-col gap-6">
+          <div className="grid gap-6 lg:grid-cols-3">
             {metricCards.map((card, index) => (
               <motion.article
                 key={card.title}
@@ -457,13 +520,13 @@ export function LandingPage() {
                 viewport={{ once: true, amount: 0.25 }}
                 variants={fadeUp}
                 custom={index * 0.08}
-                className="rounded-[1.8rem] bg-ink px-7 py-7 text-canvas shadow-card"
+                className="rounded-[1.8rem] bg-[#f8f4ec] px-7 py-7 text-ink shadow-card"
               >
-                <div className="text-[#d7cfbf]">
+                <div className="text-ink">
                   <FeatureGlyph glyph={card.glyph} />
                 </div>
-                <h3 className="mt-5 text-[1.9rem] leading-tight tracking-[-0.03em] text-canvas">{card.title}</h3>
-                <p className="mt-4 text-base leading-8 text-[#c7beb0]">{card.body}</p>
+                <h3 className="mt-5 text-[1.9rem] leading-tight tracking-[-0.03em] text-ink">{card.title}</h3>
+                <p className="mt-4 text-base leading-8 text-ink/62">{card.body}</p>
               </motion.article>
             ))}
           </div>
@@ -498,14 +561,14 @@ export function LandingPage() {
               viewport={{ once: true, amount: 0.25 }}
               variants={fadeUp}
               custom={index * 0.08}
-              className={`panel-shell rounded-[2rem] border border-ink/8 bg-[#f4efe5] p-8 shadow-card transition hover:-translate-y-1 hover:shadow-float ${card.className}`}
+              className={`panel-shell rounded-[2rem] border border-ink/8 bg-[#f8f4ec] p-8 shadow-card transition hover:-translate-y-1 hover:shadow-float ${card.className}`}
             >
               <div className="flex h-full flex-col justify-between gap-16">
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full border border-ink/10 bg-[#fffdf8] px-3 py-2 text-xs uppercase tracking-[0.18em] text-ink/48">
+                  <span className="rounded-full border border-ink/10 bg-[#f8f4ec] px-3 py-2 text-xs uppercase tracking-[0.18em] text-ink/48">
                     Deployment
                   </span>
-                  <span className="h-9 w-9 rounded-full border border-ink/10 bg-[#fffdf8]" />
+                  <span className="h-9 w-9 rounded-full border border-ink/10 bg-[#f8f4ec]" />
                 </div>
                 <div>
                   <h3 className="max-w-sm text-[2rem] leading-tight tracking-[-0.03em] text-ink">{card.eyebrow}</h3>
@@ -517,7 +580,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <footer id="footer" className="border-t border-ink/8 bg-[#fbf8f1]">
+      <footer id="footer" className="border-t border-ink/8 bg-[#f8f4ec]">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 text-sm text-ink/50 lg:flex-row lg:items-center lg:justify-between lg:px-10">
           <p>© 2026 Galileo Enterprise</p>
           <div className="flex items-center gap-6">
