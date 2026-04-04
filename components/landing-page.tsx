@@ -352,8 +352,48 @@ export function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
+            custom={0.1}
+            className="flex min-h-[12rem] items-center justify-center py-10 lg:min-h-[16rem] lg:py-16"
+          >
+            <motion.a
+              href="#live-updates"
+              whileHover={{ y: -3, scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              className="group inline-flex items-center gap-4 rounded-full border-2 border-ink/18 bg-[#f8f4ec]/78 px-7 py-4 text-[0.8rem] font-bold uppercase tracking-[0.22em] text-ink shadow-[0_18px_50px_-30px_rgba(47,47,47,0.35)] backdrop-blur-sm"
+            >
+              <span>Show Me How It Works</span>
+              <span className="relative flex h-8 w-12 items-center justify-center overflow-hidden">
+                <motion.span
+                  className="absolute left-0 top-1/2 h-px w-5 -translate-y-1/2 bg-ink/35"
+                  animate={{ x: [0, 6, 0], opacity: [0.35, 0.8, 0.35] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.svg
+                  viewBox="0 0 48 20"
+                  className="relative h-5 w-12"
+                  fill="none"
+                  animate={{ x: [0, 8, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <path d="M4 10h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" opacity="0.35" />
+                  <path
+                    d="M16 10L29 4L44 10L29 16L16 10Z"
+                    fill="currentColor"
+                    opacity="0.96"
+                  />
+                  <path d="M12 7l5 3-5 3" fill="currentColor" opacity="0.78" />
+                </motion.svg>
+              </span>
+            </motion.a>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
             custom={0.15}
-            className="mt-10 grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end"
+            id="live-updates"
+            className="mt-2 grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-end"
           >
             <div>
               <div className="flex items-center gap-3 text-[0.72rem] uppercase tracking-[0.22em] text-ink/58">
