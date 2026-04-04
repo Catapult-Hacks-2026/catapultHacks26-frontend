@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import type { MarketIntelligenceResult } from "@/app/actions/travel-intelligence";
 
 const navItems = [
   { label: "Capabilities", href: "#capabilities" },
@@ -9,63 +12,44 @@ const navItems = [
   { label: "Contact", href: "#footer" },
 ];
 
-const valueProps = [
+const metricCards = [
   {
-    title: "Persistent Memory",
-    body: "Our agents remember every negotiation, tracking vendor concession patterns, volume thresholds, and historical pricing DNA to leverage in future deals.",
+    title: "Persistent Vendor Memory",
+    body: "Galileo remembers every negotiation, tracking vendor concession patterns and historical pricing DNA.",
+    glyph: "memory" as const,
   },
   {
     title: "Omnichannel Execution",
-    body: "Autonomously initiates calls, negotiates via calls and emails, and drafts RFPs to suppliers without manual input.",
+    body: "Autonomously initiates calls, drafts emails, and interacts directly with booking APIs.",
     glyph: "network" as const,
   },
   {
-    title: "Real-time Market Analytics",
-    body: "We dynamically renegotiate group bookings and individual bookings in real-time as market conditions change.",
+    title: "Continuous Sourcing",
+    body: "Dynamically renegotiates group blocks and individual bookings in real-time.",
+    glyph: "refresh" as const,
   },
 ];
 
 const scaleCards = [
   {
     eyebrow: "Global Hotel Blocks",
-    body: "Securing inventory without sacrificing margin.",
+    body: "Negotiation memory and live rate checks across high-volume urban inventory.",
     className: "lg:col-span-5",
   },
   {
     eyebrow: "Airline Fleet Management",
-    body: "Balancing employee status preferences with corporate bottom lines.",
+    body: "Carrier pricing monitored continuously for route, timing, and contract leverage.",
     className: "lg:col-span-3",
   },
   {
     eyebrow: "Massive Event Logistics",
-    body: "From venue booking to catering negotiations, handled concurrently.",
+    body: "Hotels, air, and event travel coordinated as one procurement system instead of siloed workstreams.",
     className: "lg:col-span-4",
   },
 ];
 
-const vendors = [
-  { name: "Hilton Americas", note: "Offer improved — 7 additional comp rooms", active: true },
-  { name: "United Corporate", note: "Status tier preserved on revised routes", active: true },
-  { name: "Sands Expo Center", note: "F&B concession package secured", active: true },
-  { name: "Marriott Marquis", note: "Counter-offer under review", active: false },
-  { name: "Delta Air Lines", note: "Fare basis DY7→DY5 renegotiation open", active: true },
-];
-
-const agentFeed = [
-  { time: "2m ago", action: "Called Hilton Americas reservations. Extended checkout concession confirmed." },
-  { time: "9m ago", action: "Sent revised group fare matrix to United Corporate account manager." },
-  { time: "17m ago", action: "Pinged Sands Expo catering API — upgraded package detected and locked." },
-  { time: "24m ago", action: "Renegotiated Delta fare basis DY7 to DY5. $42K delta captured." },
-  { time: "31m ago", action: "Initiated RFP to 3 new hotel properties in Chicago Loop." },
-];
-
-const metrics = [
-  { value: "$847M+", label: "Negotiated annually" },
-  { value: "12,400+", label: "Hotel nights secured" },
-  { value: "31%", label: "Average savings" },
-  { value: "99.7%", label: "Platform uptime" },
-];
-
+const DATA_REVALIDATE_SECONDS = 300;
+const HERO_IMAGE = "/hero-clouds.jpeg";
 const easeCurve: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
@@ -77,70 +61,338 @@ const fadeUp = {
   }),
 };
 
-export function LandingPage() {
-  return (
-    <main id="top" className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[44rem] bg-[radial-gradient(ellipse_at_top,_rgba(14,159,110,0.07),_transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,_rgba(14,159,110,0.06),_transparent_60%)]" />
+type ChartPoint = {
+  label: string;
+  shortLabel: string;
+  publicRate: number;
+  arbiterRate: number;
+  savings: number;
+};
 
-      {/* ── Header ── */}
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-[rgba(251,251,251,0.88)] backdrop-blur-xl dark:border-white/8 dark:bg-[rgba(12,18,32,0.9)]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link
-            href="#top"
-            className="text-sm font-semibold tracking-[0.18em] text-ink uppercase dark:text-white"
-          >
-            Autonomous Procurement Inc.
+type ChartTooltipProps = {
+  active?: boolean;
+  payload?: Array<{
+    payload?: ChartPoint;
+  }>;
+};
+
+function truncateLabel(label: string) {
+  return label.length > 12 ? `${label.slice(0, 12)}...` : label;
+}
+
+function formatTimestamp(value?: string) {
+  if (!value) return "Awaiting sync";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function ChartTooltip({ active, payload }: ChartTooltipProps) {
+  if (!active || !payload?.length || !payload[0]?.payload) return null;
+
+  const point = payload[0].payload;
+
+  return (
+    <div className="rounded-[1.5rem] border border-ink/10 bg-[#f8f4ec]/92 px-4 py-3 text-left shadow-card backdrop-blur-[2px]">
+      <p className="text-[0.68rem] uppercase tracking-[0.2em] text-ink/45">{point.label}</p>
+      <div className="mt-2 space-y-1.5 text-sm text-ink/72">
+        <div className="flex items-center justify-between gap-8">
+          <span>Market</span>
+          <span className="font-bold text-ink">${point.publicRate}</span>
+        </div>
+        <div className="flex items-center justify-between gap-8">
+          <span>Galileo</span>
+          <span className="font-bold text-ink">${point.arbiterRate}</span>
+        </div>
+        <div className="flex items-center justify-between gap-8 border-t border-ink/8 pt-2">
+          <span>Savings</span>
+          <span className="font-bold text-ink">${point.savings}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeatureGlyph({ glyph }: { glyph: (typeof metricCards)[number]["glyph"] }) {
+  if (glyph === "memory") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <rect x="7" y="7" width="10" height="10" rx="2" />
+        <path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" />
+      </svg>
+    );
+  }
+
+  if (glyph === "network") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <circle cx="12" cy="5" r="2" />
+        <circle cx="5" cy="12" r="2" />
+        <circle cx="19" cy="12" r="2" />
+        <circle cx="12" cy="19" r="2" />
+        <path d="M12 7v10M7 12h10" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M20 11a8 8 0 0 0-14.9-3M4 13a8 8 0 0 0 14.9 3" />
+      <path d="M5 5v4h4M15 15h4v4" />
+    </svg>
+  );
+}
+
+function PerformanceBars() {
+  return (
+    <div className="flex items-end gap-3">
+      {[0.28, 0.62, 0.42, 0.86].map((height, index) => (
+        <div key={height} className="relative h-44 w-4 overflow-hidden rounded-full bg-[#3f3f3f]">
+          <div
+            className="absolute bottom-0 w-full rounded-full bg-[#f8f4ec]"
+            style={{ height: `${height * 100}%` }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function LandingPage() {
+  const [market, setMarket] = useState<MarketIntelligenceResult | null>(null);
+  const [marketError, setMarketError] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [marketSource, setMarketSource] = useState<"cache" | "fresh" | null>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  const loadMarket = useCallback(async (forceFresh = false) => {
+    try {
+      if (forceFresh) setIsRefreshing(true);
+      const res = await fetch(`/api/market-intelligence${forceFresh ? "?fresh=1" : ""}`, {
+        cache: forceFresh ? "no-store" : "default",
+      });
+
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
+        throw new Error(err.error || "Failed to load market data.");
+      }
+
+      const data = (await res.json()) as MarketIntelligenceResult;
+      setMarket(data);
+      setMarketError(null);
+      setMarketSource(res.headers.get("x-market-source") === "fresh" ? "fresh" : "cache");
+    } catch (err) {
+      setMarketError(err instanceof Error ? err.message : "Failed to load market data.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadMarket();
+    const intervalId = window.setInterval(() => {
+      loadMarket(true);
+    }, DATA_REVALIDATE_SECONDS * 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadMarket]);
+
+  const primaryStays = market?.staysDataPoints ?? [];
+  const topVendors = primaryStays.slice(0, 4);
+  const avgPublic = market?.avgStaysPublicRate ?? 0;
+  const avgArbiter = market?.avgStaysArbiterRate ?? 0;
+  const avgSavings = avgPublic && avgArbiter ? Math.max(avgPublic - avgArbiter, 0) : 0;
+
+  const chartData = useMemo<ChartPoint[]>(() => {
+    const points = market?.staysDataPoints?.length ? market.staysDataPoints : market?.flightDataPoints ?? [];
+    return points.map((point) => ({
+      label: point.label,
+      shortLabel: truncateLabel(point.label),
+      publicRate: point.publicRate,
+      arbiterRate: point.arbiterRate,
+      savings: Math.max(point.publicRate - point.arbiterRate, 0),
+    }));
+  }, [market]);
+
+  const rateMovement = useMemo(() => {
+    if (chartData.length < 2) return null;
+    const first = chartData[0]?.publicRate ?? 0;
+    const last = chartData[chartData.length - 1]?.publicRate ?? 0;
+    if (!first || !last) return null;
+    return ((last - first) / first) * 100;
+  }, [chartData]);
+
+  const signals = useMemo(() => {
+    if (!primaryStays.length) return [];
+    const sorted = [...primaryStays].sort((a, b) => a.publicRate - b.publicRate);
+    const lowest = sorted[0];
+    const highest = sorted[sorted.length - 1];
+    return [
+      `Lowest live ADR: ${lowest.label} · $${lowest.publicRate}`,
+      `Highest live ADR: ${highest.label} · $${highest.publicRate}`,
+      `Avg savings captured: $${avgSavings}`,
+      marketSource === "fresh" ? "Source: live market fetch" : "Source: cached market fetch",
+    ];
+  }, [primaryStays, avgSavings, marketSource]);
+
+  return (
+    <main id="top" className="relative overflow-hidden bg-canvas text-ink min-h-screen">
+      {/* Persist the background gradient unconditionally */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[75vh] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${HERO_IMAGE})`,
+            backgroundPosition: "center 34%",
+            transform: "scale(1.01)",
+          }}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,244,236,0.0)_0%,rgba(248,244,236,0.15)_30%,rgba(248,244,236,0.50)_65%,rgba(248,244,236,0.85)_85%,#f8f4ec_100%)]" />
+      </div>
+
+      <header className="relative z-40 bg-transparent pt-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
+          <Link href="#top" className="text-sm uppercase tracking-[0.22em] text-ink font-semibold">
+            Galileo Enterprise
           </Link>
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="ml-auto flex items-center gap-7 text-sm font-medium text-ink/70">
             {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-ink/58 transition hover:text-ink dark:text-white/58 dark:hover:text-white"
-              >
+              <Link key={item.label} href={item.href} className="transition hover:text-ink">
                 {item.label}
               </Link>
             ))}
           </nav>
-          <Link
-            href="#capabilities"
-            className="rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-white shadow-card transition hover:-translate-y-0.5 hover:shadow-float"
-          >
-            Start Automating
-          </Link>
         </div>
       </header>
 
-      {/* ── Hero ── */}
-      <section
-        id="hero"
-        className="mx-auto max-w-5xl px-6 pb-12 pt-20 text-center lg:px-10 lg:pb-16 lg:pt-28"
-      >
-        <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-ink/52 shadow-card dark:border-white/10 dark:bg-white/5 dark:text-white/52">
-            Enterprise Travel Procurement
-          </div>
-          <h1 className="text-[3.2rem] font-semibold leading-[0.94] tracking-[-0.05em] text-ink sm:text-[4.5rem] lg:text-[6rem] dark:text-white">
-            The First Agentic Negotiator for Enterprise Travel.
-          </h1>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-ink/62 sm:text-xl dark:text-white/62">
-            Stop haggling. Our autonomous agents handle the RFPs, emails, and calls to secure the absolute best rates for your corporate hotels, flights, and events.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="#capabilities"
-              className="inline-flex items-center justify-center rounded-full bg-emerald px-8 py-4 text-base font-semibold text-white shadow-card transition hover:-translate-y-1 hover:shadow-float"
+      <section id="hero" className="relative z-20 isolate overflow-hidden pt-28 lg:pt-40">
+        <div className="mx-auto max-w-7xl px-6 pb-12 lg:px-10">
+          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start min-h-[60vh]">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              custom={0}
+              className="max-w-3xl flex flex-col justify-between h-full"
             >
-              Start Automating
-            </Link>
-            <Link
-              href="#scale"
-              className="inline-flex items-center justify-center rounded-full border border-black/12 bg-transparent px-8 py-4 text-base font-semibold text-ink transition hover:-translate-y-0.5 hover:border-black/20 hover:bg-white/70 dark:border-white/12 dark:text-white dark:hover:border-white/20 dark:hover:bg-white/5"
-            >
-              Read the Whitepaper
-            </Link>
+              <div>
+                <h1 className="hero-shadow mt-2 text-[2.8rem] leading-[0.98] tracking-[-0.04em] text-ink sm:text-[3.9rem] lg:text-[4.7rem]">
+                  Galileo: live enterprise travel sourcing without the manual chase.
+                </h1>
+                <p className="hero-shadow mt-6 max-w-2xl text-base leading-8 text-ink/66 sm:text-lg font-medium">
+                  Corporate hotels, flights, and event blocks sourced continuously from one agentic workflow, with live market pricing wired directly into the decision layer.
+                </p>
+              </div>
+
+              {/* The Action Button */}
+              <div className="mt-16 sm:mt-32 mb-20 lg:mb-24">
+                <motion.a
+                  href="#live-updates-section"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsRevealed(true);
+                    setTimeout(() => {
+                      document.getElementById("live-updates-section")?.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
+                  }}
+                  whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -15px rgba(47,47,47,0.15)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`group inline-flex items-center gap-5 rounded-full border-2 border-ink/20 bg-[#f8f4ec]/80 px-8 py-5 text-[0.8rem] font-bold uppercase tracking-[0.2em] text-ink shadow-lg backdrop-blur-md transition-all duration-500`}
+                >
+                  <span>Show Me How It Works</span>
+                  <span className="relative flex h-6 w-6 items-center justify-center overflow-visible">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="relative h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </span>
+                </motion.a>
+              </div>
+            </motion.div>
+
+            {/* Right side graph shown on load */}
+            <div className="relative lg:pl-8 lg:pt-3">
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+                custom={0.1}
+              >
+                <p className="text-xl font-bold leading-tight text-ink">
+                  Increase in hotel bookings when using automated follow-up methods.
+                </p>
+                <p className="mt-3 max-w-xl text-sm leading-7 text-ink/66 font-medium">
+                  A company leveraging HubSpot's speed-to-lead automation saw a 25% boost in qualified leads through immediate follow-up emails.
+                </p>
+
+                <div className="mt-5 rounded-[1.75rem] border-2 border-ink/20 bg-[#f8f4ec]/62 p-5 backdrop-blur-[1px]">
+                  <div className="relative h-[17.5rem] overflow-hidden">
+                    <div className="absolute bottom-10 left-14 top-4 w-px bg-ink" />
+                    <div className="absolute bottom-10 left-14 right-5 h-px bg-ink" />
+                    <div className="absolute left-[-1.5rem] top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink">
+                      Booking rate
+                    </div>
+                    <div className="absolute bottom-1 left-[6.4rem] text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                      Q4 2024
+                    </div>
+                    <div className="absolute bottom-1 right-7 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-ink">
+                      Q1 2025
+                    </div>
+                    <div className="absolute left-[4.35rem] top-[0.9rem] text-[0.74rem] font-bold text-ink">25%</div>
+                    <div className="absolute left-[4.35rem] top-[6.2rem] text-[0.68rem] font-bold text-ink/78">12%</div>
+                    <div className="absolute left-[4.75rem] bottom-[3.2rem] text-[0.68rem] font-bold text-ink/78">0%</div>
+
+                    <svg viewBox="0 0 420 260" className="absolute inset-0 h-full w-full overflow-visible">
+                      <motion.path
+                        d="M94 194 C150 186, 204 166, 258 134 S 338 88, 382 62"
+                        fill="none"
+                        stroke="#111111"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0, opacity: 0.4 }}
+                        animate={{ pathLength: 1, opacity: 1 }}
+                        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                      <motion.circle
+                        cx="94"
+                        cy="194"
+                        r="6"
+                        fill="#111111"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.35 }}
+                      />
+                      <motion.circle
+                        cx="382"
+                        cy="62"
+                        r="8"
+                        fill="#111111"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 1.05, duration: 0.35 }}
+                      />
+                    </svg>
+                  </div>
+
+                  <p className="mt-2 text-right text-[0.72rem] italic text-ink">
+                    *Company data from HubSpot.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {isRevealed && (

@@ -1,5 +1,9 @@
+CLAUDE.md
 .next
 node_modules
+.env
+.env.local
+.env*.local
 dist
 out
 coverage
