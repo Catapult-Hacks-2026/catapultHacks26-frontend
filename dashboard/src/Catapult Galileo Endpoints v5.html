@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catapult Galileo API Endpoints & Types v5</title>
+    <style>
+      :root {
+        --ink: #1f2937;
+        --muted: #5f6b7a;
+        --line: #d7dde5;
+        --surface: #ffffff;
+        --surface-alt: #f5f7fb;
+        --brand: #1d4ed8;
+        --brand-soft: #dbeafe;
+        --success: #166534;
+        --success-soft: #dcfce7;
+        --warn: #92400e;
+        --warn-soft: #fef3c7;
+        --danger: #991b1b;
+        --danger-soft: #fee2e2;
+        --neutral: #374151;
+        --neutral-soft: #e5e7eb;
+      }
+
+      @page {
+        size: letter;
+        margin: 0.62in 0.72in;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--surface);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      h1, h2, h3, p {
+        margin: 0;
+      }
+
+      .document {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .hero {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 22px 24px;
+        background: linear-gradient(135deg, #eff6ff 0%, #ffffff 58%, #f8fafc 100%);
+      }
+
+      .eyebrow {
+        color: var(--brand);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hero h1 {
+        margin-top: 8px;
+        font-size: 25px;
+        line-height: 1.15;
+      }
+
+      .hero p {
+        margin-top: 10px;
+        max-width: 620px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .stat {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.88);
+        padding: 12px 14px;
+      }
+
+      .stat .label {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .stat .value {
+        margin-top: 6px;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .section h2 {
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .section > p {
+        color: var(--muted);
+      }
+
+      .callout {
+        border-left: 4px solid var(--brand);
+        border-radius: 12px;
+        background: var(--surface-alt);
+        padding: 12px 14px;
+      }
+
+      .callout strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+
+      thead th {
+        background: #eef2f7;
+        color: var(--neutral);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      th, td {
+        padding: 9px 10px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+        text-align: left;
+      }
+
+      tbody tr:nth-child(even) td {
+        background: #fbfcfe;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .chip {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .chip.success {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+
+      .chip.warn {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+
+      .chip.danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      .chip.neutral {
+        background: var(--neutral-soft);
+        color: var(--neutral);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px 15px;
+        background: var(--surface);
+      }
+
+      .panel h3 {
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .list {
+        margin: 0;
+        padding-left: 17px;
+      }
+
+      .list li + li {
+        margin-top: 6px;
+      }
+
+      .mono {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 10px;
+      }
+
+      .foot {
+        color: var(--muted);
+        font-size: 10px;
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="document">
+      <section class="hero">
+        <div class="eyebrow">Catapult Galileo</div>
+        <h1>API Endpoints & Types v5</h1>
+        <p>
+          This revision documents the updated agent call status model and the
+          additional company-page fields currently available in app data but not
+          consistently exposed in the interface.
+        </p>
+        <div class="hero-grid">
+          <div class="stat">
+            <div class="label">Lifecycle States</div>
+            <div class="value">6 statuses</div>
+          </div>
+          <div class="stat">
+            <div class="label">Negotiation Outcomes</div>
+            <div class="value">6 outcomes</div>
+          </div>
+          <div class="stat">
+            <div class="label">Company Metadata</div>
+            <div class="value">4 field groups</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Status Model Change</h2>
+        <p>
+          Agent lifecycle and negotiation outcome are now treated as separate concepts.
+          Lifecycle covers call progress. Outcome describes the result once the call is completed.
+        </p>
+        <div class="callout">
+          <strong>Important acceptance rule</strong>
+          Event acceptance should only unlock when an agent is
+          <span class="mono">COMPLETED</span> and the outcome is
+          <span class="mono">RATE_CONFIRMED</span>, shown in UI as
+          <strong style="display:inline; margin:0;">Deal Closed</strong>.
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Agent Lifecycle Status</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Internal Enum</th>
+              <th>UI Label</th>
+              <th>Meaning</th>
+              <th>UI Tone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">INITIALIZING</td>
+              <td>Queued</td>
+              <td>Worker created before the outbound call is placed.</td>
+              <td><span class="chip neutral">Neutral</span></td>
+            </tr>
+            <tr>
+              <td class="mono">RINGING</td>
+              <td>Ringing</td>
+              <td>Twilio call placed and waiting for answer.</td>
+              <td><span class="chip warn">Live</span></td>
+            </tr>
+            <tr>
+              <td class="mono">ACTIVE</td>
+              <td>Negotiating</td>
+              <td>Call connected and Galileo is actively negotiating.</td>
+              <td><span class="chip warn">Live</span></td>
+            </tr>
+            <tr>
+              <td class="mono">WRAPPING_UP</td>
+              <td>Finalizing</td>
+              <td>Reserved for end-of-call wrap-up. Defined but not currently triggered.</td>
+              <td><span class="chip neutral">Neutral</span></td>
+            </tr>
+            <tr>
+              <td class="mono">COMPLETED</td>
+              <td>Completed</td>
+              <td>Call ended and post-call analysis completed normally.</td>
+              <td><span class="chip success">Success</span></td>
+            </tr>
+            <tr>
+              <td class="mono">FAILED</td>
+              <td>Failed</td>
+              <td>Twilio failure or unrecoverable call error.</td>
+              <td><span class="chip danger">Error</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section">
+        <h2>Negotiation Outcomes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Internal Enum</th>
+              <th>UI Label</th>
+              <th>Meaning</th>
+              <th>Result Class</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">RATE_CONFIRMED</td>
+              <td>Deal Closed</td>
+              <td>Supplier confirmed commercial terms and the deal can be accepted.</td>
+              <td><span class="chip success">Acceptable</span></td>
+            </tr>
+            <tr>
+              <td class="mono">CALLBACK_REQUESTED</td>
+              <td>Callback requested</td>
+              <td>Supplier asked Galileo to reconnect later.</td>
+              <td><span class="chip neutral">Follow-up</span></td>
+            </tr>
+            <tr>
+              <td class="mono">NO_AVAILABILITY</td>
+              <td>No Availability</td>
+              <td>Requested room inventory was unavailable for the target dates.</td>
+              <td><span class="chip neutral">Closed Out</span></td>
+            </tr>
+            <tr>
+              <td class="mono">ESCALATED_TO_HUMAN</td>
+              <td>Moved to higher up</td>
+              <td>Supplier transferred the call to a manager or more senior owner.</td>
+              <td><span class="chip neutral">Escalated</span></td>
+            </tr>
+            <tr>
+              <td class="mono">FAILED</td>
+              <td>Failure</td>
+              <td>Generic negotiation failure after the call completed.</td>
+              <td><span class="chip danger">Error</span></td>
+            </tr>
+            <tr>
+              <td class="mono">TIMED_OUT</td>
+              <td>Timed Out</td>
+              <td>Call reached the maximum negotiation duration.</td>
+              <td><span class="chip danger">Error</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section">
+        <h2>Company Page Data Not Fully Surfaced</h2>
+        <p>
+          The company experience already has additional data available in
+          <span class="mono">dashboard-data.ts</span> that can be documented and exposed in future UI revisions.
+        </p>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Directory Card Fields</h3>
+            <ul class="list">
+              <li><span class="mono">totalSavings</span>: aggregate savings shown on company cards.</li>
+              <li><span class="mono">bookings</span>: booking volume shown on company cards.</li>
+              <li><span class="mono">type</span>: hotel or airline classification used for iconography.</li>
+              <li><span class="mono">initials</span>: avatar token displayed in card and detail views.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Supplier Profile Fields</h3>
+            <ul class="list">
+              <li><span class="mono">displayName</span>: richer supplier identity, for example Lumina Hospitality Group.</li>
+              <li><span class="mono">description</span>: long-form supplier summary used on the detail page.</li>
+              <li><span class="mono">id</span>: routing and lookup key for the company profile.</li>
+              <li><span class="mono">type</span>: shared with icon treatment and page labeling.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Location Analytics Data</h3>
+            <ul class="list">
+              <li>Per-location lifetime savings and delta values.</li>
+              <li>Scope-specific agreement counts and subtitles.</li>
+              <li>1Y and ALL pricing series for negotiated versus market rates.</li>
+              <li>Event-to-location associations for contextual filtering.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Suggested Exposure</h3>
+            <ul class="list">
+              <li>Show supplier profile metadata in the endpoint spec for company detail responses.</li>
+              <li>Surface location analytics as an optional nested payload for company detail endpoints.</li>
+              <li>Keep directory cards lightweight while documenting extended detail fields separately.</li>
+              <li>Preserve current naming so the frontend can stay aligned with the app model.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="foot">
+        Prepared for the Catapult dashboard workspace. Version 5 reflects the
+        updated agent status labels and the currently under-documented company-page fields.
+      </section>
+    </main>
+  </body>
+</html>
