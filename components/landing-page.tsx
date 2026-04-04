@@ -143,8 +143,8 @@ export function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-                  <div className="space-y-4 rounded-[1.5rem] border border-black/6 bg-white p-4">
+                <div className="mt-5 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+                  <div className="space-y-4 rounded-[1.5rem] border border-black/6 bg-white p-5">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs uppercase tracking-[0.18em] text-ink/45">
@@ -154,7 +154,7 @@ export function LandingPage() {
                           -18.4%
                         </p>
                       </div>
-                      <div className="rounded-full border border-[#bfe0d1] bg-[#edf8f2] px-3 py-2 text-xs font-semibold text-[#14694a]">
+                      <div className="rounded-full border border-[#bfe0d1] bg-[#edf8f2] px-3 py-2 text-xs font-semibold text-[#14694a] whitespace-nowrap">
                         renegotiating
                       </div>
                     </div>
@@ -173,7 +173,7 @@ export function LandingPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-[1.5rem] border border-black/6 bg-white p-4">
+                    <div className="rounded-[1.5rem] border border-black/6 bg-white p-5">
                       <div className="flex items-center justify-between">
                         <p className="text-xs uppercase tracking-[0.18em] text-ink/45">
                           Active vendors
@@ -190,11 +190,11 @@ export function LandingPage() {
                             key={vendor}
                             className="flex items-start justify-between rounded-2xl bg-[#f6f5f1] px-4 py-3"
                           >
-                            <div>
-                              <p className="font-semibold text-ink">{vendor}</p>
-                              <p className="mt-1 text-sm leading-6 text-ink/58">{note}</p>
+                            <div className="min-w-0 flex-1 pr-2">
+                              <p className="font-semibold text-ink truncate">{vendor}</p>
+                              <p className="mt-1 text-sm leading-6 text-ink/58 truncate">{note}</p>
                             </div>
-                            <div className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald" />
+                            <div className="flex-shrink-0 mt-1 h-2.5 w-2.5 rounded-full bg-emerald" />
                           </div>
                         ))}
                       </div>
