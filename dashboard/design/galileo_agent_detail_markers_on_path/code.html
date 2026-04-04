@@ -1,0 +1,294 @@
+<!DOCTYPE html><html class="light" lang="en"><head></head><body class="bg-surface text-on-surface antialiased overflow-hidden">```html
+
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Galileo | Agent Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#001a42",
+                    "on-surface": "#131b2e",
+                    "error": "#ba1a1a",
+                    "primary-container": "#131b2e",
+                    "inverse-on-surface": "#eef0ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-secondary-container": "#fefcff",
+                    "surface": "#faf8ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-tint": "#565e74",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#7c839b",
+                    "on-tertiary-container": "#009668",
+                    "surface-bright": "#faf8ff",
+                    "secondary": "#2170E4",
+                    "primary": "#000000",
+                    "on-primary-fixed": "#131b2e",
+                    "surface-variant": "#dae2fd",
+                    "inverse-surface": "#283044",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#2170e4",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c6c6cd",
+                    "on-tertiary-fixed": "#002113",
+                    "tertiary": "#000000",
+                    "surface-container-high": "#e2e7ff",
+                    "inverse-primary": "#bec6e0",
+                    "surface-container-highest": "#dae2fd",
+                    "on-surface-variant": "#45464d",
+                    "primary-fixed-dim": "#bec6e0",
+                    "primary-fixed": "#dae2fd",
+                    "on-background": "#131b2e",
+                    "outline": "#76777d",
+                    "tertiary-fixed": "#6ffbbe",
+                    "surface-container": "#eaedff",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "tertiary-container": "#002113",
+                    "surface-dim": "#d2d9f4",
+                    "surface-container-low": "#f2f3ff",
+                    "background": "#faf8ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d2d9f4; border-radius: 10px; }
+    </style>
+<!-- SideNavBar (Shared Component) -->
+<aside class="bg-[#131B2E] dark:bg-[#0F172A] h-screen w-64 fixed left-0 top-0 flex flex-col py-6 shadow-[24px_0_48px_rgba(19,27,46,0.08)] z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#2170E4] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg" data-icon="dashboard" style="">dashboard</span>
+</div>
+<div>
+<h1 class="text-2xl font-black tracking-tight text-white" style="">Galileo</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold" style="">Autonomous Procurement</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-white bg-[#2170E4] rounded-lg mx-2 flex items-center px-4 py-3 gap-3 shadow-lg shadow-[#0058BE]/20 transition-transform active:scale-[0.98]" href="#" style="">
+<span class="material-symbols-outlined" data-icon="dashboard" style="">dashboard</span>
+<span class="font-medium text-sm antialiased" style="">Dashboard</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#" style="">
+<span class="material-symbols-outlined" data-icon="analytics" style="">analytics</span>
+<span class="font-medium text-sm antialiased" style="">Market Insights</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#" style="">
+<span class="material-symbols-outlined" data-icon="business" style="">business</span>
+<span class="font-medium text-sm antialiased" style="">Companies</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<div class="space-y-1">
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#" style="">
+<span class="material-symbols-outlined text-xl" data-icon="settings" style="">settings</span>
+<span class="" style="">Settings</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#" style="">
+<span class="material-symbols-outlined text-xl" data-icon="help" style="">help</span>
+<span class="" style="">Support</span>
+</a>
+</div>
+<button class="w-full bg-[#2170E4] hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-lg shadow-[#0058BE]/20" style="">
+<span class="material-symbols-outlined text-sm" data-icon="add" style="">add</span>
+<span class="" style="">New Negotiation</span>
+</button>
+</div>
+</aside>
+<!-- TopAppBar (Shared Component) -->
+<!-- Main Content Canvas -->
+<main class="ml-64 h-screen overflow-y-auto bg-surface">
+<div class="max-w-7xl mx-auto p-8 space-y-8">
+<!-- Hero Header Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+<div class="md:col-span-8">
+<div class="flex items-center gap-3 mb-2">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase" style="">Live Negotiation</span>
+<span class="text-on-surface-variant text-sm flex items-center gap-1" style="">
+<span class="material-symbols-outlined text-sm" style="">location_on</span> London, UK
+                        </span>
+</div>
+<h2 class="text-5xl font-black tracking-tight text-on-surface mb-2" style="">Hilton London</h2>
+<p class="text-on-surface-variant max-w-lg" style="">Autonomous Agent <span class="font-bold text-secondary" style="">Nexus-7</span> is currently processing volume discounts for Q4 corporate travel.</p>
+</div>
+<div class="md:col-span-4 flex justify-end gap-12">
+<div class="text-right">
+<p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-1" style="">Target Price</p>
+<p class="text-4xl font-black text-on-surface tracking-tighter" style="">$220</p>
+</div>
+<div class="text-right">
+<p class="text-[11px] font-bold text-secondary uppercase tracking-widest mb-1" style="">Current Price</p>
+<p class="text-4xl font-black text-secondary tracking-tighter" style="">$245</p>
+</div>
+</div>
+</section>
+<!-- Main Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Chart Section: Comparative Analysis -->
+<div class="lg:col-span-2 bg-surface-container-low rounded-xl p-8 relative overflow-hidden">
+<div class="flex justify-between items-center mb-10"><div><h3 class="text-xl font-bold text-on-surface" style="">Negotiation Price Path</h3><p class="text-sm text-on-surface-variant" style="">Real-time delta vs market benchmark</p></div><div class="flex items-center gap-6"><div class="text-right"><p class="text-[10px] font-bold text-on-tertiary-container uppercase tracking-widest" style="">Savings to Date</p><p class="text-lg font-black text-on-tertiary-container" style="">$55.00</p></div><div class="text-right"><p class="text-[10px] font-bold text-error uppercase tracking-widest" style="">Distance to Goal</p><p class="text-lg font-black text-error" style="">$25.00</p></div><div class="flex flex-col gap-1 ml-4 border-l border-slate-200 pl-4"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="text-[10px] font-bold text-on-surface-variant uppercase" style="">Negotiated Price</span></div><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span><span class="text-[10px] font-bold text-on-surface-variant uppercase" style="">Galileo Price</span></div><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span class="text-[10px] font-bold text-on-surface-variant uppercase" style="">Supplier Offer</span></div></div></div></div>
+<!-- Placeholder for Chart -->
+<div class="h-64 relative px-4 flex flex-col justify-end">
+<!-- Y-Axis Labels -->
+<div class="absolute inset-0 flex flex-col justify-between py-4 pointer-events-none"><div class="flex items-center gap-2 border-t-2 border-slate-300 w-full z-0">
+<span class="text-[11px] font-black text-slate-500 bg-white px-2 rounded-full shadow-sm -ml-2" style="">$300 MARKET PRICE</span>
+</div>
+<div class="flex items-center gap-2 border-t-2 border-dashed border-on-tertiary-container/30 w-full z-10">
+<span class="text-[11px] font-black text-on-tertiary-container bg-tertiary-fixed px-2 rounded-full shadow-sm -ml-2" style="">$220 TARGET</span>
+</div>
+<div class="flex items-center gap-2 border-t border-slate-100 w-full opacity-50">
+<span class="text-[10px] font-bold text-slate-400 bg-surface-container-low pr-2" style="">$200</span>
+</div></div>
+<!-- SVG Line Graph -->
+<div class="absolute inset-0 pt-4 pb-0 flex items-end">
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100"><defs>
+<linearGradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:rgb(78, 222, 163);stop-opacity:0.3"></stop>
+<stop offset="100%" style="stop-color:rgb(78, 222, 163);stop-opacity:0"></stop>
+</linearGradient>
+</defs>
+<!-- Market Price Baseline -->
+<line stroke="#cbd5e1" stroke-dasharray="4" stroke-width="1" x1="0" x2="100" y1="0" y2="0"></line>
+<!-- Shaded Savings Area -->
+<path d="M 0 0 L 100 0 L 100 55 L 75 45 L 50 35 Q 25 20, 0 0 Z" fill="url(#grad1)"></path>
+<!-- Negotiated Price Trend Line -->
+<path d="M 0 0 Q 25 20, 50 35 L 75 45 L 100 55" fill="none" stroke="#2170E4" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Current Position Marker -->
+<circle cx="100" cy="55" fill="#2170E4" r="4"></circle>
+<circle cx="100" cy="55" fill="#2170E4" fill-opacity="0.2" r="8"></circle><!-- Galileo Target Marker -->
+<circle cx="75" cy="45" fill="#009668" r="3"></circle>
+<!-- Supplier Offer Marker -->
+<circle cx="25" cy="20" fill="#f59e0b" r="3"></circle></svg>
+</div>
+</div>
+</div>
+<!-- Action & Activity Panel -->
+<div class="lg:col-span-1 space-y-8">
+<!-- CTA Section -->
+<div class="bg-[#131B2E] p-8 rounded-xl text-white shadow-2xl relative overflow-hidden group">
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[#2170E4] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+<h4 class="text-xl font-bold mb-2" style="">Intervene Manually</h4>
+<p class="text-on-primary-container text-sm mb-6" style="">Agent Nexus-7 suggests a 5-minute sync with the vendor's procurement lead to finalize the tier-3 discount.</p>
+<button class="w-full py-4 bg-white text-[#131B2E] text-sm font-black rounded-lg hover:bg-slate-100 transition-all active:scale-95 flex items-center justify-center gap-3" style="">
+<span class="material-symbols-outlined" style="">call</span>
+                            Jump into Call
+                        </button>
+</div>
+<!-- Activity Stream -->
+<div class="bg-surface-container-lowest rounded-xl p-6 border border-slate-100">
+<h4 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-6" style="">Activity Stream</h4>
+<div class="space-y-6">
+<!-- Update Item -->
+<div class="relative pl-6 before:absolute before:left-0 before:top-2 before:bottom-[-24px] before:w-[2px] before:bg-slate-100 last:before:hidden">
+<div class="absolute left-[-4px] top-1 w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-white"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="text-sm font-bold text-on-surface" style="">$245.00</span>
+<span class="text-[10px] font-bold text-on-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded-full" style="">Saved 5.2%</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-on-surface-variant">
+<span class="text-on-tertiary-container font-bold flex items-center" style="">-$15.00</span>
+<span class="" style="">from previous bid</span>
+<span class="ml-auto text-slate-300" style="">2m ago</span>
+</div>
+</div>
+<!-- Update Item -->
+<div class="relative pl-6 before:absolute before:left-0 before:top-2 before:bottom-[-24px] before:w-[2px] before:bg-slate-100 last:before:hidden">
+<div class="absolute left-[-4px] top-1 w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="text-sm font-bold text-on-surface" style="">$260.00</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-on-surface-variant">
+<span class="text-on-error font-bold bg-error-container px-1 rounded" style="">+$10.00</span>
+<span class="" style="">Counter-offer received</span>
+<span class="ml-auto text-slate-300" style="">1h ago</span>
+</div>
+</div>
+<!-- Update Item -->
+<div class="relative pl-6">
+<div class="absolute left-[-4px] top-1 w-2.5 h-2.5 rounded-full bg-slate-300 ring-4 ring-white"></div>
+<div class="flex justify-between items-start mb-1">
+<span class="text-sm font-bold text-on-surface" style="">$250.00</span>
+<span class="text-[10px] font-bold text-on-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded-full" style="">Saved 2.1%</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-on-surface-variant">
+<span class="text-on-tertiary-container font-bold" style="">-$8.00</span>
+<span class="" style="">Initial agent push</span>
+<span class="ml-auto text-slate-300" style="">3h ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Transcript Section -->
+<section class="bg-surface-container-highest/30 rounded-2xl p-8 border border-slate-200/50 backdrop-blur-sm">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-xl font-bold text-on-surface" style="">Negotiation Transcript</h3>
+<p class="text-sm text-on-surface-variant" style="">Latest interaction between Nexus-7 and Vendor Portal</p>
+</div>
+<button class="px-6 py-2.5 bg-surface-container-lowest text-on-surface text-sm font-bold rounded-lg border border-slate-200 hover:bg-white transition-all shadow-sm" style="">
+                        Expand to Full Transcript
+                    </button>
+</div>
+<div class="space-y-4 max-w-4xl">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-[#131B2E] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-sm" style="">smart_toy</span>
+</div>
+<div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 flex-1">
+<p class="text-sm leading-relaxed text-on-surface" style="">"Based on our projected volume of 450 room nights for Q4, we are seeking a rate closer to the competitive benchmark of $220. Your current offer of $260 does not align with the loyalty tiered status Galileo members typically receive."</p>
+<span class="text-[10px] text-slate-400 mt-2 block font-medium uppercase tracking-tight" style="">Agent Nexus-7 • 14:02:11</span>
+</div>
+</div>
+<div class="flex gap-4 flex-row-reverse">
+<div class="w-10 h-10 rounded-full bg-[#2170E4] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-sm" style="">person</span>
+</div>
+<div class="bg-secondary/5 p-4 rounded-2xl rounded-tr-none shadow-sm border border-secondary/10 flex-1 text-right">
+<p class="text-sm leading-relaxed text-on-surface" style="">"We acknowledge the volume, however, our current occupancy for the requested period is already at 82%. We can offer $245 as a final automated concession, or we can move this to a direct line for further discussion."</p>
+<span class="text-[10px] text-slate-400 mt-2 block font-medium uppercase tracking-tight" style="">Hilton Portal Rep • 14:02:45</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+```</body></html>

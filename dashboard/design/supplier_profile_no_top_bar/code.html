@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexus-Procure | Lumina Hospitality Group Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#001a42",
+                      "primary-fixed": "#dae2fd",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-surface": "#131b2e",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#6ffbbe",
+                      "surface-container-low": "#f2f3ff",
+                      "surface": "#faf8ff",
+                      "surface-container-highest": "#dae2fd",
+                      "background": "#faf8ff",
+                      "on-tertiary-fixed": "#002113",
+                      "error": "#ba1a1a",
+                      "surface-container": "#eaedff",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#2170e4",
+                      "on-background": "#131b2e",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#fefcff",
+                      "inverse-surface": "#283044",
+                      "tertiary-container": "#002113",
+                      "surface-tint": "#565e74",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#000000",
+                      "on-tertiary-container": "#009668",
+                      "on-surface-variant": "#45464d",
+                      "surface-bright": "#faf8ff",
+                      "outline-variant": "#c6c6cd",
+                      "on-primary-container": "#7c839b",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#e2e7ff",
+                      "secondary-fixed": "#d8e2ff",
+                      "inverse-on-surface": "#eef0ff",
+                      "primary-fixed-dim": "#bec6e0",
+                      "primary-container": "#131b2e",
+                      "outline": "#76777d",
+                      "on-primary-fixed": "#131b2e",
+                      "primary": "#000000",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#dae2fd",
+                      "surface-dim": "#d2d9f4",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-secondary-fixed-variant": "#004395",
+                      "secondary": "#0058be",
+                      "tertiary-fixed-dim": "#4edea3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Inter"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- SideNavBar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-screen w-64 z-50 bg-[#131B2E] dark:bg-[#0F172A] flex flex-col p-6 shadow-[24px_0_48px_rgba(19,27,46,0.08)] font-['Inter'] text-sm font-medium antialiased py-6">
+<div class="px-6 mb-10"><div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#2170E4] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg">dashboard</span>
+</div>
+<div>
+<h1 class="text-2xl font-black tracking-tight text-white">Galileo</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Autonomous Procurement</p>
+</div>
+</div></div>
+<div class="flex-1 space-y-2"><a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium text-sm antialiased">Dashboard</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-medium text-sm antialiased">Market Insights</span>
+</a>
+<a class="text-white bg-[#2170E4] rounded-lg mx-2 flex items-center px-4 py-3 gap-3 shadow-lg shadow-[#0058BE]/20 transition-transform active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-medium text-sm antialiased">Companies</span>
+</a></div>
+<div class="mt-auto space-y-6 px-4"><div class="space-y-1 mb-4">
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span>Settings</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl">help</span>
+<span>Support</span>
+</a>
+</div>
+<button class="w-full bg-[#2170E4] hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-lg shadow-[#0058BE]/20">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Negotiation</span>
+</button></div>
+</nav>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Content Area -->
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+<!-- Hero Profile Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+<div class="lg:col-span-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
+<div class="relative">
+<div class="w-32 h-32 rounded-3xl bg-primary-container flex items-center justify-center shadow-2xl overflow-hidden">
+<img alt="Lumina Logo" class="w-full h-full object-cover opacity-90" data-alt="luxury boutique hotel lobby with elegant marble floors, warm ambient lighting, and minimalist furniture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfoGEJFvfDqsGOerQl4Ri_Y6er13HTWrhHSOvL2Qsmuo5rk4jsRgcJ9N5KwYbkWgFUMUNaZv8kEz6Yr_pE3m1bAxup4JrWnHnwvrw6SoWONmTRMdbsrEIfLDWbUBDeJgmfePMPPyX-fhnbVx0ObAl9ntLzhCtx-IzuxonAz-HZzHwXpjj6JZb4Bu-iwPnrTAeFE7xj4UKNpqFQ0ON0Vcxh3tcncWaCp555hBLNPNJyh8-jxs1Ea-dzSOByQgx6eNTgzYcJE9thAVjl"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-tertiary-fixed-dim text-on-tertiary-fixed p-1.5 rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface">Lumina Hospitality Group</h1>
+<span class="px-3 py-1 bg-surface-container-highest text-secondary text-[10px] font-black uppercase tracking-widest rounded-full">Preferred Tier I</span>
+</div>
+<p class="text-on-surface-variant max-w-xl text-sm leading-relaxed">Global leader in premium corporate stays and sustainable event infrastructure across 42 countries.</p>
+<div class="flex flex-wrap gap-4 pt-2">
+<div class="flex items-center gap-2 text-sm text-secondary font-semibold">
+<span class="material-symbols-outlined text-base" data-icon="call">call</span>
+<span>+1-800-LUMINA</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-base" data-icon="language">language</span>
+<span>lumina-hospitality.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-base" data-icon="location_on">location_on</span>
+<span>New York, NY</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Big Savings Number -->
+<div class="lg:col-span-4 bg-surface-container-low p-8 rounded-3xl flex flex-col justify-center relative overflow-hidden group">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-secondary/5 rounded-full group-hover:scale-110 transition-transform duration-700"></div>
+<span class="text-xs font-bold text-on-primary-container uppercase tracking-widest mb-1">Total Lifetime Savings</span>
+<div class="flex items-baseline gap-2">
+<span class="text-[3.5rem] font-extrabold leading-none tracking-tighter text-on-surface">$1.2M</span>
+<span class="text-on-tertiary-container font-bold text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                            14%
+                        </span>
+</div>
+<p class="text-xs text-on-surface-variant mt-2 font-medium">Negotiated across 14 master service agreements.</p>
+</div>
+</section>
+<!-- Main Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Pricing Trends Chart -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/15 flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-lg font-bold">Pricing Trends</h3>
+<p class="text-xs text-on-surface-variant mt-1">Seasonal fluctuation &amp; autonomous forecast</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full">1Y</button>
+<button class="px-3 py-1 bg-secondary text-white text-[10px] font-bold rounded-full">ALL</button>
+</div>
+</div>
+<!-- SVG Chart Mock -->
+<div class="flex-1 w-full relative">
+<svg class="w-full h-full overflow-visible" viewbox="0 0 800 200">
+<!-- Grid Lines -->
+<line class="text-outline-variant/20" stroke="currentColor" stroke-width="1" x1="0" x2="800" y1="0" y2="0"></line>
+<line class="text-outline-variant/20" stroke="currentColor" stroke-width="1" x1="0" x2="800" y1="66" y2="66"></line>
+<line class="text-outline-variant/20" stroke="currentColor" stroke-width="1" x1="0" x2="800" y1="133" y2="133"></line>
+<line class="text-outline-variant/20" stroke="currentColor" stroke-width="1" x1="0" x2="800" y1="200" y2="200"></line>
+<!-- Main Data Line -->
+<path d="M0 150 Q 100 130 200 160 T 400 80 T 600 110 T 800 40" fill="none" stroke="url(#gradient-line)" stroke-linecap="round" stroke-width="4"></path>
+<path d="M0 150 Q 100 130 200 160 T 400 80 T 600 110 T 800 40 V 200 H 0 Z" fill="url(#gradient-fill)"></path>
+<defs>
+<lineargradient id="gradient-line" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0%" stop-color="#0058BE"></stop>
+<stop offset="100%" stop-color="#2170E4"></stop>
+</lineargradient>
+<lineargradient id="gradient-fill" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0058BE" stop-opacity="0.1"></stop>
+<stop offset="100%" stop-color="#0058BE" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Highlight Points -->
+<circle cx="400" cy="80" fill="#0058BE" r="6"></circle>
+<circle cx="400" cy="80" fill="#0058BE" fill-opacity="0.2" r="12"></circle>
+</svg>
+<!-- Tooltip Mock -->
+<div class="absolute top-10 left-1/2 -translate-x-1/2 glass-card p-3 rounded-xl border border-white shadow-xl">
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tighter">Peak Season Peak</p>
+<p class="text-sm font-black">$485 <span class="text-[10px] font-medium">/ night avg</span></p>
+</div>
+</div>
+<div class="flex justify-between mt-6 text-[10px] font-bold text-on-primary-container uppercase tracking-widest px-2">
+<span>JAN</span><span>MAR</span><span>MAY</span><span>JUL</span><span>SEP</span><span>NOV</span>
+</div>
+</div>
+<!-- Best Times to Visit (Heatmap) -->
+<div class="bg-surface-container-high p-8 rounded-3xl shadow-sm flex flex-col">
+<h3 class="text-lg font-bold mb-1">Booking Window</h3>
+<p class="text-xs text-on-surface-variant mb-8">Optimal price-to-availability ratio</p>
+<div class="grid grid-cols-4 gap-3 flex-1">
+<!-- Heatmap Items -->
+<div class="bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center p-2 opacity-40">
+<span class="text-[10px] font-bold">JAN</span>
+<span class="material-symbols-outlined text-lg mt-1" data-icon="ac_unit">ac_unit</span>
+</div>
+<div class="bg-tertiary-fixed-dim rounded-xl flex flex-col items-center justify-center p-2 shadow-sm border border-tertiary-fixed">
+<span class="text-[10px] font-bold">FEB</span>
+<span class="material-symbols-outlined text-lg mt-1" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="bg-secondary-fixed rounded-xl flex flex-col items-center justify-center p-2 opacity-70">
+<span class="text-[10px] font-bold">MAR</span>
+<span class="material-symbols-outlined text-lg mt-1" data-icon="trending_up">trending_up</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center p-2 opacity-40">
+<span class="text-[10px] font-bold">APR</span>
+<span class="material-symbols-outlined text-lg mt-1" data-icon="water_drop">water_drop</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center p-2 opacity-40">
+<span class="text-[10px] font-bold">MAY</span>
+</div>
+<div class="bg-secondary-fixed-dim rounded-xl flex flex-col items-center justify-center p-2">
+<span class="text-[10px] font-bold">JUN</span>
+</div>
+<div class="bg-tertiary-fixed-dim rounded-xl flex flex-col items-center justify-center p-2 shadow-sm border border-tertiary-fixed">
+<span class="text-[10px] font-bold">JUL</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center p-2 opacity-40">
+<span class="text-[10px] font-bold">AUG</span>
+</div>
+<div class="bg-secondary-fixed rounded-xl flex flex-col items-center justify-center p-2 opacity-70">
+<span class="text-[10px] font-bold">SEP</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center p-2 opacity-40">
+<span class="text-[10px] font-bold">OCT</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center p-2 opacity-40">
+<span class="text-[10px] font-bold">NOV</span>
+</div>
+<div class="bg-tertiary-fixed-dim rounded-xl flex flex-col items-center justify-center p-2 shadow-sm border border-tertiary-fixed">
+<span class="text-[10px] font-bold">DEC</span>
+</div>
+</div>
+<div class="mt-8 flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-sm bg-tertiary-fixed-dim"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Best Deal</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-sm bg-surface-container-lowest"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Peak Price</span>
+</div>
+</div>
+</div>
+<!-- Previous Negotiations -->
+<div class="lg:col-span-3 bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/15">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-lg font-bold">Previous Negotiations</h3>
+<p class="text-xs text-on-surface-variant mt-1">Autonomous audit history</p>
+</div>
+<button class="text-secondary text-xs font-bold flex items-center gap-1 hover:underline">
+                            View All Archive
+                            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-separate border-spacing-y-4">
+<thead>
+<tr class="text-[10px] font-black text-on-primary-container uppercase tracking-[0.2em]">
+<th class="pb-2 px-4">Contract ID</th>
+<th class="pb-2 px-4">Focus Region</th>
+<th class="pb-2 px-4">Duration</th>
+<th class="pb-2 px-4">Negotiated Rate</th>
+<th class="pb-2 px-4">Net Savings</th>
+<th class="pb-2 px-4">Status</th>
+</tr>
+</thead>
+<tbody>
+<!-- Negotiation Row 1 -->
+<tr class="group hover:bg-surface-container-low transition-colors rounded-2xl">
+<td class="py-5 px-4 font-bold text-sm rounded-l-2xl">LH-2023-0492</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="public">public</span>
+<span class="text-sm font-medium">EMEA Corporate</span>
+</div>
+</td>
+<td class="py-5 px-4 text-sm text-on-surface-variant">24 Months</td>
+<td class="py-5 px-4 font-bold text-sm text-on-surface">$242 <span class="text-[10px] text-slate-400">/avg</span></td>
+<td class="py-5 px-4">
+<span class="text-on-tertiary-container font-bold text-sm">+$420,000</span>
+</td>
+<td class="py-5 px-4 rounded-r-2xl">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold rounded-full">ACTIVE</span>
+</td>
+</tr>
+<!-- Negotiation Row 2 -->
+<tr class="group hover:bg-surface-container-low transition-colors rounded-2xl">
+<td class="py-5 px-4 font-bold text-sm rounded-l-2xl">LH-2022-0115</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="apartment">apartment</span>
+<span class="text-sm font-medium">North America</span>
+</div>
+</td>
+<td class="py-5 px-4 text-sm text-on-surface-variant">12 Months</td>
+<td class="py-5 px-4 font-bold text-sm text-on-surface">$310 <span class="text-[10px] text-slate-400">/avg</span></td>
+<td class="py-5 px-4">
+<span class="text-on-tertiary-container font-bold text-sm">+$285,000</span>
+</td>
+<td class="py-5 px-4 rounded-r-2xl">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full">ARCHIVED</span>
+</td>
+</tr>
+<!-- Negotiation Row 3 -->
+<tr class="group hover:bg-surface-container-low transition-colors rounded-2xl">
+<td class="py-5 px-4 font-bold text-sm rounded-l-2xl">LH-2021-0882</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="flight_takeoff">flight_takeoff</span>
+<span class="text-sm font-medium">APAC Logistics</span>
+</div>
+</td>
+<td class="py-5 px-4 text-sm text-on-surface-variant">36 Months</td>
+<td class="py-5 px-4 font-bold text-sm text-on-surface">$185 <span class="text-[10px] text-slate-400">/avg</span></td>
+<td class="py-5 px-4">
+<span class="text-on-tertiary-container font-bold text-sm">+$512,000</span>
+</td>
+<td class="py-5 px-4 rounded-r-2xl">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full">ARCHIVED</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

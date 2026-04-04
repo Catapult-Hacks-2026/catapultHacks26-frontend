@@ -1,0 +1,271 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Galileo Dashboard | Sovereign Navigator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#001a42",
+                      "on-surface": "#131b2e",
+                      "error": "#ba1a1a",
+                      "primary-container": "#131b2e",
+                      "inverse-on-surface": "#eef0ff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "on-secondary-container": "#fefcff",
+                      "surface": "#faf8ff",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "secondary-fixed": "#d8e2ff",
+                      "surface-tint": "#565e74",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#7c839b",
+                      "on-tertiary-container": "#009668",
+                      "surface-bright": "#faf8ff",
+                      "secondary": "#0058be",
+                      "primary": "#000000",
+                      "on-primary-fixed": "#131b2e",
+                      "surface-variant": "#dae2fd",
+                      "inverse-surface": "#283044",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#2170e4",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c6c6cd",
+                      "on-tertiary-fixed": "#002113",
+                      "tertiary": "#000000",
+                      "surface-container-high": "#e2e7ff",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-highest": "#dae2fd",
+                      "on-surface-variant": "#45464d",
+                      "primary-fixed-dim": "#bec6e0",
+                      "primary-fixed": "#dae2fd",
+                      "on-background": "#131b2e",
+                      "outline": "#76777d",
+                      "tertiary-fixed": "#6ffbbe",
+                      "surface-container": "#eaedff",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "tertiary-container": "#002113",
+                      "surface-dim": "#d2d9f4",
+                      "surface-container-low": "#f2f3ff",
+                      "background": "#faf8ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Inter"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- SideNavBar Execution -->
+<aside class="bg-[#131B2E] dark:bg-[#0F172A] h-screen w-64 fixed left-0 top-0 flex flex-col py-6 shadow-[24px_0_48px_rgba(19,27,46,0.08)] z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#2170E4] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg" data-icon="dashboard" style="">dashboard</span>
+</div>
+<div>
+<h1 class="text-2xl font-black tracking-tight text-white" style="">Galileo</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold" style="">Autonomous Procurement</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-white bg-[#2170E4] rounded-lg mx-2 flex items-center px-4 py-3 gap-3 shadow-lg shadow-[#0058BE]/20 transition-transform active:scale-[0.98]" href="#" style="">
+<span class="material-symbols-outlined" data-icon="dashboard" style="">dashboard</span>
+<span class="font-medium text-sm antialiased" style="">Dashboard</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#" style="">
+<span class="material-symbols-outlined" data-icon="analytics" style="">analytics</span>
+<span class="font-medium text-sm antialiased" style="">Market Insights</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#" style="">
+<span class="material-symbols-outlined" data-icon="business" style="">business</span>
+<span class="font-medium text-sm antialiased" style="">Companies</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<div class="space-y-1">
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#" style="">
+<span class="material-symbols-outlined text-xl" data-icon="settings" style="">settings</span>
+<span class="" style="">Settings</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#" style="">
+<span class="material-symbols-outlined text-xl" data-icon="help" style="">help</span>
+<span class="" style="">Support</span>
+</a>
+</div>
+<button class="w-full bg-[#2170E4] hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-lg shadow-[#0058BE]/20" style="">
+<span class="material-symbols-outlined text-sm" data-icon="add" style="">add</span>
+<span class="" style="">New Negotiation</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-12 pb-12 px-10 min-h-screen bg-surface">
+<!-- Hero Section -->
+<section class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="label-sm text-[11px] font-bold text-on-primary-container uppercase tracking-[0.2em] mb-2 block" style="">Fiscal Performance YTD</span>
+<h2 class="display-lg text-6xl font-black tracking-tight text-on-surface leading-none" style="">
+                        $1.2M
+                    </h2>
+<p class="text-on-surface-variant mt-2 flex items-center gap-2" style="">
+<span class="text-on-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded-full text-xs font-bold" style="">14.2% Optimization</span>
+                        Total Money Saved via Galileo Intelligence
+                    </p>
+</div>
+<div class="flex gap-4">
+<button class="bg-gradient-to-br from-secondary to-secondary-container text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-secondary/20 hover:scale-[1.02] transition-all flex items-center gap-3 active:scale-95" style="">
+<span class="material-symbols-outlined" data-icon="bolt" data-weight="fill" style="font-variation-settings: &quot;FILL&quot; 1;">bolt</span><div>New Negotiation</div></button>
+</div>
+</div>
+</section>
+<!-- Active Agents Table -->
+<section class="bg-surface-container-highest rounded-3xl overflow-hidden shadow-xl shadow-on-surface/5">
+<div class="p-8 border-b border-outline-variant/10 flex items-center justify-between">
+<div>
+<h3 class="text-2xl font-bold text-on-surface" style="">Active Procurement Agents</h3>
+<p class="text-on-surface-variant" style="">Live Galileo autonomous negotiations across travel sectors</p>
+</div>
+<button class="p-2 hover:bg-white rounded-full transition-colors" style="">
+<span class="material-symbols-outlined" data-icon="filter_list" style="">filter_list</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-[11px] font-black uppercase tracking-[0.15em] text-on-primary-container">
+<th class="px-8 py-6" style="">Company</th>
+<th class="px-8 py-6" style="">Target Price</th>
+<th class="px-8 py-6" style="">Negotiation Price</th>
+<th class="px-8 py-6" style="">Status</th>
+<th class="px-8 py-6" style="">Action</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<!-- Hilton Row -->
+<tr class="group hover:bg-surface-container transition-colors border-t border-outline-variant/5">
+<td class="px-8 py-6" style="">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center">
+<img alt="Hilton Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDro-osSFc59YlmssplIP_0Mmc-yvUxncEgp895B9v5MA4ij9TrdO-dLgrY3e1wa7xmN1GD-GPe_7msszEKysppOJoBrOEm-eAipSG4bTTDdib9QmeSCGJ2G7e30K9MFwYGz0Q0IfrPMP2Jaty3Kv4VgVOqhUGNykTIbd9hXXetKWjIE3Bj83gMEhIZOJnheoK3bisqODPlXQGf2NHl_L64txRcNR6QPPrBAnWHJ-5MEbXZBjlM61yrBA3DcQ5Fjz91EubjZcaXjNWB" style="">
+</div>
+<div>
+<div class="font-bold text-on-surface text-base" style="">Hilton Worldwide</div>
+<div class="text-xs text-on-surface-variant" style="">Hospitality / Corporate</div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 font-semibold text-on-surface" style="">$185.00</td>
+<td class="px-8 py-6" style="">
+<span class="font-bold text-secondary" style="">$192.50</span>
+<span class="text-[10px] text-on-surface-variant ml-1" style="">(-3.4%)</span>
+</td>
+<td class="px-8 py-6" style="">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-xs font-bold" style="">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                                    Negotiating
+                                </span>
+</td>
+<td class="px-8 py-6" style="">
+<button class="text-on-surface-variant hover:text-secondary font-bold text-xs uppercase tracking-widest transition-colors" style="">Details</button>
+</td>
+</tr>
+<!-- Delta Row -->
+<tr class="group hover:bg-surface-container transition-colors border-t border-outline-variant/5">
+<td class="px-8 py-6" style="">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center">
+<img alt="Delta Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCueF187ov2cU807Te4R6Sd6yHPPQVQ5COMT_0jwe2EhxZlcawnNSqDEq-cZD2rqhriOJ_gLYaFzc6Bp5dOVhmgZ-VFxLgrtuKcQKXl-YfZyMXrySwZCV7jEy1Mfajp7wIT1zgewbt065bFFPT5t49pHL3fSXbZ1-quD3mcKdJNtYF20mDd9lPNNk94iZt--qB7dvJLJpYMkVxjQ-kBkhLvyhusqfz0tXlswJPcCObQ5RQ8vH9U5r1Ws9K_Hir_szSNXYi_bzOfsCm-" style="">
+</div>
+<div>
+<div class="font-bold text-on-surface text-base" style="">Delta Air Lines</div>
+<div class="text-xs text-on-surface-variant" style="">Aviation / Logistics</div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 font-semibold text-on-surface" style="">$450.00</td>
+<td class="px-8 py-6" style="">
+<span class="font-bold text-on-surface" style="">$455.00</span>
+<span class="text-[10px] text-on-surface-variant ml-1" style="">(-1.1%)</span>
+</td>
+<td class="px-8 py-6" style="">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold" style="">
+                                    Reviewing
+                                </span>
+</td>
+<td class="px-8 py-6" style="">
+<button class="text-on-surface-variant hover:text-secondary font-bold text-xs uppercase tracking-widest transition-colors" style="">Details</button>
+</td>
+</tr>
+<!-- Marriott Row -->
+<tr class="group hover:bg-surface-container transition-colors border-t border-outline-variant/5">
+<td class="px-8 py-6" style="">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center">
+<img alt="Marriott Logo" class="w-8 h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvjJRnTiJd-Jp-EKLr-Lb0Pt_OMlpixwaNnfbVv-nKJwsDo4jYXlQXZtnQLiXufuaohF-tb2UQV_2t6BnVyMN4PVKgy7SkZmf4xYyyJ5r5Lg27-iaAtCIg0To35FglSCp8tCsGBqQahVa9vAZht-gBHi4dZUu3tQR2M40mdiEzh_qiKT1NR7JfImK4cO1bRaeaJg5epLecD3GMtuRQemSanYQzd7uryV11lzmAZn0lKouPEn2kNMkCrQ6OfVwg7HEMI96OvDiavVht" style="">
+</div>
+<div>
+<div class="font-bold text-on-surface text-base" style="">Marriott Intl.</div>
+<div class="text-xs text-on-surface-variant" style="">Hospitality / Luxury</div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6 font-semibold text-on-surface" style="">$210.00</td>
+<td class="px-8 py-6" style="">
+<span class="font-bold text-on-tertiary-container" style="">$208.00</span>
+<span class="text-[10px] text-on-tertiary-container ml-1" style="">(+0.9%)</span>
+</td>
+<td class="px-8 py-6" style="">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-xs font-bold" style="">
+                                    Optimized
+                                </span>
+</td>
+<td class="px-8 py-6" style="">
+<button class="text-on-surface-variant hover:text-secondary font-bold text-xs uppercase tracking-widest transition-colors" style="">Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer -->
+<div class="px-8 py-6 bg-surface-container-low flex items-center justify-between border-t border-outline-variant/5">
+<p class="text-xs text-on-surface-variant font-medium" style="">Showing 3 of 12 active Galileo cycles</p>
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:text-secondary transition-colors font-bold text-xs uppercase tracking-widest" style="">View All Agents</button>
+</div>
+</div>
+</section>
+</main>
+</body></html>

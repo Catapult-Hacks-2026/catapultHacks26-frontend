@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexus-Procure | Market Landscape Insights</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#001a42",
+                      "primary-fixed": "#dae2fd",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-surface": "#131b2e",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#6ffbbe",
+                      "surface-container-low": "#f2f3ff",
+                      "surface": "#faf8ff",
+                      "surface-container-highest": "#dae2fd",
+                      "background": "#faf8ff",
+                      "on-tertiary-fixed": "#002113",
+                      "error": "#ba1a1a",
+                      "surface-container": "#eaedff",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#2170e4",
+                      "on-background": "#131b2e",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#fefcff",
+                      "inverse-surface": "#283044",
+                      "tertiary-container": "#002113",
+                      "surface-tint": "#565e74",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#000000",
+                      "on-tertiary-container": "#009668",
+                      "on-surface-variant": "#45464d",
+                      "surface-bright": "#faf8ff",
+                      "outline-variant": "#c6c6cd",
+                      "on-primary-container": "#7c839b",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#e2e7ff",
+                      "secondary-fixed": "#d8e2ff",
+                      "inverse-on-surface": "#eef0ff",
+                      "primary-fixed-dim": "#bec6e0",
+                      "primary-container": "#131b2e",
+                      "outline": "#76777d",
+                      "on-primary-fixed": "#131b2e",
+                      "primary": "#000000",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#dae2fd",
+                      "surface-dim": "#d2d9f4",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-secondary-fixed-variant": "#004395",
+                      "secondary": "#0058be",
+                      "tertiary-fixed-dim": "#4edea3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Inter"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- SideNavBar -->
+<aside class="bg-[#131B2E] dark:bg-[#0F172A] h-screen w-64 fixed left-0 top-0 flex flex-col py-6 shadow-[24px_0_48px_rgba(19,27,46,0.08)] z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#2170E4] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg">dashboard</span>
+</div>
+<div>
+<h1 class="text-2xl font-black tracking-tight text-white">Galileo</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Autonomous Procurement</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium text-sm antialiased">Dashboard</span>
+</a>
+<a class="text-white bg-[#2170E4] rounded-lg mx-2 flex items-center px-4 py-3 gap-3 shadow-lg shadow-[#0058BE]/20 transition-transform active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-medium text-sm antialiased">Market Insights</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-medium text-sm antialiased">Companies</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<div class="space-y-1">
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="">Settings</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl">help</span>
+<span class="">Support</span>
+</a>
+</div>
+<button class="w-full bg-[#2170E4] hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-lg shadow-[#0058BE]/20">
+<span class="material-symbols-outlined text-sm">add</span>
+<span class="">New Negotiation</span>
+</button>
+</div></aside>
+<!-- Main Canvas -->
+<main class="ml-64 pt-12 pb-12 px-10 min-h-screen bg-surface">
+<!-- Content Area -->
+<div class="p-8 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-8">
+<!-- Hero Title -->
+<section>
+<span class="text-[10px] font-black tracking-[0.3em] text-secondary uppercase mb-2 block">Autonomous Landscape</span>
+<h2 class="text-6xl font-black text-on-surface tracking-tighter leading-none">Market Insights</h2>
+</section>
+<!-- Main Insights Container (Asymmetric Layout) -->
+<div class="grid grid-cols-12 gap-8 items-start flex-1">
+<!-- Chat Interface (Col 1-12) -->
+<div class="flex flex-col gap-6 h-full min-h-[750px] col-span-12">
+<div class="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-8 pr-4">
+<!-- User Prompt -->
+<div class="flex justify-end">
+<div class="max-w-[80%] bg-surface-container-high p-6 rounded-3xl rounded-tr-none shadow-sm">
+<p class="text-sm font-medium leading-relaxed text-on-surface">
+                                What's the best time for a 100-person company outing to Las Vegas this year?
+                            </p>
+<span class="text-[10px] text-on-surface-variant mt-3 block font-semibold uppercase tracking-wider">10:42 AM • Alex Thompson</span>
+</div>
+</div>
+<!-- AI Response -->
+<div class="flex flex-col gap-6">
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-blue-400 shadow-lg">
+<span class="material-symbols-outlined text-sm" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="flex-1">
+<div class="bg-surface-container-lowest p-8 rounded-3xl rounded-tl-none shadow-[0px_24px_48px_rgba(19,27,46,0.04)] border border-surface-container">
+<p class="text-sm font-medium leading-relaxed text-on-surface mb-6">
+                                        Based on autonomous data modeling of Vegas convention calendars, flight volatility, and local hospitality pricing, I recommend scheduling for <strong class="text-secondary">October 22-26</strong>.
+                                    </p>
+<!-- The Data Card -->
+<div class="bg-surface-container-low rounded-2xl p-6 mb-8 flex flex-col gap-6">
+<div class="flex justify-between items-center">
+<div>
+<h4 class="text-xs font-black uppercase tracking-widest text-on-surface-variant">Recommended Window</h4>
+<p class="text-2xl font-black text-on-surface tracking-tight mt-1">Oct 22 - Oct 26</p>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-[10px] font-bold">
+                                                94% SAVINGS PROBABILITY
+                                            </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-2">Average Nightly Rate</p>
+<div class="flex items-end gap-2">
+<span class="text-xl font-bold text-on-surface">$184</span>
+<span class="text-[10px] text-on-tertiary-container font-bold mb-1">▼ 12% vs Market</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mb-2">Flight Availability</p>
+<div class="flex items-end gap-2">
+<span class="text-xl font-bold text-on-surface">High</span>
+<span class="text-[10px] text-on-surface-variant font-bold mb-1">Optimum Window</span>
+</div>
+</div>
+</div>
+<!-- Top Companies List -->
+<div class="space-y-4">
+<h5 class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Top Companies Visiting During Window</h5>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between py-2 bg-surface-container-lowest px-4 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-xs font-bold text-on-surface">TechCorp</span>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">Group Size: 450</span>
+</div>
+<div class="flex items-center justify-between py-2 bg-surface-container-lowest px-4 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></div>
+<span class="text-xs font-bold text-on-surface">Innovate Inc</span>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">Group Size: 120</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-gradient-to-r from-secondary to-secondary-container text-white px-8 py-3 rounded-full font-bold text-sm hover:shadow-xl hover:shadow-secondary/30 transition-all">
+                                            Start Negotiation
+                                        </button>
+<button class="text-on-primary-fixed-variant px-6 py-3 rounded-full font-bold text-sm hover:bg-surface-container-high transition-colors">
+                                            Save to Discovery
+                                        </button>
+</div>
+</div>
+<span class="text-[10px] text-on-surface-variant mt-3 block font-semibold uppercase tracking-wider">AI AGENT • VERIFIED MARKET DATA</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Input Field -->
+<div class="relative mt-auto pt-6">
+<div class="absolute inset-x-0 -top-2 h-8 bg-gradient-to-t from-background to-transparent pointer-events-none"></div>
+<div class="bg-surface-container-lowest border border-surface-container p-2 pl-6 pr-2 rounded-full flex items-center shadow-xl shadow-on-surface/5">
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium placeholder:text-on-surface-variant" placeholder="Ask Nexus-Procure about other markets..." type="text"/>
+<button class="w-10 h-10 rounded-full bg-on-surface text-white flex items-center justify-center hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-lg" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

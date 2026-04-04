@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
 export const metadata: Metadata = {
-  title: "Autonomous Procurement Inc.",
+  title: "Galileo Dashboard",
   description:
-    "The first agentic negotiator for enterprise travel, built to automate corporate hotel, flight, and event procurement.",
+    "Autonomous procurement command center for enterprise travel sourcing, supplier intelligence, and live negotiations.",
 };
 
 export default function RootLayout({
@@ -14,15 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body>{children}</body>
+      <body className={inter.variable}>{children}</body>
     </html>
   );
 }
