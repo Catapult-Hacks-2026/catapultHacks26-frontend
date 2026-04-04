@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e2e7ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#eaedff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-primary-container": "#7c839b",
+                    "outline": "#76777d",
+                    "surface-dim": "#d2d9f4",
+                    "inverse-surface": "#283044",
+                    "surface-container-highest": "#dae2fd",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-surface": "#131b2e",
+                    "inverse-on-surface": "#eef0ff",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-secondary-container": "#fefcff",
+                    "surface-bright": "#faf8ff",
+                    "surface": "#faf8ff",
+                    "inverse-primary": "#bec6e0",
+                    "tertiary-fixed": "#6ffbbe",
+                    "on-secondary-fixed": "#001a42",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#000000",
+                    "surface-variant": "#dae2fd",
+                    "on-surface-variant": "#45464d",
+                    "on-primary-fixed": "#131b2e",
+                    "secondary": "#0058be",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "on-tertiary-fixed": "#002113",
+                    "error-container": "#ffdad6",
+                    "on-background": "#131b2e",
+                    "primary": "#000000",
+                    "error": "#ba1a1a",
+                    "primary-container": "#131b2e",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#002113",
+                    "background": "#faf8ff",
+                    "primary-fixed": "#dae2fd",
+                    "surface-tint": "#565e74",
+                    "primary-fixed-dim": "#bec6e0",
+                    "surface-container-low": "#f2f3ff",
+                    "on-tertiary-container": "#009668",
+                    "on-secondary-fixed-variant": "#004395",
+                    "outline-variant": "#c6c6cd",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#2170e4",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="bg-[#131B2E] dark:bg-[#0F172A] h-screen w-64 fixed left-0 top-0 flex flex-col py-6 shadow-[24px_0_48px_rgba(19,27,46,0.08)] z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#2170E4] flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg" data-icon="dashboard">dashboard</span>
+</div>
+<div>
+<h1 class="text-2xl font-black tracking-tight text-white">Galileo</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Autonomous Procurement</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm antialiased">Dashboard</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 hover:bg-[#1C263D] flex items-center px-4 py-3 gap-3 transition-all duration-300 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-medium text-sm antialiased">Market Insights</span>
+</a>
+<a class="text-white bg-[#2170E4] rounded-lg mx-2 flex items-center px-4 py-3 gap-3 shadow-lg shadow-[#0058BE]/20 transition-transform active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="business">business</span>
+<span class="font-medium text-sm antialiased">Companies</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<div class="space-y-1">
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="text-slate-400 hover:text-white mx-2 flex items-center px-4 py-2 gap-3 transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</div>
+<button class="w-full bg-[#2170E4] hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-lg shadow-[#0058BE]/20">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span>New Negotiation</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-8 min-h-screen flex flex-col gap-8">
+<!-- Header Section -->
+<section class="flex flex-col gap-2 pt-8">
+<h1 class="text-[3.5rem] font-black tracking-tight leading-none text-on-surface">Companies</h1>
+<p class="text-on-surface-variant text-lg">Curated directory of autonomous procurement partners and global chains.</p>
+</section>
+<div class="grid grid-cols-12 gap-8">
+<!-- Filter Sidebar -->
+<aside class="col-span-3 space-y-8">
+<div class="bg-surface-container-low p-6 rounded-xl space-y-6">
+<div>
+<h3 class="font-bold text-sm uppercase tracking-widest text-on-surface-variant mb-4">Total Savings</h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-outline-variant group-hover:border-secondary transition-colors flex items-center justify-center">
+<div class="w-2.5 h-2.5 bg-secondary rounded-sm opacity-0 group-hover:opacity-20 transition-opacity"></div>
+</div>
+<span class="text-sm font-medium">Over $1M</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-secondary bg-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="text-sm font-medium">$500k - $1M</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-outline-variant group-hover:border-secondary transition-colors"></div>
+<span class="text-sm font-medium">Under $500k</span>
+</label>
+</div>
+</div>
+<div>
+<h3 class="font-bold text-sm uppercase tracking-widest text-on-surface-variant mb-4">Industry</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-secondary text-white rounded-full text-xs font-semibold">Hospitality</span>
+<span class="px-3 py-1.5 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-semibold hover:bg-surface-container-high transition-colors cursor-pointer">Aviation</span>
+<span class="px-3 py-1.5 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-semibold hover:bg-surface-container-high transition-colors cursor-pointer">Logistics</span>
+<span class="px-3 py-1.5 bg-surface-container-highest text-on-surface-variant rounded-full text-xs font-semibold hover:bg-surface-container-high transition-colors cursor-pointer">SaaS</span>
+</div>
+</div>
+<div>
+<h3 class="font-bold text-sm uppercase tracking-widest text-on-surface-variant mb-4">Region</h3>
+<select class="w-full bg-surface-container-lowest border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-secondary/20 outline-none">
+<option>North America</option>
+<option>Europe &amp; UK</option>
+<option>APAC</option>
+<option>Global</option>
+</select>
+</div>
+<div>
+<h3 class="font-bold text-sm uppercase tracking-widest text-on-surface-variant mb-4">Supplier Rating</h3>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="star">star</span>
+<span class="ml-2 text-xs font-bold text-on-surface-variant">4.0+</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Company Grid -->
+<div class="col-span-9 grid grid-cols-2 gap-6">
+<!-- Card 1: Hilton -->
+<div class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-[0px_24px_48px_rgba(19,27,46,0.08)] transition-all duration-500 border border-transparent hover:border-surface-container-highest group">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center border border-surface-container">
+<img class="w-10 h-10 object-contain rounded" data-alt="minimalist luxury hotel exterior with architectural lighting and palm trees at twilight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAObx7TF5hzyRL_u8juNdzFbflrocySsyBI9y1iG4L20fB34EI7eky9f2SQ2Xwx0oWFCFFlK34PoMXog-uVeF4xtyHf5j96_HxIddIApqUOpB_PmzfY9RLVJuJG82VSJE6yqygKcv8JU0u79zwkHs5fHAJsPY2-h0vbLC3CKUnym1Wdfj4QnJMCAyRILiy3EEsx7yNguFk3VGKXb2NJJ1_3HaVUHlv3SK3e0IVTHYISyF3j4_jfZmgDKPxXQwCYnGovhIfYECPCw8E"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-on-surface group-hover:text-secondary transition-colors">Hilton</h3>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-tertiary-fixed text-on-tertiary-fixed-variant">Strategic Partner</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-8">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Savings Realized</span>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black text-on-tertiary-container tracking-tight">$1,240,500</span>
+<span class="text-xs font-bold text-on-tertiary-container bg-tertiary-fixed px-1.5 py-0.5 rounded">+12% YoY</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-6 border-t border-surface-container">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Avg Delta</span>
+<span class="text-lg font-bold text-on-surface">18.4%</span>
+</div>
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Bookings</span>
+<span class="text-lg font-bold text-on-surface">4,821</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Marriott -->
+<div class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-[0px_24px_48px_rgba(19,27,46,0.08)] transition-all duration-500 border border-transparent hover:border-surface-container-highest group">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center border border-surface-container">
+<img class="w-10 h-10 object-contain rounded" data-alt="elegant upscale hotel lobby with marble floors and grand chandeliers" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaf5hzXyFgMQk_z9Z6uVX-yInuWbWpthA0Oj887hBLtcdhUwouOwjoxvGFKC0pILHknVbQX-IddSe7L8n3LdZ4vqV9cSEozrjot5oahforUIdmsmsR8px6_SOIPeqNWjoiDOcPdRmZ9nmjcqmTOduHVYIak4bPu9ign9xDgx35BO9fJjaFHv5nf4QuKpknHoSRAs1j4fX8qDefVemoXCtgq7UGwCWSVPsZ04BNzVdBAPnCpiZeAd8-JQN5l9VC4Ja30wFt2oyIBXxe"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-on-surface group-hover:text-secondary transition-colors">Marriott</h3>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-surface-container-highest text-on-secondary-fixed-variant">Preferred Supplier</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-8">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Savings Realized</span>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black text-on-tertiary-container tracking-tight">$842,200</span>
+<span class="text-xs font-bold text-on-tertiary-container bg-tertiary-fixed px-1.5 py-0.5 rounded">+8% YoY</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-6 border-t border-surface-container">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Avg Delta</span>
+<span class="text-lg font-bold text-on-surface">15.2%</span>
+</div>
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Bookings</span>
+<span class="text-lg font-bold text-on-surface">3,102</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Delta Airlines -->
+<div class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-[0px_24px_48px_rgba(19,27,46,0.08)] transition-all duration-500 border border-transparent hover:border-surface-container-highest group">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center border border-surface-container">
+<img class="w-10 h-10 object-contain rounded" data-alt="modern commercial airplane tail with blue logo design against a bright clear sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXltx3SAq94q20d8f2XYnWIlEvtOKAXeQ_dUliUT4sQgkBt0PVUKRO_Bwaj-BdHDlwmF9h6yffIRdBDCmgwT2QxZNPPity9KjDyJj7Vj49N2CuDbo-6yApF3Recq8ktQd92AOm9WixwrtCgUkmxR6_pyqohrbKzqRB_IBVzpUoLGWRxKZWBIwej1Z48t1AqiBXPa2DXfCxHinHsVGTd-7Uspq1D-TXfwsm5WIsFcaqkzUARWe1aeQpyiql9cT9Hv8arkL3D5cj3smq"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-on-surface group-hover:text-secondary transition-colors">Delta</h3>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-tertiary-fixed text-on-tertiary-fixed-variant">Strategic Partner</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-8">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Savings Realized</span>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black text-on-tertiary-container tracking-tight">$2,105,800</span>
+<span class="text-xs font-bold text-on-tertiary-container bg-tertiary-fixed px-1.5 py-0.5 rounded">+21% YoY</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-6 border-t border-surface-container">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Avg Delta</span>
+<span class="text-lg font-bold text-on-surface">24.1%</span>
+</div>
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Bookings</span>
+<span class="text-lg font-bold text-on-surface">12,544</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Hyatt -->
+<div class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-[0px_24px_48px_rgba(19,27,46,0.08)] transition-all duration-500 border border-transparent hover:border-surface-container-highest group">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-slate-50 flex items-center justify-center border border-surface-container">
+<img class="w-10 h-10 object-contain rounded" data-alt="ultra modern luxury resort swimming pool at night with soft ambient glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrpDsAK1dgrMPHRQRn-qEIXad53M1G37bflnZTEwhZyxM_O93LDS-DFQh4Q4T81p3yPBYWjtCqxN8V8kQgoXzOdjBJWlRlZ1wEN0Fy0GQVQKGVdzFQsP1h5k-R0k8kdMte9h3wheXjKeU6SyG9ryB8SeAWuQy6oALTX3rtFwBJLeK7rebkQhWbdtQG6_7jhI90r3O54mF2hkrU8k6mNteL6GGJ7pj9xq9a2Wpy0BtUZBnl-8wiLXSl2EbgAZMDsr4COH_2QER3p031"/>
+</div>
+<div>
+<h3 class="text-xl font-bold text-on-surface group-hover:text-secondary transition-colors">Hyatt</h3>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-surface-container-highest text-on-secondary-fixed-variant">Preferred Supplier</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-8">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Savings Realized</span>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black text-on-tertiary-container tracking-tight">$412,000</span>
+<span class="text-xs font-bold text-error bg-error-container px-1.5 py-0.5 rounded">-2% YoY</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-6 border-t border-surface-container">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Avg Delta</span>
+<span class="text-lg font-bold text-on-surface">9.2%</span>
+</div>
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block mb-1">Total Bookings</span>
+<span class="text-lg font-bold text-on-surface">1,850</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination / Load More -->
+<div class="flex justify-end pt-12 pb-12">
+<div class="flex items-center gap-4">
+<span class="text-sm font-medium text-on-surface-variant">Showing 4 of 128 suppliers</span>
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest text-on-surface font-bold rounded-full hover:bg-surface-container-high transition-colors">
+<span>Load More Suppliers</span>
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>
