@@ -11,19 +11,19 @@ export default function ConfigureNegotiationPage() {
   const [service, setService] = useState("Hotel");
 
   return (
-    <div className="min-h-screen bg-surface" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div className="-mt-16 min-h-screen bg-surface lg:mt-0" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
       {/* Header */}
-      <div className="border-b border-outline-variant/20 bg-white px-10 py-5">
+      <div className="sticky top-0 z-30 border-b border-outline-variant/20 bg-white/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-10 lg:py-5">
         <h1 className="text-3xl font-semibold tracking-tight text-on-surface">
           New Negotiation
         </h1>
       </div>
 
-      <div className="px-10 py-8">
+      <div className="px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
         <div className="space-y-4">
 
           {/* Row 1: Event Name + Service Type */}
-          <div className="grid grid-cols-[1fr_auto] gap-4 items-stretch">
+          <div className="grid items-stretch gap-4 lg:grid-cols-[1fr_auto]">
             <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
               <label className="block">
                 <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Event Name</span>
@@ -63,7 +63,7 @@ export default function ConfigureNegotiationPage() {
           </div>
 
           {/* Row 2: Dates + Location */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
               <label className="block">
                 <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Start Date</span>
@@ -105,8 +105,8 @@ export default function ConfigureNegotiationPage() {
             </div>
           </div>
 
-          {/* Row 3: Attendees + Budget + Requirements */}
-          <div className="grid grid-cols-[1fr_1fr_2fr] gap-4">
+          {/* Row 3: Attendees + Requirements */}
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_2fr]">
             <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
               <label className="block">
                 <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Attendees</span>
@@ -115,20 +115,6 @@ export default function ConfigureNegotiationPage() {
                   placeholder="120"
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
-              </label>
-            </div>
-
-            <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
-              <label className="block">
-                <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Budget / Person</span>
-                <div className="relative mt-2">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-outline">$</span>
-                  <input
-                    type="number"
-                    placeholder="0.00"
-                    className="w-full rounded-lg bg-surface-container-low py-3 pl-7 pr-3 text-sm text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
-                  />
-                </div>
               </label>
             </div>
 
@@ -145,7 +131,7 @@ export default function ConfigureNegotiationPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <Link to="/" className="text-sm text-on-surface-variant hover:text-on-surface">
               Cancel
             </Link>

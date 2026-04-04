@@ -1,6 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { Chip } from "@/components/ui/Chip";
-import { activityStream } from "@/lib/dashboard-data";
+import {
+  activityStream,
+  getAgentDisplayStatus,
+  getStatusVariant,
+  isClosedDeal,
+} from "@/lib/dashboard-data";
 import {
   NegotiationPricePath,
   type PricePoint,
@@ -24,35 +29,35 @@ export default function NegotiationAgentPage() {
   const agent = event?.agents.find((item) => item.negotiationId === id);
   const canAccept = event && agent ? canAcceptAgent(event, agent) : false;
   const isNegotiating = agent?.status === "Negotiating";
+  const displayStatus = agent ? getAgentDisplayStatus(agent) : "Negotiating";
   const repLabel = agent?.type === "Airline" ? "airline sales rep" : "hotel sales rep";
 
   const agentStatus = (() => {
     if (!agent) return "Live Negotiation";
     if (agent.isAccepted) return "Accepted";
-    if (agent.status === "Cancelled") return "Cancelled";
-    return agent.status;
+    return displayStatus;
   })();
 
-  const agentChipVariant = (() => {
-    if (!agent) return "success";
-    if (agent.isAccepted) return "success";
-    if (agent.status === "Cancelled") return "error";
-    if (agent.status === "Reviewing") return "neutral";
-    if (agent.status === "Negotiating") return "negotiating";
-    return "success";
-  })() as "success" | "neutral" | "negotiating" | "error";
+  const agentChipVariant = (!agent || agent.isAccepted ? "success" : getStatusVariant(displayStatus)) as
+    | "success"
+    | "neutral"
+    | "negotiating"
+    | "error";
 
   const actionLabel = (() => {
     if (!agent) return null;
-    if (agent.isAccepted) return "Offer accepted";
-    if (agent.status === "Cancelled") return "Offer cancelled";
-    if (agent.status !== "Completed") return "Waiting for completion";
-    return "Type already accepted";
+    if (agent.isAccepted) return "Deal accepted";
+    if (agent.status !== "Completed") return "Waiting for call completion";
+    if (isClosedDeal(agent)) return "Type already accepted";
+    return displayStatus;
   })();
+  const companyLabel = agent?.company ?? "Hilton London";
+  const companyId = agent?.negotiationId ?? id ?? "";
+  const negotiatedPrice = agent?.negotiatedPrice ?? "$245";
 
   return (
-    <div className="h-screen overflow-y-auto bg-surface">
-      <div className="mx-auto max-w-7xl space-y-8 p-8">
+    <div className="min-h-screen bg-surface">
+      <div className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
         {event && (
           <Link
             to={`/events/${event.id}`}
@@ -62,8 +67,8 @@ export default function NegotiationAgentPage() {
             {event.name}
           </Link>
         )}
-        <section className="grid grid-cols-12 items-end gap-8">
-          <div className="col-span-8">
+        <section className="grid grid-cols-1 items-end gap-8 xl:grid-cols-12">
+          <div className="xl:col-span-8">
             <div className="flex items-center gap-3">
               <Chip variant={agentChipVariant}>{agentStatus}</Chip>
               <span className="inline-flex items-center gap-2 text-sm text-on-surface-variant">
@@ -71,15 +76,22 @@ export default function NegotiationAgentPage() {
                 London, UK
               </span>
             </div>
-            <h1 className="mt-5 text-5xl font-black tracking-tight text-on-surface">
-              Hilton London
+            <h1 className="mt-5 text-4xl font-black tracking-tight text-on-surface sm:text-5xl">
+              {companyLabel}
             </h1>
+            <Link
+              to={`/companies/${companyId}`}
+              className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary hover:underline"
+            >
+              View company profile
+              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </Link>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-on-surface-variant">
               Autonomous Agent <span className="font-bold text-secondary">Galileo</span> is
               actively negotiating rates, concessions, and commercial terms with the supplier sales team.
             </p>
           </div>
-          <div className="col-span-4 grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:col-span-4">
             <div className="rounded-3xl bg-surface-container-low p-6">
               <p className="text-[11px] uppercase tracking-widest text-on-surface-variant">
                 Target Price
@@ -95,70 +107,87 @@ export default function NegotiationAgentPage() {
           </div>
         </section>
 
-        <section className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 rounded-xl bg-surface-container-low p-8">
-            <div className="mb-6 flex items-start justify-between gap-6">
-              <div>
-                <h2 className="text-2xl font-bold text-on-surface">
-                  Negotiation Price Path
-                </h2>
-                <p className="mt-2 text-sm text-on-surface-variant">
-                  Real-time progression from supplier anchor to Galileo target.
-                </p>
-              </div>
-              <div className="space-y-1.5 text-sm">
-                <p className="font-bold text-on-tertiary-container">
-                  Savings to Date: $55.00
-                </p>
-                <p className="font-bold text-error">Distance to Goal: $25.00</p>
-              </div>
-            </div>
-            <NegotiationPricePath
-              points={pricePath}
-              marketPrice={300}
-              targetPrice={220}
-            />
-          </div>
-
-          <div className="space-y-6">
+        <section className="space-y-8">
+          {canAccept && event && agent ? (
             <div className="group relative overflow-hidden rounded-xl bg-primary-container p-8 text-white shadow-2xl">
               <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-secondary blur-3xl opacity-20 transition-opacity group-hover:opacity-40" />
-              <h4 className="relative text-2xl font-bold">{isNegotiating ? "Intervene Manually" : "Accept Offer"}</h4>
-              <p className="relative mt-3 text-sm leading-6 text-slate-400">
-                {isNegotiating
-                  ? `Join the live negotiation with the ${repLabel} to handle pricing pushback, concession tradeoffs, or final commercial alignment.`
-                  : canAccept
-                  ? "The supplier has finalized terms. Accept this offer to lock it into the event and automatically close out competing offers of the same type."
-                  : actionLabel ?? "This negotiation is not ready to be accepted yet."}
-              </p>
-              {isNegotiating ? (
-                <button
-                  type="button"
-                  className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100"
-                >
-                  <span className="material-symbols-outlined text-lg">call</span>
-                  Talk to {agent?.type === "Airline" ? "Airline" : "Hotel"} Rep
-                </button>
-              ) : canAccept && event && agent ? (
+              <div className="relative flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">
+                    Negotiated Price
+                  </p>
+                  <p className="mt-2 text-4xl font-black tracking-tight text-white">{negotiatedPrice}</p>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
+                    The supplier has finalized terms. Accept this offer to lock it into the event and automatically close out competing deals of the same type.
+                  </p>
+                </div>
                 <button
                   type="button"
                   onClick={() => acceptOffer(event.id, agent.negotiationId)}
-                  className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100"
+                  className="relative inline-flex w-full items-center justify-center gap-3 rounded-lg bg-white px-6 py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100 xl:w-auto xl:min-w-[220px]"
                 >
                   <span className="material-symbols-outlined text-lg">check</span>
                   Accept Offer
                 </button>
-              ) : (
-                <div className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/10 py-4 text-sm font-black text-slate-200">
-                  <span className="material-symbols-outlined text-lg">
-                    {agent?.isAccepted ? "check_circle" : agent?.status === "Cancelled" ? "cancel" : "schedule"}
-                  </span>
-                  {actionLabel ?? "Unavailable"}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
+            <div className="rounded-xl bg-surface-container-low p-5 sm:p-6 lg:p-8 xl:col-span-2">
+              <div className="mb-6 flex items-start justify-between gap-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-on-surface">
+                    Negotiation Price Path
+                  </h2>
+                  <p className="mt-2 text-sm text-on-surface-variant">
+                    Real-time progression from supplier anchor to Galileo target.
+                  </p>
                 </div>
-              )}
+                <div className="space-y-1.5 text-sm">
+                  <p className="font-bold text-on-tertiary-container">
+                    Savings to Date: $55.00
+                  </p>
+                  <p className="font-bold text-error">Distance to Goal: $25.00</p>
+                </div>
+              </div>
+              <NegotiationPricePath
+                points={pricePath}
+                marketPrice={300}
+                targetPrice={220}
+              />
             </div>
 
-            <div className="rounded-xl border border-slate-100 bg-surface-container-lowest p-6">
+            <div className="space-y-6">
+              {!canAccept ? (
+                <div className="group relative overflow-hidden rounded-xl bg-primary-container p-8 text-white shadow-2xl">
+                  <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-secondary blur-3xl opacity-20 transition-opacity group-hover:opacity-40" />
+                  <h4 className="relative text-2xl font-bold">{isNegotiating ? "Intervene Manually" : "Accept Deal"}</h4>
+                  <p className="relative mt-3 text-sm leading-6 text-slate-400">
+                    {isNegotiating
+                      ? `Join the live negotiation with the ${repLabel} to handle pricing pushback, concession tradeoffs, or final commercial alignment.`
+                      : actionLabel ?? "This negotiation is not ready to be accepted yet."}
+                  </p>
+                  {isNegotiating ? (
+                    <button
+                      type="button"
+                      className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100"
+                    >
+                      <span className="material-symbols-outlined text-lg">call</span>
+                      Talk to {agent?.type === "Airline" ? "Airline" : "Hotel"} Rep
+                    </button>
+                  ) : (
+                    <div className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/10 py-4 text-sm font-black text-slate-200">
+                      <span className="material-symbols-outlined text-lg">
+                        {agent?.isAccepted ? "check_circle" : agentChipVariant === "error" ? "cancel" : "schedule"}
+                      </span>
+                      {actionLabel ?? "Unavailable"}
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              <div className="rounded-xl border border-slate-100 bg-surface-container-lowest p-5 sm:p-6">
               <p className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
                 Activity Stream
               </p>
@@ -193,12 +222,13 @@ export default function NegotiationAgentPage() {
                   </div>
                 ))}
               </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200/50 bg-surface-container-highest/30 p-8 backdrop-blur-sm">
-          <div className="flex items-center justify-between gap-6">
+        <section className="rounded-2xl border border-slate-200/50 bg-surface-container-highest/30 p-5 backdrop-blur-sm sm:p-6 lg:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <div>
               <h2 className="text-2xl font-bold text-on-surface">
                 Negotiation Transcript

@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
 import { useEvents } from "@/context/EventsContext";
-import type { EventAgent, GalileoEvent } from "@/lib/dashboard-data";
+import {
+  getAgentDisplayStatus,
+  getStatusVariant,
+  isClosedDeal,
+  type EventAgent,
+  type GalileoEvent,
+} from "@/lib/dashboard-data";
 
 function statusDot(status: GalileoEvent["status"]) {
   if (status === "Active") {
@@ -23,19 +29,11 @@ function agentBadgeClass(agent: EventAgent) {
     return "bg-secondary/10 text-secondary";
   }
 
-  if (agent.status === "Cancelled") {
-    return "bg-error-container text-error";
-  }
-
-  if (agent.status === "Completed") {
-    return "bg-tertiary-fixed text-on-tertiary-fixed";
-  }
-
-  if (agent.status === "Reviewing") {
-    return "bg-surface-container-highest text-on-surface-variant";
-  }
-
-  return "bg-secondary-fixed text-on-secondary-fixed";
+  const variant = getStatusVariant(getAgentDisplayStatus(agent));
+  if (variant === "success") return "bg-tertiary-fixed text-on-tertiary-fixed";
+  if (variant === "error") return "bg-error-container text-error";
+  if (variant === "negotiating") return "bg-secondary-fixed text-on-secondary-fixed";
+  return "bg-surface-container-highest text-on-surface-variant";
 }
 
 export default function EventsPage() {
@@ -45,7 +43,7 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-surface" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <div className="flex items-center justify-between border-b border-outline-variant/20 bg-white px-10 py-5">
+      <div className="flex flex-col gap-3 border-b border-outline-variant/20 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10 lg:py-5">
         <h1 className="text-3xl font-semibold tracking-tight text-on-surface">Events</h1>
         <Link
           to="/negotiations/configure"
@@ -56,7 +54,7 @@ export default function EventsPage() {
         </Link>
       </div>
 
-      <div className="space-y-8 px-10 py-8">
+      <div className="space-y-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
         <section>
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Active - {active.length}</p>
           <div className="space-y-2">
@@ -82,32 +80,33 @@ export default function EventsPage() {
 function EventRow({ event }: { event: GalileoEvent }) {
   const { canAcceptAgent, acceptOffer } = useEvents();
   const completedAgents = event.agents.filter((agent) => agent.status === "Completed").length;
+  const closedDeals = event.agents.filter((agent) => isClosedDeal(agent)).length;
   const acceptedAgents = event.agents.filter((agent) => agent.isAccepted);
   const eligibleAgents = event.agents.filter((agent) => canAcceptAgent(event, agent));
 
   return (
     <div className="rounded-xl border border-outline-variant/20 bg-white transition-colors hover:bg-surface-container-low">
-      <div className="flex items-center gap-6 px-6 py-4">
-        <Link to={`/events/${event.id}`} className="flex min-w-0 flex-1 items-center gap-6">
-          <div className="flex w-48 shrink-0 items-center gap-2.5">
+      <div className="flex flex-col gap-4 px-5 py-4 sm:px-6">
+        <Link to={`/events/${event.id}`} className="flex min-w-0 flex-1 flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
+          <div className="flex items-center gap-2.5 lg:w-48 lg:shrink-0">
             {statusDot(event.status)}
             <span className="text-sm font-medium text-on-surface">{event.name}</span>
           </div>
 
-          <div className="flex w-40 shrink-0 items-center gap-1.5 text-sm text-on-surface-variant">
+          <div className="flex items-center gap-1.5 text-sm text-on-surface-variant lg:w-40 lg:shrink-0">
             <span className="material-symbols-outlined text-[15px]">location_on</span>
             {event.location}
           </div>
 
-          <div className="w-44 shrink-0 text-sm text-on-surface-variant">
+          <div className="text-sm text-on-surface-variant lg:w-44 lg:shrink-0">
             {event.startDate} - {event.endDate}
           </div>
 
-          <div className="w-24 shrink-0 text-sm text-on-surface-variant">
+          <div className="text-sm text-on-surface-variant lg:w-24 lg:shrink-0">
             {event.attendees} people
           </div>
 
-          <div className="flex flex-1 items-center gap-2">
+          <div className="flex flex-1 flex-wrap items-center gap-2">
             {event.agents.map((agent) => (
               <span
                 key={agent.negotiationId}
@@ -117,17 +116,19 @@ function EventRow({ event }: { event: GalileoEvent }) {
                   {agentTypeIcon(agent.type)}
                 </span>
                 {agent.company.split(" ")[0]}
-                {agent.isAccepted ? " accepted" : agent.status === "Cancelled" ? " cancelled" : ""}
+                {agent.isAccepted ? " accepted" : ""}
               </span>
             ))}
           </div>
         </Link>
 
-        <div className="shrink-0 text-right">
+        <div className="shrink-0 text-left lg:text-right">
           {event.status === "Completed" ? (
             <span className="text-xs text-on-surface-variant">Completed</span>
           ) : acceptedAgents.length > 0 ? (
             <span className="text-xs text-on-surface-variant">{acceptedAgents.length} accepted</span>
+          ) : closedDeals > 0 ? (
+            <span className="text-xs text-on-surface-variant">{closedDeals} deal{closedDeals === 1 ? "" : "s"} ready</span>
           ) : (
             <span className="text-xs text-on-surface-variant">{completedAgents}/{event.agents.length} done</span>
           )}
@@ -136,7 +137,7 @@ function EventRow({ event }: { event: GalileoEvent }) {
 
       {event.status === "Active" && eligibleAgents.length > 0 ? (
         <div className="flex flex-wrap items-center gap-2 border-t border-outline-variant/10 px-6 py-3">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Accept Offer</span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Accept Deal</span>
           {eligibleAgents.map((agent) => (
             <button
               key={agent.negotiationId}

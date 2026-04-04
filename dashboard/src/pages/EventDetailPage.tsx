@@ -2,7 +2,13 @@ import { Link, useParams } from "react-router-dom";
 import { NegotiationPricePath, type PricePoint } from "@/components/dashboard/NegotiationPricePath";
 import { Chip } from "@/components/ui/Chip";
 import { useEvents } from "@/context/EventsContext";
-import type { EventAgent } from "@/lib/dashboard-data";
+import {
+  getAgentDisplayStatus,
+  getStatusVariant,
+  isClosedDeal,
+  type AgentStatus,
+  type EventAgent,
+} from "@/lib/dashboard-data";
 
 const winnerPricePath: PricePoint[] = [
   { label: "Anchor", price: 310, type: "offer" },
@@ -13,11 +19,9 @@ const winnerPricePath: PricePoint[] = [
   { label: "Final", price: 201, type: "current" },
 ];
 
-function agentStatusChip(status: EventAgent["status"]) {
-  if (status === "Negotiating") return <Chip variant="negotiating">Negotiating</Chip>;
-  if (status === "Reviewing") return <Chip variant="neutral">Reviewing</Chip>;
-  if (status === "Cancelled") return <Chip variant="error">Cancelled</Chip>;
-  return <Chip variant="success">Completed</Chip>;
+function agentStatusChip(status: AgentStatus) {
+  const variant = getStatusVariant(status);
+  return <Chip variant={variant}>{status}</Chip>;
 }
 
 function agentTypeIcon(type: EventAgent["type"]) {
@@ -26,9 +30,9 @@ function agentTypeIcon(type: EventAgent["type"]) {
 
 function acceptedProgressLabel(service: "Hotel" | "Airline" | "Both", acceptedCount: number) {
   if (service === "Both") {
-    return `${acceptedCount}/2 offers accepted`;
+    return `${acceptedCount}/2 deals accepted`;
   }
-  return acceptedCount === 0 ? "No offer accepted yet" : "Offer accepted";
+  return acceptedCount === 0 ? "No deal accepted yet" : "Deal accepted";
 }
 
 export default function EventDetailPage() {
@@ -51,14 +55,14 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen bg-surface" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <div className="border-b border-outline-variant/20 bg-white px-10 py-5">
+      <div className="border-b border-outline-variant/20 bg-white px-4 py-4 sm:px-6 lg:px-10 lg:py-5">
         <p className="text-xs text-on-surface-variant">
           <Link to="/events" className="hover:text-on-surface">Events</Link>
           <span className="mx-2 text-outline-variant">›</span>
           {event.name}
         </p>
-        <div className="mt-0.5 flex items-center justify-between">
-          <h1 className="text-3xl font-semibold tracking-tight text-on-surface">{event.name}</h1>
+        <div className="mt-0.5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-2xl font-semibold tracking-tight text-on-surface sm:text-3xl">{event.name}</h1>
           {isCompleted ? (
             <span className="rounded-full bg-surface-container-highest px-3 py-1 text-xs font-semibold text-on-surface-variant">
               Completed
@@ -75,8 +79,8 @@ export default function EventDetailPage() {
         </div>
       </div>
 
-      <div className="space-y-6 px-10 py-8">
-        <div className="flex gap-6 text-sm text-on-surface-variant">
+      <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+        <div className="flex flex-col gap-3 text-sm text-on-surface-variant sm:flex-row sm:flex-wrap sm:gap-6">
           <span className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[15px]">location_on</span>
             {event.location}
@@ -94,13 +98,13 @@ export default function EventDetailPage() {
         {!isCompleted ? (
           <>
             <section className="rounded-xl border border-secondary/20 bg-secondary/5 px-6 py-5">
-              <div className="flex items-start justify-between gap-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
                 <div>
-                  <p className="text-sm font-semibold text-on-surface">Accept completed offers</p>
+                  <p className="text-sm font-semibold text-on-surface">Accept closed deals</p>
                   <p className="mt-0.5 text-xs text-on-surface-variant">
                     {event.service === "Both"
-                      ? "Accept one hotel and one airline offer to complete this event. Once a type is accepted, other offers of that type are locked."
-                      : `Accept one ${event.service.toLowerCase()} offer to complete this event.`}
+                      ? "Accept one hotel and one airline deal to complete this event. Once a type is accepted, other closed deals of that type are locked."
+                      : `Accept one ${event.service.toLowerCase()} deal to complete this event.`}
                   </p>
                 </div>
                 <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-on-surface-variant">
@@ -127,17 +131,14 @@ export default function EventDetailPage() {
               <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                 Agents Working This Event
               </p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {event.agents.map((agent) => {
                   const canAccept = canAcceptAgent(event, agent);
                   const sameTypeAccepted = event.agents.some(
                     (item) => item.type === agent.type && item.isAccepted,
                   );
-                  const sameTypeLocked =
-                    agent.status === "Completed" &&
-                    !agent.isAccepted &&
-                    !canAccept &&
-                    sameTypeAccepted;
+                  const sameTypeLocked = isClosedDeal(agent) && !agent.isAccepted && !canAccept && sameTypeAccepted;
+                  const displayStatus = getAgentDisplayStatus(agent);
 
                   return (
                     <div
@@ -159,11 +160,11 @@ export default function EventDetailPage() {
                             Accepted
                           </span>
                         ) : (
-                          agentStatusChip(agent.status)
+                          agentStatusChip(displayStatus)
                         )}
                       </div>
 
-                      <div className="mt-4 grid grid-cols-2 gap-3">
+                      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">Original</p>
                           <p className="mt-0.5 text-base font-semibold text-on-surface">{agent.originalPrice}</p>
@@ -178,7 +179,7 @@ export default function EventDetailPage() {
                         Potential savings: <span className="font-semibold text-on-tertiary-container">{agent.savings}</span>
                       </p>
 
-                      <div className="mt-4 flex items-center justify-between gap-3">
+                      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <Link
                           to={`/negotiations/${agent.negotiationId}/agent`}
                           className="text-[11px] font-medium text-on-surface-variant hover:text-secondary"
@@ -192,18 +193,18 @@ export default function EventDetailPage() {
                             onClick={() => acceptOffer(event.id, agent.negotiationId)}
                             className="inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-secondary-container"
                           >
-                            Accept offer
+                            Accept deal
                             <span className="material-symbols-outlined text-[14px]">check</span>
                           </button>
-                        ) : agent.status === "Cancelled" ? (
-                          <span className="text-[11px] font-medium text-error">Cancelled</span>
                         ) : sameTypeLocked ? (
-                          <span className="text-[11px] font-medium text-on-surface-variant">Type already accepted</span>
+                          <span className="text-[11px] font-medium text-on-surface-variant">Competing deal already accepted</span>
                         ) : agent.status !== "Completed" ? (
-                          <span className="text-[11px] font-medium text-on-surface-variant">Waiting for completion</span>
+                          <span className="text-[11px] font-medium text-on-surface-variant">Waiting for call completion</span>
                         ) : agent.isAccepted ? (
-                          <span className="text-[11px] font-medium text-secondary">Offer accepted</span>
-                        ) : null}
+                          <span className="text-[11px] font-medium text-secondary">Deal accepted</span>
+                        ) : isClosedDeal(agent) ? null : (
+                          <span className="text-[11px] font-medium text-on-surface-variant">{displayStatus}</span>
+                        )}
                       </div>
                     </div>
                   );
@@ -213,7 +214,7 @@ export default function EventDetailPage() {
           </>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {winners.map((agent) => (
                 <div key={agent.negotiationId} className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
                   <div className="mb-4 flex items-center gap-2">
@@ -221,11 +222,11 @@ export default function EventDetailPage() {
                       {agentTypeIcon(agent.type)}
                     </span>
                     <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                      Accepted {agent.type} Offer
+                      Accepted {agent.type} Deal
                     </p>
                   </div>
                   <p className="text-lg font-semibold text-on-surface">{agent.company}</p>
-                  <div className="mt-4 grid grid-cols-3 gap-3">
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">Original</p>
                       <p className="mt-1 text-xl font-bold text-on-surface">{agent.originalPrice}</p>
@@ -245,8 +246,8 @@ export default function EventDetailPage() {
 
             {firstWinner ? (
               <>
-                <div className="rounded-xl border border-outline-variant/20 bg-white px-8 py-6">
-                  <div className="mb-2 flex items-start justify-between">
+                <div className="rounded-xl border border-outline-variant/20 bg-white px-5 py-5 sm:px-6 lg:px-8 lg:py-6">
+                  <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Negotiation Path</p>
                       <p className="mt-0.5 text-lg font-semibold text-on-surface">{firstWinner.company}</p>
@@ -261,7 +262,7 @@ export default function EventDetailPage() {
                   <NegotiationPricePath points={winnerPricePath} marketPrice={310} targetPrice={200} />
                 </div>
 
-                <div className="rounded-xl border border-outline-variant/20 bg-white px-8 py-6">
+                <div className="rounded-xl border border-outline-variant/20 bg-white px-5 py-5 sm:px-6 lg:px-8 lg:py-6">
                   <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Negotiation Transcript</p>
                   <div className="space-y-5">
                     <div className="flex items-start gap-3">
