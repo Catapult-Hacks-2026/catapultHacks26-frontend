@@ -35,10 +35,13 @@ export default function SideNav({ collapsed, onToggle }: SideNavProps) {
     >
       {/* Wordmark */}
       <div className={collapsed ? "flex flex-col items-center gap-2 px-2 pb-4" : "flex items-center justify-between px-5 pb-2"}>
-        <Link to="/" className="inline-block">
-          <span className={`font-semibold tracking-tight text-on-surface ${collapsed ? "text-xl" : "text-[32px]"}`}>
-            {collapsed ? "G" : "Galileo"}
-          </span>
+        <Link to="/" className="inline-flex items-center gap-2.5">
+          <img src="/Galileo.png" alt="Galileo" className={collapsed ? "h-7 w-7" : "h-8 w-8"} />
+          {!collapsed && (
+            <span className="text-[32px] font-semibold tracking-tight text-on-surface">
+              Galileo
+            </span>
+          )}
         </Link>
         <button
           type="button"

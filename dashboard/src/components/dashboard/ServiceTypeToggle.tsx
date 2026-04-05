@@ -2,7 +2,6 @@ import { useState } from "react";
 
 const options = [
   { id: "hotel", label: "Hotel", icon: "hotel" },
-  { id: "airline", label: "Airline", icon: "flight" },
 ] as const;
 
 export function ServiceTypeToggle() {

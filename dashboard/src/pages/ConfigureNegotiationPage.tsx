@@ -1,14 +1,43 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+type ConfigureLocationState = {
+  location?: string;
+  attendees?: string;
+  startDate?: string;
+  endDate?: string;
+  requirements?: string;
+  eventType?: string;
+} | null;
 
 const serviceTypes = [
   { id: "Hotel", icon: "hotel" },
-  { id: "Airline", icon: "flight" },
-  { id: "Both", icon: "sync_alt" },
 ];
 
 export default function ConfigureNegotiationPage() {
+  const navigate = useNavigate();
+  const prefill = useLocation().state as ConfigureLocationState;
   const [service, setService] = useState("Hotel");
+  const [eventName, setEventName] = useState(prefill?.eventType ?? "");
+  const [startDate, setStartDate] = useState(prefill?.startDate ?? "");
+  const [endDate, setEndDate] = useState(prefill?.endDate ?? "");
+  const [location, setLocation] = useState(prefill?.location ?? "");
+  const [attendees, setAttendees] = useState(prefill?.attendees ?? "");
+  const [requirements, setRequirements] = useState(prefill?.requirements ?? "");
+
+  const handleNext = () => {
+    const params = new URLSearchParams({
+      attendees,
+      endDate,
+      eventName,
+      location,
+      requirements,
+      service,
+      startDate,
+    });
+
+    navigate(`/negotiations/setup?${params.toString()}`);
+  };
 
   return (
     <div className="-mt-16 min-h-screen bg-surface lg:mt-0" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
@@ -30,6 +59,8 @@ export default function ConfigureNegotiationPage() {
                 <input
                   type="text"
                   placeholder="e.g. Q3 Sales Kickoff, Annual Leadership Retreat"
+                  value={eventName}
+                  onChange={(event) => setEventName(event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </label>
@@ -45,11 +76,10 @@ export default function ConfigureNegotiationPage() {
                       key={id}
                       type="button"
                       onClick={() => setService(id)}
-                      className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                        selected
+                      className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${selected
                           ? "border-secondary bg-secondary/5 text-secondary"
                           : "border-outline-variant/30 bg-surface-container-low text-on-surface-variant hover:text-on-surface"
-                      }`}
+                        }`}
                     >
                       <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: selected ? "'FILL' 1" : "'FILL' 0" }}>
                         {icon}
@@ -71,6 +101,8 @@ export default function ConfigureNegotiationPage() {
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">calendar_today</span>
                   <input
                     type="date"
+                    value={startDate}
+                    onChange={(event) => setStartDate(event.target.value)}
                     className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/30"
                   />
                 </div>
@@ -84,6 +116,8 @@ export default function ConfigureNegotiationPage() {
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">calendar_today</span>
                   <input
                     type="date"
+                    value={endDate}
+                    onChange={(event) => setEndDate(event.target.value)}
                     className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/30"
                   />
                 </div>
@@ -98,6 +132,8 @@ export default function ConfigureNegotiationPage() {
                   <input
                     type="text"
                     placeholder="City or airport code"
+                    value={location}
+                    onChange={(event) => setLocation(event.target.value)}
                     className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                   />
                 </div>
@@ -113,6 +149,8 @@ export default function ConfigureNegotiationPage() {
                 <input
                   type="number"
                   placeholder="120"
+                  value={attendees}
+                  onChange={(event) => setAttendees(event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </label>
@@ -124,6 +162,8 @@ export default function ConfigureNegotiationPage() {
                 <input
                   type="text"
                   placeholder="Room types, meal plans, AV, baggage handling..."
+                  value={requirements}
+                  onChange={(event) => setRequirements(event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </label>
@@ -135,13 +175,14 @@ export default function ConfigureNegotiationPage() {
             <Link to="/" className="text-sm text-on-surface-variant hover:text-on-surface">
               Cancel
             </Link>
-            <Link
-              to={`/negotiations/setup?service=${service}`}
+            <button
+              type="button"
+              onClick={handleNext}
               className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary-container"
             >
-              Review & Launch
+              Next
               <span className="material-symbols-outlined text-[17px]">arrow_forward</span>
-            </Link>
+            </button>
           </div>
 
         </div>

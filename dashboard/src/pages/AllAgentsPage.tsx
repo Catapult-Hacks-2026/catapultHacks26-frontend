@@ -2,14 +2,22 @@ import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
-import { agentRows, getStatusVariant } from "@/lib/dashboard-data";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/context/EventsContext";
+import { useClosedDealsCount, useNegotiations } from "@/hooks/useNegotiations";
+import { getStatusVariant } from "@/lib/dashboard-data";
 
 export default function AllAgentsPage() {
   const { getEventForNegotiation } = useEvents();
+  const {
+    data: agentRows = [],
+    error,
+    isError,
+    isLoading,
+  } = useNegotiations();
+  const { data: closedDeals = 0 } = useClosedDealsCount();
   const activeCalls = agentRows.filter((r) => r.status === "Ringing" || r.status === "Negotiating").length;
   const queuedOrWrapping = agentRows.filter((r) => r.status === "Queued" || r.status === "Finalizing").length;
-  const closedDeals = agentRows.filter((r) => r.status === "Deal Closed").length;
 
   return (
     <div className="min-h-screen bg-surface px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-12">
@@ -23,8 +31,7 @@ export default function AllAgentsPage() {
               All Agents
             </h1>
             <p className="mt-3 text-sm text-on-surface-variant">
-              {agentRows.length} active sourcing cycles across hotels, aviation,
-              and corporate events.
+              {agentRows.length} active sourcing cycles across hotels and corporate events.
             </p>
           </div>
 
@@ -78,7 +85,29 @@ export default function AllAgentsPage() {
           </div>
 
           <div>
-            {agentRows.map((row) => {
+            {isLoading
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col gap-4 border-t border-outline-variant/5 px-5 py-5 sm:px-6 lg:grid lg:grid-cols-[1.6fr_1.1fr_0.85fr_1fr_0.9fr] lg:items-center lg:gap-4 lg:px-8 lg:py-6"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-5 w-36" />
+                        <Skeleton className="h-4 w-28" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-7 w-20" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-7 w-20" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                    <Skeleton className="h-8 w-28" />
+                  </div>
+                ))
+              : agentRows.map((row) => {
               const event = getEventForNegotiation(row.id);
               return (
                 <Link
@@ -138,7 +167,9 @@ export default function AllAgentsPage() {
 
           <div className="border-t border-outline-variant/5 bg-surface-container-low px-5 py-5 sm:px-6 lg:px-8">
             <p className="text-sm text-on-surface-variant">
-              Showing all {agentRows.length} active Galileo cycles
+              {isError
+                ? ((error as Error)?.message ?? "Unable to load agents.")
+                : `Showing all ${agentRows.length} active Galileo cycles`}
             </p>
           </div>
         </section>
