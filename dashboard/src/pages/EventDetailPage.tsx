@@ -1,8 +1,10 @@
-import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { NegotiationPricePath, type PricePoint } from "@/components/dashboard/NegotiationPricePath";
 import { Chip } from "@/components/ui/Chip";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/context/EventsContext";
+import { useDeleteEvent } from "@/hooks/useEvents";
 import {
   getAgentDisplayStatus,
   getStatusVariant,
@@ -35,7 +37,10 @@ function acceptedProgressLabel(_service: "Hotel", acceptedCount: number) {
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { error, getEvent, canAcceptAgent, acceptOffer, isLoading } = useEvents();
+  const deleteEvent = useDeleteEvent();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const event = getEvent(id ?? "");
 
   if (isLoading) {
@@ -76,19 +81,54 @@ export default function EventDetailPage() {
         </p>
         <div className="mt-0.5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-semibold tracking-tight text-on-surface sm:text-3xl">{event.name}</h1>
-          {isCompleted ? (
-            <span className="rounded-full bg-surface-container-highest px-3 py-1 text-xs font-semibold text-on-surface-variant">
-              Completed
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-2 rounded-full bg-secondary-fixed px-3 py-1 text-xs font-semibold text-on-secondary-fixed">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-secondary" />
+          <div className="flex items-center gap-3">
+            {isCompleted ? (
+              <span className="rounded-full bg-surface-container-highest px-3 py-1 text-xs font-semibold text-on-surface-variant">
+                Completed
               </span>
-              Active
-            </span>
-          )}
+            ) : (
+              <span className="inline-flex items-center gap-2 rounded-full bg-secondary-fixed px-3 py-1 text-xs font-semibold text-on-secondary-fixed">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-secondary" />
+                </span>
+                Active
+              </span>
+            )}
+            {!showDeleteConfirm ? (
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-error/20 px-3 py-1.5 text-xs font-semibold text-error transition-colors hover:bg-error/5"
+              >
+                <span className="material-symbols-outlined text-[14px]">delete</span>
+                Delete
+              </button>
+            ) : (
+              <div className="inline-flex items-center gap-2">
+                <span className="text-xs text-on-surface-variant">Are you sure?</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    deleteEvent.mutate(id!, {
+                      onSuccess: () => navigate("/events"),
+                    });
+                  }}
+                  disabled={deleteEvent.isPending}
+                  className="rounded-lg bg-error px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-error/90 disabled:opacity-50"
+                >
+                  {deleteEvent.isPending ? "Deleting..." : "Confirm"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="rounded-lg border border-outline-variant/30 px-3 py-1.5 text-xs font-semibold text-on-surface-variant transition-colors hover:bg-surface-container"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

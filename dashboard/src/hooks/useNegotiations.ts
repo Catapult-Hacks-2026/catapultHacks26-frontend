@@ -41,17 +41,12 @@ export type LaunchNegotiationPayload = {
   endDate: string;
   location: string;
   attendees: number;
-  budgetPerPerson: number;
-  requirements: string;
-  guardrails: {
-    hotel: {
-      idealPrice: number;
-      ceilingPrice: number;
-    };
-    airline: {
-      idealPrice: number;
-      ceilingPrice: number;
-    };
+  idealPrice: number;
+  ceilingPrice: number;
+  budgetPerPerson?: number;
+  requirements?: string;
+  guardrails?: {
+    hotel?: { idealPrice: number; ceilingPrice: number };
   };
 };
 
@@ -63,7 +58,11 @@ export function useNegotiations() {
         `/api/galileo/enterprises/${ENTERPRISE_ID}/agents`,
       );
 
-      return raw.map((agent) => {
+      return raw.filter((agent) => {
+        if (agent.isAccepted) return false;
+        const status = mapNegotiationStatus(agent.outcome ?? agent.status);
+        return status !== "Deal Closed";
+      }).map((agent) => {
         const company = agent.companyName ?? "Supplier";
         const target = agent.idealPrice ?? null;
         const negotiated = agent.currentPrice ?? null;
@@ -93,6 +92,20 @@ export function useNegotiations() {
           status: mapNegotiationStatus(agent.outcome ?? agent.status),
         };
       });
+    },
+  });
+}
+
+export function useClosedDealsCount() {
+  return useQuery({
+    queryKey: ["negotiations", "closed-count"],
+    queryFn: async () => {
+      const raw = await apiFetch<EnterpriseAgent[]>(
+        `/api/galileo/enterprises/${ENTERPRISE_ID}/agents`,
+      );
+      return raw.filter(
+        (agent) => agent.isAccepted || mapNegotiationStatus(agent.outcome ?? agent.status) === "Deal Closed",
+      ).length;
     },
   });
 }

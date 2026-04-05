@@ -4,7 +4,7 @@ import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/context/EventsContext";
-import { useNegotiations } from "@/hooks/useNegotiations";
+import { useClosedDealsCount, useNegotiations } from "@/hooks/useNegotiations";
 import { getStatusVariant } from "@/lib/dashboard-data";
 
 export default function AllAgentsPage() {
@@ -15,9 +15,9 @@ export default function AllAgentsPage() {
     isError,
     isLoading,
   } = useNegotiations();
+  const { data: closedDeals = 0 } = useClosedDealsCount();
   const activeCalls = agentRows.filter((r) => r.status === "Ringing" || r.status === "Negotiating").length;
   const queuedOrWrapping = agentRows.filter((r) => r.status === "Queued" || r.status === "Finalizing").length;
-  const closedDeals = agentRows.filter((r) => r.status === "Deal Closed").length;
 
   return (
     <div className="min-h-screen bg-surface px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-12">

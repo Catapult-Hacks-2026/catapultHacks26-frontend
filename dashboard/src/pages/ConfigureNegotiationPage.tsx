@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+type ConfigureLocationState = {
+  location?: string;
+  attendees?: string;
+  startDate?: string;
+  endDate?: string;
+  requirements?: string;
+  eventType?: string;
+} | null;
 
 const serviceTypes = [
   { id: "Hotel", icon: "hotel" },
@@ -7,13 +16,14 @@ const serviceTypes = [
 
 export default function ConfigureNegotiationPage() {
   const navigate = useNavigate();
+  const prefill = useLocation().state as ConfigureLocationState;
   const [service, setService] = useState("Hotel");
-  const [eventName, setEventName] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [attendees, setAttendees] = useState("");
-  const [requirements, setRequirements] = useState("");
+  const [eventName, setEventName] = useState(prefill?.eventType ?? "");
+  const [startDate, setStartDate] = useState(prefill?.startDate ?? "");
+  const [endDate, setEndDate] = useState(prefill?.endDate ?? "");
+  const [location, setLocation] = useState(prefill?.location ?? "");
+  const [attendees, setAttendees] = useState(prefill?.attendees ?? "");
+  const [requirements, setRequirements] = useState(prefill?.requirements ?? "");
 
   const handleNext = () => {
     const params = new URLSearchParams({

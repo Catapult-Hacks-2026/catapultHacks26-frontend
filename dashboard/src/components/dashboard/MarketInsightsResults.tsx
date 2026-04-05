@@ -130,7 +130,18 @@ export function MarketInsightsResults() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Button
-              href="/negotiations/configure"
+              onClick={() =>
+                navigate("/negotiations/configure", {
+                  state: {
+                    location: query.location,
+                    attendees: query.attendees,
+                    startDate: window.startDate,
+                    endDate: window.endDate,
+                    requirements: query.eventDetails,
+                    eventType: query.eventType,
+                  },
+                })
+              }
               className="rounded-full px-7 py-3 text-sm"
             >
               Launch Negotiation

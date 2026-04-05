@@ -27,6 +27,25 @@ export function useEventDetail(id: string) {
   });
 }
 
+export function useDeleteEvent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (eventId: string) =>
+      apiFetch<{ id: string; deleted: boolean }>(
+        `/api/galileo/events/${eventId}`,
+        { method: "DELETE" },
+      ),
+    onSuccess: async (_, eventId) => {
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["events", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["negotiations"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "summary"] });
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    },
+  });
+}
+
 export function useAcceptEventOffer() {
   const queryClient = useQueryClient();
 

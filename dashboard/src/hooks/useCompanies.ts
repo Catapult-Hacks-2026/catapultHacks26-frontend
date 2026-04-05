@@ -19,12 +19,61 @@ export type CompanyProfileResponse = FullCompanyProfile & {
   bookings: string;
 };
 
+function parseMoney(str: string): number {
+  return Number.parseFloat(str.replace(/[^0-9.]/g, "")) || 0;
+}
+
+function formatSavings(value: number): string {
+  if (value <= 0) return "—";
+  return `$${value.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
+
 export function useCompanyCards() {
   return useQuery({
     queryKey: ["companies"],
     queryFn: async () => {
-      const raw = await apiFetch<RawGalileoCompany[]>("/api/galileo/companies");
-      return raw.map(transformCompanyCard);
+      const [raw, agents, rawEvents] = await Promise.all([
+        apiFetch<RawGalileoCompany[]>("/api/galileo/companies"),
+        apiFetch<EnterpriseAgent[]>(
+          `/api/galileo/enterprises/${ENTERPRISE_ID}/agents`,
+        ),
+        apiFetch<RawGalileoEvent[]>(
+          `/api/galileo/enterprises/${ENTERPRISE_ID}/events`,
+        ),
+      ]);
+
+      const events = rawEvents.map(transformEvent);
+      const completedEvents = events.filter((e) => e.status === "Completed");
+
+      return raw.map((company) => {
+        const card = transformCompanyCard(company);
+
+        let totalSavings = 0;
+        let totalBookings = 0;
+
+        const acceptedAgentEventIds = new Set(
+          agents
+            .filter((a) => a.companyId === company.id && a.isAccepted)
+            .map((a) => a.eventId),
+        );
+
+        for (const event of completedEvents) {
+          if (!acceptedAgentEventIds.has(event.id)) continue;
+          const acceptedAgent = event.agents.find(
+            (a) => a.companyId === company.id && a.isAccepted,
+          );
+          if (acceptedAgent) {
+            totalSavings += parseMoney(acceptedAgent.savings);
+            totalBookings += 1;
+          }
+        }
+
+        return {
+          ...card,
+          totalSavings: totalSavings > 0 ? formatSavings(totalSavings) : card.totalSavings,
+          bookings: totalBookings > 0 ? totalBookings.toLocaleString("en-US") : card.bookings,
+        };
+      });
     },
   });
 }
