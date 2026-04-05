@@ -11,6 +11,11 @@ function formatCurrency(value: number) {
   return `$${value} / night avg`;
 }
 
+function parseMoney(str: string): number {
+  const cleaned = str.replace(/[^0-9.]/g, "");
+  return Number.parseFloat(cleaned) || 0;
+}
+
 function buildChartPoints(
   series: ReadonlyArray<{ label: string; value: number }>,
   minValue: number,
@@ -118,6 +123,15 @@ export default function CompanyDetailPage() {
     savingsDelta: "—",
     subtitle: "",
   };
+  const pastEvents = companyEvents.filter((e) => e.status === "Completed");
+  const lifetimeSavings = pastEvents.reduce((sum, event) => {
+    const companyAgent = event.agents.find((a) => a.companyId === id && a.isAccepted);
+    return sum + (companyAgent ? parseMoney(companyAgent.savings) : 0);
+  }, 0);
+  const formattedLifetimeSavings = lifetimeSavings > 0
+    ? `$${lifetimeSavings.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+    : activeLocation.lifetimeSavings;
+
   const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const historicSeries = historicPricing
     .slice()
@@ -202,7 +216,7 @@ export default function CompanyDetailPage() {
             Total Lifetime Savings
           </p>
           <div className="mt-4 text-[3.5rem] font-extrabold leading-none tracking-tighter text-on-surface">
-            {activeLocation.lifetimeSavings}
+            {formattedLifetimeSavings}
           </div>
           <p className="mt-2 text-sm font-semibold text-secondary">{activeLocation.savingsDelta} avg savings rate</p>
         </div>

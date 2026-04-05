@@ -15,6 +15,8 @@ export type EventWindowQuery = {
 export type RecommendationWindow = {
   label: string;
   range: string;
+  startDate: string;
+  endDate: string;
   explanation: string;
   marketCost: string;
   negotiatedPrice: string;
@@ -43,11 +45,13 @@ export function useMarketInsights() {
       return raw.map((window) => ({
         label: window.label,
         range: formatDateRange(window.startDate, window.endDate),
+        startDate: window.startDate,
+        endDate: window.endDate,
         explanation: window.explanation,
         marketCost: `${formatCurrency(window.hotel.marketCost)} / room night`,
         negotiatedPrice: `${formatCurrency(window.hotel.negotiatedPrice)} / room night`,
         savings: `${formatCurrency(window.hotel.savings)} / room night`,
-        probability: `${Math.round(window.negotiationConfidence * 100)}% negotiation confidence`,
+        probability: `${Math.round(window.negotiationConfidence > 1 ? window.negotiationConfidence : window.negotiationConfidence * 100)}% negotiation confidence`,
       }));
     },
   });

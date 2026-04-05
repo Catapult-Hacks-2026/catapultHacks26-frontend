@@ -81,7 +81,6 @@ export default function NegotiationShellPage() {
 
   const [idealPrice, setIdealPrice] = useState("");
   const [ceilingPrice, setCeilingPrice] = useState("");
-  const [budgetPerPerson, setBudgetPerPerson] = useState("");
 
   const pricingPayload =
     startDate && endDate && location && Number.isFinite(attendees) && attendees > 0
@@ -100,8 +99,6 @@ export default function NegotiationShellPage() {
   const handleLaunch = () => {
     const ideal = Number.parseFloat(idealPrice) || 0;
     const ceiling = Number.parseFloat(ceilingPrice) || 0;
-    const budget = Number.parseFloat(budgetPerPerson) || 0;
-
     void launch.mutateAsync({
       eventName,
       service,
@@ -109,7 +106,7 @@ export default function NegotiationShellPage() {
       endDate,
       location,
       attendees,
-      budgetPerPerson: budget,
+      budgetPerPerson: 0,
       requirements,
       guardrails: {
         hotel: { idealPrice: ideal, ceilingPrice: ceiling },
@@ -136,7 +133,7 @@ export default function NegotiationShellPage() {
           unit={data?.unit ?? "per night"}
         />
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
             <label className="block">
               <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Ideal Price</span>
@@ -164,22 +161,6 @@ export default function NegotiationShellPage() {
                   placeholder="215.00"
                   value={ceilingPrice}
                   onChange={(e) => setCeilingPrice(e.target.value)}
-                  className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
-                />
-              </div>
-            </label>
-          </div>
-          <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
-            <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Budget Per Person</span>
-              <p className="mt-0.5 text-xs text-outline">Per-person budget cap for the event</p>
-              <div className="relative mt-3">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-                <input
-                  type="number"
-                  placeholder="250.00"
-                  value={budgetPerPerson}
-                  onChange={(e) => setBudgetPerPerson(e.target.value)}
                   className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </div>
