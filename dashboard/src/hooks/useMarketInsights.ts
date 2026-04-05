@@ -1,5 +1,5 @@
-import { apiFetch } from "@/lib/api";
 import type { MarketInsightsQuery } from "@/lib/market-insights-data";
+import { recommendationWindows } from "@/lib/market-insights-data";
 import { useMutation } from "@/lib/queryClient";
 
 export type RecommendationWindow = {
@@ -14,10 +14,6 @@ export type RecommendationWindow = {
 
 export function useMarketInsights() {
   return useMutation({
-    mutationFn: (query: MarketInsightsQuery) =>
-      apiFetch<RecommendationWindow[]>("/api/market-insights", {
-        body: JSON.stringify(query),
-        method: "POST",
-      }),
+    mutationFn: async (_query: MarketInsightsQuery) => recommendationWindows,
   });
 }

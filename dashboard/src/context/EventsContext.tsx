@@ -22,14 +22,6 @@ function hasAcceptedType(event: GalileoEvent, type: EventAgent["type"]) {
   return event.agents.some((agent) => agent.type === type && agent.isAccepted);
 }
 
-function isEventComplete(event: GalileoEvent) {
-  const acceptedTypes = new Set(
-    event.agents.filter((agent) => agent.isAccepted).map((agent) => agent.type),
-  );
-
-  return acceptedTypes.has("Hotel");
-}
-
 export function EventsProvider({ children }: { children: ReactNode }) {
   const { data: events = [], error, isLoading } = useEventsList();
   const acceptMutation = useAcceptEventOffer();

@@ -134,18 +134,6 @@ function currency(value: number, digits = 0) {
   })}`;
 }
 
-function companyIdFromName(name: string) {
-  const direct = companyCards.find(
-    (company) => company.name.toLowerCase() === name.toLowerCase(),
-  );
-
-  if (direct) {
-    return direct.id;
-  }
-
-  return name.toLowerCase().split(" ")[0]?.replace(/[^a-z0-9]/g, "") ?? "company";
-}
-
 function eventLocationForNegotiation(id: string) {
   const event = initialEvents.find((item) =>
     item.agents.some((agent) => agent.negotiationId === id),

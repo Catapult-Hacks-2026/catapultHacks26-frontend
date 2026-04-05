@@ -1,4 +1,5 @@
 import { ApiError } from "@/lib/api-error";
+import { API_BASE_URL } from "@/lib/config";
 import { mockApiFetch } from "@/lib/mock-api";
 
 // ─── Toggle ───────────────────────────────────────────────────────────────────
@@ -7,7 +8,6 @@ import { mockApiFetch } from "@/lib/mock-api";
 const USE_MOCK_DATA = false;
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 const API_TOKEN = import.meta.env.VITE_API_TOKEN ?? "";
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -18,14 +18,14 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
     headers.set("Authorization", `Bearer ${API_TOKEN}`);
   }
 
-  if (USE_MOCK_DATA || !BASE) {
+  if (USE_MOCK_DATA || !API_BASE_URL) {
     return mockApiFetch<T>(path, { ...init, headers });
   }
 
   let response: Response;
 
   try {
-    response = await fetch(`${BASE}${path}`, {
+    response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
       headers,
     });

@@ -108,8 +108,17 @@ export default function CompanyDetailPage() {
 
   const locationKeys = Object.keys(profile.locations);
   const resolvedLocationScope = profile.locations[locationScope] ? locationScope : (locationKeys[0] ?? "all");
-  const activeLocation = profile.locations[resolvedLocationScope] ?? profile.locations[locationKeys[0]];
-  const activeSeries = activeLocation.pricing[pricingRange];
+  const activeLocation = profile.locations[resolvedLocationScope] ?? profile.locations[locationKeys[0]] ?? {
+    agreements: "—",
+    currentLocation: "Location unavailable",
+    eventIds: [],
+    label: "All Locations",
+    lifetimeSavings: "—",
+    pricing: { "1Y": [], ALL: [] },
+    savingsDelta: "—",
+    subtitle: "",
+  };
+  const activeSeries = activeLocation.pricing[pricingRange] ?? [];
   const safeActiveIndex =
     activePointIndex === null ? null : Math.min(activePointIndex, activeSeries.length - 1);
   const activePoint = safeActiveIndex === null ? null : activeSeries[safeActiveIndex];

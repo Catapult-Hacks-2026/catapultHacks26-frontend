@@ -1,11 +1,18 @@
 import { apiFetch } from "@/lib/api";
-import type { GalileoEvent } from "@/lib/dashboard-data";
+import type { RawGalileoEvent } from "@/lib/api-types";
+import { ENTERPRISE_ID } from "@/lib/config";
+import { transformEvent } from "@/lib/transformers";
 import { useMutation, useQuery, useQueryClient } from "@/lib/queryClient";
 
 export function useEventsList() {
   return useQuery({
     queryKey: ["events"],
-    queryFn: () => apiFetch<GalileoEvent[]>("/api/events"),
+    queryFn: async () => {
+      const raw = await apiFetch<RawGalileoEvent[]>(
+        `/api/galileo/enterprises/${ENTERPRISE_ID}/events`,
+      );
+      return raw.map(transformEvent);
+    },
   });
 }
 
@@ -13,7 +20,10 @@ export function useEventDetail(id: string) {
   return useQuery({
     enabled: Boolean(id),
     queryKey: ["events", id],
-    queryFn: () => apiFetch<GalileoEvent>(`/api/events/${id}`),
+    queryFn: async () => {
+      const raw = await apiFetch<RawGalileoEvent>(`/api/galileo/events/${id}`);
+      return transformEvent(raw);
+    },
   });
 }
 
@@ -22,7 +32,7 @@ export function useAcceptEventOffer() {
 
   return useMutation({
     mutationFn: ({ eventId, agentId }: { eventId: string; agentId: string }) =>
-      apiFetch<{ success: boolean }>(`/api/events/${eventId}/agents/${agentId}/accept`, {
+      apiFetch<{ success: boolean }>(`/api/galileo/events/${eventId}/agents/${agentId}/accept`, {
         method: "POST",
       }),
     onSuccess: async (_, { eventId, agentId }) => {

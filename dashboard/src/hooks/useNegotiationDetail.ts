@@ -1,4 +1,6 @@
 import { apiFetch } from "@/lib/api";
+import type { RawGalileoAgent, RawGalileoEvent, RawNegotiationDetail } from "@/lib/api-types";
+import { transformGalileoAgentDetail, transformNegotiationDetail } from "@/lib/transformers";
 import { useMutation, useQuery, useQueryClient } from "@/lib/queryClient";
 
 export type PriceStep = {
@@ -45,7 +47,25 @@ export function useNegotiationDetail(id: string) {
   return useQuery({
     enabled: Boolean(id),
     queryKey: ["negotiations", id],
-    queryFn: () => apiFetch<NegotiationDetail>(`/api/negotiations/${id}`),
+    queryFn: async () => {
+      try {
+        const raw = await apiFetch<RawNegotiationDetail>(`/negotiations/${id}`);
+        return transformNegotiationDetail(raw);
+      } catch {
+        const agent = await apiFetch<RawGalileoAgent>(`/api/galileo/agents/${id}`);
+        let fallbackEvent: RawGalileoEvent | null = null;
+
+        if (agent.event_id) {
+          try {
+            fallbackEvent = await apiFetch<RawGalileoEvent>(`/api/galileo/events/${agent.event_id}`);
+          } catch {
+            fallbackEvent = null;
+          }
+        }
+
+        return transformGalileoAgentDetail(agent, fallbackEvent);
+      }
+    },
   });
 }
 
@@ -54,7 +74,7 @@ export function useAcceptNegotiation() {
 
   return useMutation({
     mutationFn: (id: string) =>
-      apiFetch<{ success: boolean }>(`/api/negotiations/${id}/accept`, {
+      apiFetch<{ success: boolean }>(`/negotiations/${id}/approve`, {
         method: "POST",
       }),
     onSuccess: async (_, id) => {

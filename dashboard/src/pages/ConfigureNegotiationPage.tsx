@@ -43,11 +43,10 @@ export default function ConfigureNegotiationPage() {
                       key={id}
                       type="button"
                       onClick={() => setService(id)}
-                      className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                        selected
+                      className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${selected
                           ? "border-secondary bg-secondary/5 text-secondary"
                           : "border-outline-variant/30 bg-surface-container-low text-on-surface-variant hover:text-on-surface"
-                      }`}
+                        }`}
                     >
                       <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: selected ? "'FILL' 1" : "'FILL' 0" }}>
                         {icon}
@@ -137,7 +136,7 @@ export default function ConfigureNegotiationPage() {
               to={`/negotiations/setup?service=${service}`}
               className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary-container"
             >
-              Review & Launch
+              Next
               <span className="material-symbols-outlined text-[17px]">arrow_forward</span>
             </Link>
           </div>

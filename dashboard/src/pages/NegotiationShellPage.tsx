@@ -25,38 +25,6 @@ function MarketCard({ label, market, predicted, unit }: { label: string; market:
   );
 }
 
-function GuardrailRow({ label }: { label: string }) {
-  return (
-    <div className="rounded-xl border border-outline-variant/20 bg-white px-6 py-5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-3">{label}</p>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <label className="block">
-          <span className="text-xs text-on-surface-variant">Ideal Price</span>
-          <div className="relative mt-1.5">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-            <input
-              type="number"
-              placeholder="185.00"
-              className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
-            />
-          </div>
-        </label>
-        <label className="block">
-          <span className="text-xs text-on-surface-variant">Ceiling Price</span>
-          <div className="relative mt-1.5">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
-            <input
-              type="number"
-              placeholder="215.00"
-              className="w-full rounded-lg bg-surface-container-low py-3 pl-8 pr-4 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
-            />
-          </div>
-        </label>
-      </div>
-    </div>
-  );
-}
-
 export default function NegotiationShellPage() {
 
   return (
@@ -110,7 +78,7 @@ export default function NegotiationShellPage() {
             to="/negotiations/new/agent"
             className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary-container"
           >
-            Launch Agent
+            Launch Negotiations
             <span className="material-symbols-outlined text-[17px]">arrow_forward</span>
           </Link>
         </div>
