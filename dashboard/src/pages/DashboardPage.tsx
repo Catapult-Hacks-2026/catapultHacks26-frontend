@@ -109,76 +109,76 @@ export default function DashboardPage() {
           <div>
             {isNegotiationsLoading
               ? Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-4 border-t border-outline-variant/5 px-5 py-5 sm:px-6 lg:grid lg:grid-cols-[1.6fr_1.1fr_0.85fr_1fr_0.9fr] lg:items-center lg:gap-4 lg:px-8 lg:py-6"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Skeleton className="h-12 w-12 rounded-full" />
-                      <div className="space-y-2">
-                        <Skeleton className="h-5 w-36" />
-                        <Skeleton className="h-4 w-28" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-5 w-32" />
-                    <Skeleton className="h-7 w-20" />
-                    <div className="space-y-2">
-                      <Skeleton className="h-7 w-20" />
-                      <Skeleton className="h-4 w-16" />
-                    </div>
-                    <Skeleton className="h-8 w-28" />
-                  </div>
-                ))
-              : previewRows.map((row) => {
-              const event = getEventForNegotiation(row.id);
-              return (
-                <Link
-                  key={row.id}
-                  to={`/negotiations/${row.id}/agent`}
-                  className="flex flex-col gap-4 border-t border-outline-variant/5 px-5 py-5 transition-colors hover:bg-surface-container sm:px-6 lg:grid lg:grid-cols-[1.6fr_1.1fr_0.85fr_1fr_0.9fr] lg:items-center lg:gap-4 lg:px-8 lg:py-6"
+                <div
+                  key={index}
+                  className="flex flex-col gap-4 border-t border-outline-variant/5 px-5 py-5 sm:px-6 lg:grid lg:grid-cols-[1.6fr_1.1fr_0.85fr_1fr_0.9fr] lg:items-center lg:gap-4 lg:px-8 lg:py-6"
                 >
                   <div className="flex items-center gap-4">
-                    <AvatarMark label={row.company[0]} />
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-36" />
+                      <Skeleton className="h-4 w-28" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-7 w-20" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-7 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  <Skeleton className="h-8 w-28" />
+                </div>
+              ))
+              : previewRows.map((row) => {
+                const event = getEventForNegotiation(row.id);
+                return (
+                  <Link
+                    key={row.id}
+                    to={`/negotiations/${row.id}/agent`}
+                    className="flex flex-col gap-4 border-t border-outline-variant/5 px-5 py-5 transition-colors hover:bg-surface-container sm:px-6 lg:grid lg:grid-cols-[1.6fr_1.1fr_0.85fr_1fr_0.9fr] lg:items-center lg:gap-4 lg:px-8 lg:py-6"
+                  >
+                    <div className="flex items-center gap-4">
+                      <AvatarMark label={row.company[0]} />
+                      <div>
+                        <p className="font-bold text-on-surface">{row.company}</p>
+                        <p className="text-sm text-on-surface-variant">{row.segment}</p>
+                      </div>
+                    </div>
+                    <div className="text-sm lg:text-base">
+                      {event ? (
+                        <Link
+                          to={`/events/${event.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="group/event inline-flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-[13px] text-on-surface-variant group-hover/event:text-secondary">
+                            event
+                          </span>
+                          <span className="text-sm font-semibold text-on-surface group-hover/event:text-secondary leading-tight">
+                            {event.name}
+                          </span>
+                        </Link>
+                      ) : (
+                        <span className="text-sm text-on-surface-variant">—</span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between gap-3 lg:block">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant lg:hidden">Target</span>
+                      <div className="text-lg font-bold text-on-surface">{row.target}</div>
+                    </div>
                     <div>
-                      <p className="font-bold text-on-surface">{row.company}</p>
-                      <p className="text-sm text-on-surface-variant">{row.segment}</p>
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant lg:hidden">Negotiation</div>
+                      <div className="text-lg font-bold text-on-surface">
+                        {row.negotiated}
+                      </div>
+                      <div className={`text-sm font-bold ${row.deltaTone}`}>{row.delta}</div>
                     </div>
-                  </div>
-                  <div className="text-sm lg:text-base">
-                    {event ? (
-                      <Link
-                        to={`/events/${event.id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="group/event inline-flex items-center gap-1.5"
-                      >
-                        <span className="material-symbols-outlined text-[13px] text-on-surface-variant group-hover/event:text-secondary">
-                          event
-                        </span>
-                        <span className="text-sm font-semibold text-on-surface group-hover/event:text-secondary leading-tight">
-                          {event.name}
-                        </span>
-                      </Link>
-                    ) : (
-                      <span className="text-sm text-on-surface-variant">—</span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between gap-3 lg:block">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant lg:hidden">Target</span>
-                    <div className="text-lg font-bold text-on-surface">{row.target}</div>
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant lg:hidden">Negotiation</div>
-                    <div className="text-lg font-bold text-on-surface">
-                      {row.negotiated}
+                    <div>
+                      <Chip variant={getStatusVariant(row.status)}>{row.status}</Chip>
                     </div>
-                    <div className={`text-sm font-bold ${row.deltaTone}`}>{row.delta}</div>
-                  </div>
-                  <div>
-                    <Chip variant={getStatusVariant(row.status)}>{row.status}</Chip>
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
           </div>
 
           <div className="flex flex-col gap-3 border-t border-outline-variant/5 bg-surface-container-low px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8 lg:py-6">

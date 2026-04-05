@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api";
-import type { RawGalileoAgent, RawGalileoEvent, RawNegotiationDetail } from "@/lib/api-types";
-import { transformGalileoAgentDetail, transformNegotiationDetail } from "@/lib/transformers";
+import type { RawGalileoAgent, RawGalileoEvent, RawInterveneResponse } from "@/lib/api-types";
+import { ENTERPRISE_ID } from "@/lib/config";
+import { transformGalileoAgentDetail } from "@/lib/transformers";
 import { useMutation, useQuery, useQueryClient } from "@/lib/queryClient";
 
 export type PriceStep = {
@@ -33,6 +34,7 @@ export type NegotiationDetail = {
   targetPrice: string;
   currentPrice: string;
   negotiatedPrice: string;
+  originalPrice: number | null;
   savingsToDate: string;
   distanceToGoal: string;
   pricePath: PriceStep[];
@@ -48,23 +50,20 @@ export function useNegotiationDetail(id: string) {
     enabled: Boolean(id),
     queryKey: ["negotiations", id],
     queryFn: async () => {
-      try {
-        const raw = await apiFetch<RawNegotiationDetail>(`/negotiations/${id}`);
-        return transformNegotiationDetail(raw);
-      } catch {
-        const agent = await apiFetch<RawGalileoAgent>(`/api/galileo/agents/${id}`);
-        let fallbackEvent: RawGalileoEvent | null = null;
+      const agent = await apiFetch<RawGalileoAgent>(`/api/galileo/agents/${id}`);
+      let fallbackEvent: RawGalileoEvent | null = null;
 
-        if (agent.event_id) {
-          try {
-            fallbackEvent = await apiFetch<RawGalileoEvent>(`/api/galileo/events/${agent.event_id}`);
-          } catch {
-            fallbackEvent = null;
-          }
+      if (agent.eventId ?? agent.event_id) {
+        try {
+          fallbackEvent = await apiFetch<RawGalileoEvent>(
+            `/api/galileo/events/${agent.eventId ?? agent.event_id}`,
+          );
+        } catch {
+          fallbackEvent = null;
         }
-
-        return transformGalileoAgentDetail(agent, fallbackEvent);
       }
+
+      return transformGalileoAgentDetail(agent, fallbackEvent);
     },
   });
 }
@@ -73,15 +72,36 @@ export function useAcceptNegotiation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiFetch<{ success: boolean }>(`/negotiations/${id}/approve`, {
-        method: "POST",
-      }),
-    onSuccess: async (_, id) => {
+    mutationFn: ({ eventId, agentId }: { eventId: string; agentId: string }) =>
+      apiFetch<RawGalileoEvent>(
+        `/api/galileo/events/${eventId}/agents/${agentId}/accept`,
+        {
+          body: JSON.stringify({ enterpriseId: ENTERPRISE_ID }),
+          method: "POST",
+        },
+      ),
+    onSuccess: async (_, { eventId, agentId }) => {
       queryClient.invalidateQueries({ queryKey: ["negotiations"] });
-      queryClient.invalidateQueries({ queryKey: ["negotiations", id] });
+      queryClient.invalidateQueries({ queryKey: ["negotiations", agentId] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["events", eventId] });
       queryClient.invalidateQueries({ queryKey: ["dashboard", "summary"] });
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    },
+  });
+}
+
+export function useIntervene() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (agentId: string) =>
+      apiFetch<RawInterveneResponse>(
+        `/api/galileo/agents/${agentId}/intervene`,
+        { method: "POST" },
+      ),
+    onSuccess: async (_, agentId) => {
+      queryClient.invalidateQueries({ queryKey: ["negotiations", agentId] });
     },
   });
 }

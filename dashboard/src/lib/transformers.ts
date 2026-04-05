@@ -97,6 +97,10 @@ function coerceSegment(category?: string | null, location?: string | null) {
   return location ? `${categoryLabel}/${location}` : categoryLabel;
 }
 
+function firstDefinedString(...values: Array<string | null | undefined>) {
+  return values.find((value) => typeof value === "string" && value.trim().length > 0);
+}
+
 export function formatCurrency(value: number | null | undefined, digits = 0) {
   if (!isFiniteNumber(value ?? null)) {
     return "—";
@@ -135,11 +139,14 @@ export function mapNegotiationStatus(status?: string | null): AgentStatus {
   const normalized = status?.toLowerCase() ?? "";
 
   if (normalized === "pending" || normalized === "queued") return "Queued";
+  if (normalized === "reviewing") return "Finalizing";
+  if (normalized === "optimized") return "Finalizing";
   if (normalized === "ringing") return "Ringing";
   if (normalized === "active" || normalized === "negotiating" || normalized === "in_progress") return "Negotiating";
   if (normalized === "finalizing") return "Finalizing";
   if (normalized === "accepted" || normalized === "approved" || normalized === "deal_closed") return "Deal Closed";
   if (normalized === "completed") return "Completed";
+  if (normalized === "cancelled") return "Failed";
   if (normalized === "escalated") return "Moved to higher up";
   if (normalized === "callback_requested" || normalized === "callback requested") return "Callback requested";
   if (normalized === "timeout" || normalized === "timed_out") return "Timed Out";
@@ -162,6 +169,12 @@ function eventAgentOutcome(agent: RawGalileoAgent) {
   }
 
   const normalized = agent.outcome?.toLowerCase() ?? agent.status?.toLowerCase() ?? "";
+  if (normalized === "rate_confirmed") return "Deal Closed" as const;
+  if (normalized === "callback_requested") return "Callback requested" as const;
+  if (normalized === "escalated_to_human") return "Moved to higher up" as const;
+  if (normalized === "no_availability") return "No Availability" as const;
+  if (normalized === "failed") return "Failure" as const;
+  if (normalized === "timed_out") return "Timed Out" as const;
   if (normalized === "accepted" || normalized === "approved" || normalized === "deal closed") return "Deal Closed" as const;
   if (normalized === "escalated") return "Moved to higher up" as const;
   if (normalized === "callback requested" || normalized === "callback_requested") return "Callback requested" as const;
@@ -212,11 +225,21 @@ function normalizeActivityStream(raw: RawGalileoActivityItem[] | null | undefine
     raw?.map((item, index, items) => ({
       active: item.active ?? index === items.length - 1,
       badge: item.badge ?? null,
-      badgeTone: item.badgeTone ?? "bg-tertiary-fixed text-on-tertiary-fixed",
+      badgeTone:
+        item.badgeTone ??
+        (item.badgeType === "savings"
+          ? "bg-tertiary-fixed text-on-tertiary-fixed"
+          : "bg-secondary-fixed text-on-secondary-fixed"),
       detail: item.detail ?? "Status updated",
-      detailTone: item.detailTone ?? undefined,
+      detailTone:
+        item.detailTone ??
+        (item.detailType === "positive"
+          ? "bg-tertiary-fixed text-on-tertiary-fixed"
+          : item.detailType === "negative"
+            ? "bg-error-container text-error"
+            : undefined),
       price: typeof item.price === "number" ? formatCurrency(item.price, 2) : item.price ?? "—",
-      time: item.time ?? formatTimeLabel(item.created_at),
+      time: item.time ?? formatTimeLabel(item.timestamp ?? item.created_at),
     })) ?? []
   );
 }
@@ -232,7 +255,7 @@ function transcriptSender(role?: string | null, sender?: string | null): "agent"
 function normalizeTranscript(raw: RawGalileoTranscriptMessage[] | null | undefined, companyName: string) {
   return (
     raw?.map((message) => ({
-      body: message.body ?? message.content ?? "",
+      body: message.message ?? message.body ?? message.content ?? "",
       label:
         message.label ??
         (transcriptSender(message.role, message.sender) === "agent" ? "Agent Galileo" : `${companyName} rep`),
@@ -367,7 +390,7 @@ export function transformNegotiationDetail(raw: RawNegotiationDetail, fallbackLo
   return {
     activityStream: buildActivityStream(raw.messages, maxPrice, currentOffer),
     company,
-    currentPrice: formatCurrency(maxPrice, 0),
+    currentPrice: formatCurrency(currentOffer, 0),
     distanceToGoal:
       isFiniteNumber(currentOffer) && isFiniteNumber(targetPrice)
         ? formatCurrency(Math.max(currentOffer! - targetPrice!, 0), 2)
@@ -391,6 +414,8 @@ export function transformNegotiationDetail(raw: RawNegotiationDetail, fallbackLo
 function priceFromAgent(agent: RawGalileoAgent, key: "original" | "negotiated") {
   if (key === "original") {
     return (
+      asNumber(agent.marketPrice) ??
+      asNumber(agent.originalPrice) ??
       asNumber(agent.original_price) ??
       asNumber(agent.market_price) ??
       asNumber(agent.pricePath?.[0]?.price) ??
@@ -399,8 +424,9 @@ function priceFromAgent(agent: RawGalileoAgent, key: "original" | "negotiated") 
   }
 
   return (
-    asNumber(agent.negotiated_price) ??
+    asNumber(agent.currentPrice) ??
     asNumber(agent.current_price) ??
+    asNumber(agent.negotiated_price) ??
     getCurrentOfferUnitPrice(agent.current_offer) ??
     asNumber(agent.pricePath?.[agent.pricePath.length - 1]?.price) ??
     asNumber(agent.pricePath?.[agent.pricePath.length - 1]?.unit_price)
@@ -408,13 +434,24 @@ function priceFromAgent(agent: RawGalileoAgent, key: "original" | "negotiated") 
 }
 
 export function transformEventAgent(agent: RawGalileoAgent): EventAgent {
-  const company = agent.vendor_name ?? agent.company ?? agent.company_name ?? agent.name ?? "Supplier";
+  const company =
+    firstDefinedString(
+      agent.companyName,
+      agent.vendor_name,
+      agent.company,
+      agent.company_name,
+      agent.name,
+    ) ?? "Supplier";
   const originalPrice = priceFromAgent(agent, "original");
   const negotiatedPrice = priceFromAgent(agent, "negotiated");
-  const savings = asNumber(agent.savings) ?? (isFiniteNumber(originalPrice) && isFiniteNumber(negotiatedPrice) ? originalPrice! - negotiatedPrice! : null);
+  const savings =
+    asNumber(agent.savingsToDate) ??
+    asNumber(agent.savings) ??
+    (isFiniteNumber(originalPrice) && isFiniteNumber(negotiatedPrice) ? originalPrice! - negotiatedPrice! : null);
 
   return {
     company,
+    companyId: agent.companyId ?? agent.company_id ?? "",
     isAccepted: Boolean(agent.isAccepted ?? agent.is_accepted),
     negotiationId: agent.id,
     negotiatedPrice: isFiniteNumber(negotiatedPrice) ? `${formatCurrency(negotiatedPrice, 0)}/night` : "—",
@@ -422,7 +459,7 @@ export function transformEventAgent(agent: RawGalileoAgent): EventAgent {
     outcome: eventAgentOutcome(agent),
     savings: formatCurrency(savings),
     status: eventAgentStatus(agent.status),
-    type: coerceType(agent.service ?? agent.type ?? agent.product_category),
+    type: coerceType(agent.type ?? agent.service ?? agent.product_category),
   };
 }
 
@@ -441,26 +478,45 @@ export function transformEvent(raw: RawGalileoEvent): GalileoEvent {
 }
 
 export function transformGalileoAgentDetail(raw: RawGalileoAgent, fallbackEvent?: RawGalileoEvent | null) {
-  const company = raw.vendor_name ?? raw.company ?? raw.company_name ?? raw.name ?? "Supplier";
-  const target = priceFromAgent(raw, "original");
+  const company =
+    firstDefinedString(
+      raw.companyName,
+      raw.vendor_name,
+      raw.company,
+      raw.company_name,
+      raw.name,
+    ) ?? "Supplier";
+  const target = asNumber(raw.idealPrice);
+  const original = priceFromAgent(raw, "original");
   const negotiated = priceFromAgent(raw, "negotiated");
   const status = eventAgentOutcome(raw) ?? mapNegotiationStatus(raw.status);
 
   return {
     activityStream: normalizeActivityStream(raw.activityStream),
     company,
-    currentPrice: formatCurrency(target, 0),
-    distanceToGoal: "—",
+    currentPrice: formatCurrency(negotiated, 0),
+    distanceToGoal:
+      asNumber(raw.distanceToGoal) !== null
+        ? formatCurrency(asNumber(raw.distanceToGoal), 2)
+        : isFiniteNumber(negotiated) && isFiniteNumber(target)
+          ? formatCurrency(Math.max(negotiated! - target!, 0), 2)
+          : "—",
     id: raw.id,
     isAccepted: Boolean(raw.isAccepted ?? raw.is_accepted),
     location: raw.location ?? fallbackEvent?.location ?? "Location unavailable",
     negotiatedPrice: formatCurrency(negotiated, 2),
-    pricePath: normalizePricePath(raw.pricePath, target, negotiated),
+    originalPrice: original ?? null,
+    pricePath: [
+      ...(isFiniteNumber(original) ? [{ label: "Market", price: original!, type: "offer" as const }] : []),
+      ...normalizePricePath(raw.pricePath, target, negotiated),
+    ],
     savingsToDate:
-      isFiniteNumber(target) && isFiniteNumber(negotiated)
-        ? formatCurrency(Math.max(target! - negotiated!, 0), 2)
-        : "—",
-    segment: titleCase(raw.product_category ?? raw.service ?? raw.type ?? "Hotel"),
+      asNumber(raw.savingsToDate) !== null
+        ? formatCurrency(asNumber(raw.savingsToDate), 2)
+        : isFiniteNumber(original) && isFiniteNumber(negotiated)
+          ? formatCurrency(Math.max(original! - negotiated!, 0), 2)
+          : "—",
+    segment: raw.segment ?? titleCase(raw.product_category ?? raw.service ?? raw.type ?? "Hotel"),
     status,
     targetPrice: formatCurrency(target, 0),
     transcript: normalizeTranscript(raw.transcript, company),
@@ -549,6 +605,7 @@ export function transformCompanyProfile(
     bookingWindowScores:
       enterpriseSummary?.bookingWindowScores ??
       enterpriseSummary?.booking_window_scores ??
+      enterpriseSummary?.bookingWindow?.map((bw) => ({ label: bw.month, score: bw.score })) ??
       fallback.bookingWindowScores,
     bookings: bookings?.toLocaleString("en-US") ?? "—",
     description: base.description ?? enterpriseSummary?.description ?? fallback.description,

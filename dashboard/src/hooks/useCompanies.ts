@@ -1,11 +1,14 @@
 import { apiFetch } from "@/lib/api";
 import type {
+  EnterpriseAgent,
+  HistoricPricingRecord,
   RawEnterpriseCompanySummary,
   RawGalileoCompany,
+  RawGalileoEvent,
 } from "@/lib/api-types";
 import { ENTERPRISE_ID } from "@/lib/config";
 import type { FullCompanyProfile } from "@/lib/dashboard-data";
-import { transformCompanyCard, transformCompanyProfile } from "@/lib/transformers";
+import { transformCompanyCard, transformCompanyProfile, transformEvent } from "@/lib/transformers";
 import { useQuery } from "@/lib/queryClient";
 
 export type CompanyProfileResponse = FullCompanyProfile & {
@@ -71,6 +74,54 @@ export function useCompanyNegotiations(id: string) {
           target: "—",
         })),
       );
+    },
+  });
+}
+
+export function useHistoricPricing(hotel: string | undefined) {
+  return useQuery({
+    enabled: Boolean(hotel),
+    queryKey: ["historic-pricing", hotel],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (hotel) params.set("hotel", hotel);
+      return apiFetch<HistoricPricingRecord[]>(
+        `/api/hotel-data/historic-pricing?${params.toString()}`,
+      );
+    },
+  });
+}
+
+export function useCompanyEvents(companyId: string) {
+  return useQuery({
+    enabled: Boolean(companyId),
+    queryKey: ["companies", companyId, "events"],
+    queryFn: async () => {
+      const [agents, rawEvents] = await Promise.all([
+        apiFetch<EnterpriseAgent[]>(
+          `/api/galileo/enterprises/${ENTERPRISE_ID}/agents`,
+        ),
+        apiFetch<RawGalileoEvent[]>(
+          `/api/galileo/enterprises/${ENTERPRISE_ID}/events`,
+        ),
+      ]);
+
+      const companyAgents = agents.filter((a) => a.companyId === companyId);
+      const companyEventIds = new Set(companyAgents.map((a) => a.eventId));
+      const acceptedEventIds = new Set(
+        companyAgents.filter((a) => a.isAccepted).map((a) => a.eventId),
+      );
+
+      const events = rawEvents
+        .filter((e) => companyEventIds.has(e.id))
+        .map(transformEvent);
+
+      return events.filter((event) => {
+        if (event.status === "Active") {
+          return event.agents.some((a) => a.companyId === companyId);
+        }
+        return acceptedEventIds.has(event.id);
+      });
     },
   });
 }

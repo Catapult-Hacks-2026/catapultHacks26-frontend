@@ -1,3 +1,13 @@
+export type HistoricPricingRecord = {
+  id: number;
+  hotel: string;
+  location: string;
+  month: number;
+  year: number;
+  price_per_night: number;
+  created_at: string;
+};
+
 export type RawOffer = {
   unit_price?: number | null;
   shipping_cost?: number | null;
@@ -71,25 +81,32 @@ export type RawGalileoPricePoint = {
   unit_price?: number | null;
   value?: number | null;
   type?: string | null;
+  round?: number | null;
 };
 
 export type RawGalileoActivityItem = {
   id?: string | number;
   price?: string | number | null;
   badge?: string | null;
+  badgeType?: string | null;
   badgeTone?: string | null;
   detail?: string | null;
+  detailType?: string | null;
   detailTone?: string | null;
   time?: string | null;
+  timestamp?: string | null;
+  agentId?: string | null;
   created_at?: string | null;
   active?: boolean | null;
 };
 
 export type RawGalileoTranscriptMessage = {
   id?: string | number;
+  agentId?: string | null;
   role?: string | null;
   sender?: string | null;
   body?: string | null;
+  message?: string | null;
   content?: string | null;
   timestamp?: string | null;
   created_at?: string | null;
@@ -98,14 +115,52 @@ export type RawGalileoTranscriptMessage = {
 
 export type RawGalileoPreviousNegotiation = {
   id?: string | number;
+  contractId?: string | null;
   location?: string | null;
+  region?: string | null;
   month?: string | null;
+  duration?: string | null;
+  finalRate?: number | null;
+  totalSavings?: number | null;
+  status?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
   market_price?: number | null;
   negotiated_price?: number | null;
 };
 
+export type EnterpriseAgent = {
+  id: string;
+  enterpriseId: string;
+  eventId: string;
+  companyId: string;
+  companyName: string;
+  status: string;
+  outcome: string | null;
+  idealPrice: number;
+  ceilingPrice: number;
+  marketPrice: number;
+  currentPrice: number;
+  isAccepted: boolean;
+};
+
 export type RawGalileoAgent = {
   id: string;
+  enterpriseId?: string | null;
+  eventId?: string | null;
+  companyId?: string | null;
+  companyName?: string | null;
+  segment?: string | null;
+  lifecycleStatus?: string | null;
+  idealPrice?: number | null;
+  ceilingPrice?: number | null;
+  marketPrice?: number | null;
+  originalPrice?: number | null;
+  currentPrice?: number | null;
+  delta?: number | null;
+  potentialSavings?: number | null;
+  savingsToDate?: number | null;
+  distanceToGoal?: number | null;
   company_id?: string | null;
   event_id?: string | null;
   vendor_name?: string | null;
@@ -134,6 +189,7 @@ export type RawGalileoAgent = {
 
 export type RawGalileoEvent = {
   id: string;
+  enterpriseId?: string | null;
   name?: string | null;
   event_name?: string | null;
   location?: string | null;
@@ -146,6 +202,8 @@ export type RawGalileoEvent = {
   service?: string | null;
   status?: string | null;
   agents?: RawGalileoAgent[] | null;
+  requirements?: string | null;
+  budgetPerPerson?: number | null;
   winnerAgentId?: string | null;
   winnerTranscript?: RawGalileoTranscriptMessage[] | null;
   winnerPricePath?: RawGalileoPricePoint[] | null;
@@ -172,34 +230,110 @@ export type RawGalileoLocation = {
   event_ids?: string[] | null;
 };
 
+export type RawCompanyLocation = {
+  id: string;
+  companyId: string;
+  name: string;
+  address: string;
+  phone: string;
+};
+
 export type RawGalileoCompany = {
   id: string;
   name?: string | null;
+  initials?: string | null;
   description?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  industry?: string | null;
+  badge?: string | null;
   type?: string | null;
   totalSavings?: number | string | null;
   total_savings?: number | string | null;
   bookings?: number | string | null;
-  initials?: string | null;
-  locations?: RawGalileoLocation[] | Record<string, RawGalileoLocation> | null;
+  locations?: RawGalileoLocation[] | RawCompanyLocation[] | Record<string, RawGalileoLocation> | null;
 };
 
 export type RawEnterpriseCompanySummary = {
   id?: string;
   companyId?: string;
   company_id?: string;
+  enterpriseId?: string;
+  locationId?: string;
   name?: string;
   description?: string;
   totalSavings?: number | string | null;
   total_savings?: number | string | null;
   bookings?: number | string | null;
+  totalBookings?: number | null;
   acceptedAgreements?: number | null;
   accepted_agreements?: number | null;
+  agreementsCount?: number | null;
+  agreementsSummary?: string | null;
+  lifetimeSavings?: number | null;
+  savingsDelta?: number | null;
+  avgDelta?: number | null;
+  yoyChange?: number | null;
   bookingWindowScores?:
     | Array<{ label: string; score: number }>
     | null;
   booking_window_scores?:
     | Array<{ label: string; score: number }>
     | null;
+  bookingWindow?:
+    | Array<{ month: string; score: number; status: string }>
+    | null;
+  pricingTrends?:
+    | Array<{ month: string; year: number; range: string; negotiatedPrice: number; marketPrice: number }>
+    | null;
+  linkedEvents?: RawGalileoEvent[] | null;
   locations?: RawGalileoLocation[] | Record<string, RawGalileoLocation> | null;
+};
+
+export type RawMarketPricingResponse = {
+  service?: string;
+  hotel?: {
+    marketPrice: number;
+    predictedWinPrice: number;
+    unit: string;
+  };
+  airline?: {
+    marketPrice: number;
+    predictedWinPrice: number;
+    unit: string;
+  };
+  expectedMarketPrice?: number | string | null;
+  expected_market_price?: number | string | null;
+  marketPrice?: number | string | null;
+  market_price?: number | string | null;
+  predictedWin?: number | string | null;
+  predicted_win?: number | string | null;
+  winPrice?: number | string | null;
+  win_price?: number | string | null;
+  unit?: string | null;
+};
+
+export type RawEventWindowResult = {
+  label: string;
+  startDate: string;
+  endDate: string;
+  explanation: string;
+  hotel: {
+    marketCost: number;
+    negotiatedPrice: number;
+    savings: number;
+  };
+  airline: {
+    marketCost: number;
+    negotiatedPrice: number;
+    savings: number;
+  };
+  negotiationConfidence: number;
+};
+
+export type RawInterveneResponse = {
+  agentId: string;
+  status: string;
+  callRoutingInfo: string;
+  transferredAt: string;
 };

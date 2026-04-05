@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import {
   defaultMarketInsightsQuery,
-  recommendationWindows,
   type MarketInsightsQuery,
 } from "@/lib/market-insights-data";
+import { useMarketInsights, type RecommendationWindow } from "@/hooks/useMarketInsights";
 
 type ResultsLocationState = {
   query?: MarketInsightsQuery;
@@ -15,28 +15,29 @@ export function MarketInsightsResults() {
   const navigate = useNavigate();
   const locationState = useLocation().state as ResultsLocationState | null;
   const query = locationState?.query ?? defaultMarketInsightsQuery;
-  const [isLoading, setIsLoading] = useState(true);
-  const timeoutRef = useRef<number | null>(null);
+  const insights = useMarketInsights();
+  const hasFiredRef = useRef(false);
+  const [results, setResults] = useState<RecommendationWindow[] | null>(null);
 
   useEffect(() => {
-    timeoutRef.current = window.setTimeout(() => {
-      setIsLoading(false);
-      timeoutRef.current = null;
-    }, 1600);
-
-    return () => {
-      if (timeoutRef.current !== null) {
-        window.clearTimeout(timeoutRef.current);
-      }
-      setIsLoading(true);
-    };
+    if (!hasFiredRef.current) {
+      hasFiredRef.current = true;
+      void insights.mutateAsync({
+        location: query.location,
+        eventType: query.eventType,
+        preferredTiming: query.timing,
+        attendees: Number.parseInt(query.attendees, 10) || 100,
+        nights: Number.parseInt(query.nights, 10) || 3,
+        eventDetails: query.eventDetails,
+      }).then(setResults).catch(() => {});
+    }
   }, []);
 
   function queryAgain() {
     navigate("/event-timing", { state: { query } satisfies ResultsLocationState });
   }
 
-  if (isLoading) {
+  if (insights.isPending || !results) {
     return (
       <div className="space-y-6">
         <div className="rounded-[2rem] border border-outline-variant/20 bg-white p-5 shadow-ambient-sm sm:p-7">
@@ -84,7 +85,7 @@ export function MarketInsightsResults() {
 
   return (
     <div className="grid gap-4">
-      {recommendationWindows.map((window) => (
+      {results.map((window) => (
         <article
           key={window.range}
           className="rounded-[1.75rem] border border-outline-variant/20 bg-surface-container-lowest p-5 shadow-sm sm:p-6"

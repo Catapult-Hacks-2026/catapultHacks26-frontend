@@ -14,8 +14,8 @@ import {
 } from "@/lib/dashboard-data";
 import {
   recommendationWindows,
-  type MarketInsightsQuery,
 } from "@/lib/market-insights-data";
+import { GALILEO_MARKET_PRICING_ENDPOINT } from "@/lib/negotiation-pricing";
 import { ApiError } from "@/lib/api-error";
 
 type NegotiationRow = {
@@ -90,26 +90,37 @@ type MarketPreview = {
   unit: string;
 };
 
-type RecommendationWindow = {
-  label: string;
-  range: string;
-  explanation: string;
-  marketCost: string;
-  negotiatedPrice: string;
-  savings: string;
-  probability: string;
+type NegotiationPricingPayload = {
+  service?: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  attendees: number;
+};
+
+type EventWindowPayload = {
+  location: string;
+  eventType: string;
+  preferredTiming: string;
+  attendees: number;
+  nights: number;
+  eventDetails: string;
 };
 
 type LaunchPayload = {
+  enterpriseId?: string;
   eventName: string;
   service: string;
   startDate: string;
   endDate: string;
   location: string;
   attendees: number;
+  budgetPerPerson?: number;
   requirements: string;
-  idealPrice: number;
-  ceilingPrice: number;
+  guardrails?: {
+    hotel: { idealPrice: number; ceilingPrice: number };
+    airline: { idealPrice: number; ceilingPrice: number };
+  };
 };
 
 type Database = {
@@ -398,27 +409,70 @@ function marketPreview(location: string, dates: string): MarketPreview {
   };
 }
 
-function buildInsights(query: MarketInsightsQuery): RecommendationWindow[] {
-  const attendees = Number.parseInt(query.attendees, 10) || 100;
-  const nights = Number.parseInt(query.nights, 10) || 3;
-  const base = attendees * nights;
+function differenceInNights(startDate: string, endDate: string) {
+  const start = new Date(`${startDate}T00:00:00`);
+  const end = new Date(`${endDate}T00:00:00`);
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const raw = Math.round((end.getTime() - start.getTime()) / millisecondsPerDay);
+
+  return Math.max(1, Number.isFinite(raw) ? raw : 1);
+}
+
+function marketPricing(payload: NegotiationPricingPayload) {
+  const nights = differenceInNights(payload.startDate, payload.endDate);
+  const seed = `${payload.location}-${payload.startDate}-${payload.endDate}-${payload.attendees}`
+    .split("")
+    .reduce((sum, character) => sum + character.charCodeAt(0), 0);
+  const hotelMarket = 210 + nights * 18 + (payload.attendees % 35) + (seed % 45);
+  const hotelPredicted = hotelMarket - (20 + (payload.attendees % 12) + (seed % 10));
+  const airlineMarket = 320 + (payload.attendees % 50) + (seed % 30);
+  const airlinePredicted = airlineMarket - (15 + (seed % 18));
+
+  return {
+    service: payload.service ?? "Hotel",
+    hotel: {
+      marketPrice: hotelMarket,
+      predictedWinPrice: hotelPredicted,
+      unit: "per night",
+    },
+    airline: {
+      marketPrice: airlineMarket,
+      predictedWinPrice: airlinePredicted,
+      unit: "per seat",
+    },
+  };
+}
+
+function eventWindow(payload: EventWindowPayload) {
+  const seed = `${payload.location}-${payload.eventType}-${payload.attendees}`
+    .split("")
+    .reduce((sum, character) => sum + character.charCodeAt(0), 0);
 
   return recommendationWindows.map((window, index) => {
-    const market = 230 + index * 28 + (base % 35);
-    const negotiated = market - (32 + index * 7);
-    const savings = market - negotiated;
+    const hotelMarket = 230 + index * 28 + (payload.attendees % 35);
+    const hotelNegotiated = hotelMarket - (32 + index * 7);
+    const airlineMarket = 310 + index * 15 + (seed % 25);
+    const airlineNegotiated = airlineMarket - (20 + index * 5);
+    const baseMonth = 4 + index;
+    const startDay = 1 + index * 7;
+    const endDay = startDay + payload.nights;
 
     return {
-      ...window,
-      explanation: `${window.explanation} Modeled for ${query.location}, ${attendees} attendees, and ${nights} nights of ${query.eventType.toLowerCase()} demand.`,
-      marketCost: `${currency(market, 0)} / room night`,
-      negotiatedPrice: `${currency(negotiated, 0)} / room night`,
-      probability: `${92 - index * 6}% negotiation confidence`,
-      range:
-        index === 0
-          ? query.timing
-          : `${query.timing} · Option ${index + 1}`,
-      savings: `${currency(savings, 0)} / room night`,
+      label: window.label,
+      startDate: `2026-${String(baseMonth).padStart(2, "0")}-${String(startDay).padStart(2, "0")}`,
+      endDate: `2026-${String(baseMonth).padStart(2, "0")}-${String(endDay).padStart(2, "0")}`,
+      explanation: window.explanation,
+      hotel: {
+        marketCost: hotelMarket,
+        negotiatedPrice: hotelNegotiated,
+        savings: hotelMarket - hotelNegotiated,
+      },
+      airline: {
+        marketCost: airlineMarket,
+        negotiatedPrice: airlineNegotiated,
+        savings: airlineMarket - airlineNegotiated,
+      },
+      negotiationConfidence: (92 - index * 6) / 100,
     };
   });
 }
@@ -429,13 +483,15 @@ function launchNegotiation(payload: LaunchPayload) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")}-${Date.now().toString(36)}`;
   const company = "Hilton Hotels";
+  const idealPrice = payload.guardrails?.hotel.idealPrice ?? 0;
+  const ceilingPrice = payload.guardrails?.hotel.ceilingPrice ?? 0;
   const market = marketPreview(payload.location, `${payload.startDate}-${payload.endDate}`);
-  const negotiated = currency(Math.max(payload.ceilingPrice - 6, payload.idealPrice + 10), 2);
+  const negotiated = currency(Math.max(ceilingPrice - 6, idealPrice + 10), 2);
   const row: NegotiationRow = {
     id: negotiationId,
     company,
     segment: `${payload.service}/${payload.location}`,
-    target: currency(payload.idealPrice, 2),
+    target: currency(idealPrice, 2),
     negotiated,
     delta: `(+${Math.max(
       4,
@@ -453,7 +509,7 @@ function launchNegotiation(payload: LaunchPayload) {
     ...buildNegotiationDetail(row),
     activityStream: [
       {
-        price: currency(payload.ceilingPrice, 2),
+        price: currency(ceilingPrice, 2),
         badge: "Queued",
         badgeTone: "bg-secondary-fixed text-on-secondary-fixed",
         detail: "Negotiation packet assembled and ready to dial",
@@ -491,7 +547,7 @@ function launchNegotiation(payload: LaunchPayload) {
 
   db.events.unshift(newEvent);
 
-  return { negotiationId };
+  return clone(newEvent);
 }
 
 async function parseBody(init?: RequestInit) {
@@ -506,10 +562,310 @@ async function parseBody(init?: RequestInit) {
   return undefined;
 }
 
+function buildMockAgentResponse(detail: NegotiationDetail, row: NegotiationRow, eventForAgent?: GalileoEvent) {
+  return {
+    id: row.id,
+    enterpriseId: "ent_demo",
+    eventId: eventForAgent?.id ?? null,
+    companyId: row.id.split("-")[0] ?? row.id,
+    companyName: row.company,
+    status: detail.status,
+    outcome: detail.status,
+    idealPrice: parseMoney(detail.targetPrice),
+    ceilingPrice: parseMoney(detail.targetPrice) + 30,
+    marketPrice: detail.pricePath[0]?.price ?? parseMoney(row.target),
+    currentPrice: parseMoney(detail.currentPrice),
+    isAccepted: detail.isAccepted,
+    pricePath: detail.pricePath,
+    activityStream: detail.activityStream.map((item) => ({
+      id: `${item.time}-${item.price}`,
+      agentId: row.id,
+      price: parseMoney(item.price),
+      badge: item.badge,
+      badgeType: item.badgeTone.includes("tertiary") ? "savings" : "neutral",
+      detail: item.detail,
+      detailType: item.detailTone?.includes("error") ? "negative" : "neutral",
+      timestamp: item.time,
+      active: item.active,
+    })),
+    transcript: detail.transcript.map((msg, idx) => ({
+      id: `${row.id}-msg-${idx}`,
+      agentId: row.id,
+      message: msg.body,
+      sender: msg.sender === "agent" ? "Galileo" : row.company,
+      timestamp: msg.timestamp,
+    })),
+    location: detail.location,
+    segment: detail.segment,
+  };
+}
+
+function buildMockEventResponse(event: GalileoEvent) {
+  return {
+    id: event.id,
+    enterpriseId: "ent_demo",
+    name: event.name,
+    location: event.location,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    attendees: event.attendees,
+    service: event.service,
+    status: event.status,
+    agents: event.agents.map((agent) => ({
+      id: agent.negotiationId,
+      enterpriseId: "ent_demo",
+      eventId: event.id,
+      companyId: agent.negotiationId.split("-")[0] ?? agent.negotiationId,
+      companyName: agent.company,
+      status: agent.status,
+      outcome: agent.outcome ?? agent.status,
+      idealPrice: parseMoney(agent.originalPrice) - 30,
+      ceilingPrice: parseMoney(agent.originalPrice),
+      marketPrice: parseMoney(agent.originalPrice),
+      currentPrice: parseMoney(agent.negotiatedPrice),
+      isAccepted: agent.isAccepted,
+    })),
+    requirements: "",
+    budgetPerPerson: 0,
+    winnerAgentId: event.agents.find((a) => a.isAccepted)?.negotiationId ?? null,
+    winnerTranscript: [],
+    winnerPricePath: [],
+  };
+}
+
 export async function mockApiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const method = (init?.method ?? "GET").toUpperCase();
   const url = new URL(path, "http://localhost");
   const pathname = url.pathname;
+
+  // GET /api/galileo/enterprises/{enterprise_id}
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/enterprises\/[^/]+$/)) {
+    const summary = buildDashboardSummary();
+    return clone({
+      id: pathname.split("/")[4],
+      name: "Demo Enterprise",
+      description: "Enterprise travel procurement",
+      totalSavedHotels: parseMoney(summary.hotelsSaved) * 1000,
+      totalSavedAirlines: 0,
+      totalSaved: parseMoney(summary.totalSavedThisYear) * 1000,
+      yoyChange: 17.3,
+      hotelContractCount: summary.contractCount,
+      airlineContractCount: 0,
+    }) as T;
+  }
+
+  // GET /api/galileo/enterprises/{enterprise_id}/agents
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/enterprises\/[^/]+\/agents$/)) {
+    return clone(
+      db.negotiations.map((row) => {
+        const detail = db.negotiationDetails[row.id];
+        const event = getEventByNegotiationId(row.id);
+        if (detail) {
+          return buildMockAgentResponse(detail, row, event);
+        }
+        return {
+          id: row.id,
+          enterpriseId: "ent_demo",
+          eventId: event?.id ?? null,
+          companyId: row.id,
+          companyName: row.company,
+          status: row.status,
+          outcome: row.status,
+          idealPrice: parseMoney(row.target),
+          ceilingPrice: parseMoney(row.target) + 30,
+          marketPrice: parseMoney(row.target) + 60,
+          currentPrice: parseMoney(row.negotiated),
+          isAccepted: false,
+        };
+      }),
+    ) as T;
+  }
+
+  // GET /api/galileo/agents/{agent_id}
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/agents\/[^/]+$/) && !pathname.includes("/activity-stream") && !pathname.includes("/transcript") && !pathname.includes("/intervene")) {
+    const id = pathname.split("/")[4];
+    const detail = db.negotiationDetails[id];
+    const row = getNegotiationRow(id);
+
+    if (!detail || !row) {
+      throw new ApiError(404, pathname, "Agent not found");
+    }
+
+    const event = getEventByNegotiationId(id);
+    return clone(buildMockAgentResponse(detail, row, event)) as T;
+  }
+
+  // POST /api/galileo/agents/{agent_id}/intervene
+  if (method === "POST" && pathname.match(/^\/api\/galileo\/agents\/[^/]+\/intervene$/)) {
+    const agentId = pathname.split("/")[4];
+    const detail = db.negotiationDetails[agentId];
+
+    if (!detail) {
+      throw new ApiError(404, pathname, "Agent not found");
+    }
+
+    if (detail.status !== "Negotiating") {
+      throw new ApiError(409, pathname, "Agent is not in Negotiating status");
+    }
+
+    return clone({
+      agentId,
+      status: "Routed",
+      callRoutingInfo: "+1-555-0123",
+      transferredAt: new Date().toISOString(),
+    }) as T;
+  }
+
+  // GET /api/galileo/agents/{agent_id}/activity-stream (mock as regular JSON for now)
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/agents\/[^/]+\/activity-stream$/)) {
+    const agentId = pathname.split("/")[4];
+    const detail = db.negotiationDetails[agentId];
+
+    if (!detail) {
+      throw new ApiError(404, pathname, "Agent not found");
+    }
+
+    return clone(detail.activityStream.map((item, idx) => ({
+      id: `${agentId}-activity-${idx}`,
+      agentId,
+      price: parseMoney(item.price),
+      badge: item.badge,
+      badgeType: "neutral",
+      detail: item.detail,
+      detailType: "neutral",
+      timestamp: item.time,
+      active: item.active,
+    }))) as T;
+  }
+
+  // GET /api/galileo/agents/{agent_id}/transcript (mock as regular JSON for now)
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/agents\/[^/]+\/transcript$/)) {
+    const agentId = pathname.split("/")[4];
+    const detail = db.negotiationDetails[agentId];
+
+    if (!detail) {
+      throw new ApiError(404, pathname, "Agent not found");
+    }
+
+    return clone(detail.transcript.map((msg, idx) => ({
+      id: `${agentId}-msg-${idx}`,
+      agentId,
+      message: msg.body,
+      sender: msg.sender === "agent" ? "Galileo" : detail.company,
+      timestamp: msg.timestamp,
+    }))) as T;
+  }
+
+  // GET /api/galileo/enterprises/{enterprise_id}/events
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/enterprises\/[^/]+\/events$/)) {
+    return clone(db.events.map(buildMockEventResponse)) as T;
+  }
+
+  // GET /api/galileo/events/{event_id}
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/events\/[^/]+$/)) {
+    const id = pathname.split("/")[4];
+    const event = getEvent(id);
+
+    if (!event) {
+      throw new ApiError(404, pathname, "Event not found");
+    }
+
+    return clone(buildMockEventResponse(event)) as T;
+  }
+
+  // POST /api/galileo/events/{event_id}/agents/{agent_id}/accept
+  if (
+    method === "POST" &&
+    pathname.match(/^\/api\/galileo\/events\/[^/]+\/agents\/[^/]+\/accept$/)
+  ) {
+    const parts = pathname.split("/");
+    const eventId = parts[4];
+    const agentId = parts[6];
+    acceptDeal(eventId, agentId);
+    const event = getEvent(eventId)!;
+    return clone(buildMockEventResponse(event)) as T;
+  }
+
+  // GET /api/galileo/companies
+  if (method === "GET" && pathname === "/api/galileo/companies") {
+    return clone(db.companyCards.map((card) => ({
+      id: card.id,
+      name: card.name,
+      initials: card.initials,
+      description: "",
+      phone: "",
+      website: "",
+      industry: "Hospitality",
+      badge: "",
+      locations: [],
+    }))) as T;
+  }
+
+  // GET /api/galileo/companies/{company_id}
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/companies\/[^/]+$/)) {
+    const id = pathname.split("/")[4];
+    const card = db.companyCards.find((c) => c.id === id);
+    return clone({
+      id,
+      name: card?.name ?? "Company",
+      initials: card?.initials ?? "C",
+      description: "",
+      phone: "",
+      website: "",
+      industry: "Hospitality",
+      badge: "",
+      locations: [],
+    }) as T;
+  }
+
+  // GET /api/galileo/enterprises/{enterprise_id}/companies/{company_id}
+  if (method === "GET" && pathname.match(/^\/api\/galileo\/enterprises\/[^/]+\/companies\/[^/]+$/)) {
+    const parts = pathname.split("/");
+    const companyId = parts[6];
+    const profile = companyProfileResponse(companyId);
+    const card = db.companyCards.find((c) => c.id === companyId);
+
+    return clone({
+      companyId,
+      enterpriseId: parts[4],
+      locationId: url.searchParams.get("locationId") ?? null,
+      lifetimeSavings: parseMoney(card?.totalSavings ?? "0"),
+      savingsDelta: 0,
+      agreementsCount: 0,
+      agreementsSummary: "",
+      avgDelta: 0,
+      totalBookings: parseMoney(card?.bookings ?? "0"),
+      totalSavings: parseMoney(card?.totalSavings ?? "0"),
+      yoyChange: 0,
+      pricingTrends: [],
+      bookingWindow: [],
+      linkedEvents: [],
+      locations: profile.locations,
+      name: card?.name,
+      description: profile.description,
+      bookingWindowScores: profile.bookingWindowScores,
+    }) as T;
+  }
+
+  // POST /api/galileo/market/pricing
+  if (method === "POST" && pathname === GALILEO_MARKET_PRICING_ENDPOINT) {
+    const body = (await parseBody(init)) as NegotiationPricingPayload;
+    return marketPricing(body) as T;
+  }
+
+  // POST /api/galileo/market/event-window
+  if (method === "POST" && pathname === "/api/galileo/market/event-window") {
+    const body = (await parseBody(init)) as EventWindowPayload;
+    return eventWindow(body) as T;
+  }
+
+  // POST /api/galileo/negotiations/launch
+  if (method === "POST" && pathname === "/api/galileo/negotiations/launch") {
+    const payload = (await parseBody(init)) as LaunchPayload;
+    return launchNegotiation(payload) as T;
+  }
+
+  // Legacy fallback routes for backwards compatibility
 
   if (method === "GET" && pathname === "/api/dashboard/summary") {
     return clone(buildDashboardSummary()) as T;
@@ -517,11 +873,6 @@ export async function mockApiFetch<T>(path: string, init?: RequestInit): Promise
 
   if (method === "GET" && pathname === "/api/negotiations") {
     return clone(db.negotiations) as T;
-  }
-
-  if (method === "POST" && pathname === "/api/negotiations") {
-    const payload = (await parseBody(init)) as LaunchPayload;
-    return launchNegotiation(payload) as T;
   }
 
   if (method === "GET" && pathname.startsWith("/api/negotiations/")) {
@@ -533,25 +884,6 @@ export async function mockApiFetch<T>(path: string, init?: RequestInit): Promise
     }
 
     return clone(detail) as T;
-  }
-
-  if (method === "POST" && pathname.match(/^\/api\/negotiations\/[^/]+\/accept$/)) {
-    const id = pathname.split("/")[3];
-    const event = getEventByNegotiationId(id);
-
-    if (!event) {
-      const detail = db.negotiationDetails[id];
-
-      if (!detail) {
-        throw new ApiError(404, pathname, "Negotiation not found");
-      }
-
-      detail.isAccepted = true;
-      detail.status = "Accepted";
-      return { success: true } as T;
-    }
-
-    return acceptDeal(event.id, id) as T;
   }
 
   if (method === "GET" && pathname === "/api/events") {
@@ -569,14 +901,6 @@ export async function mockApiFetch<T>(path: string, init?: RequestInit): Promise
     return clone(event) as T;
   }
 
-  if (
-    method === "POST" &&
-    pathname.match(/^\/api\/events\/[^/]+\/agents\/[^/]+\/accept$/)
-  ) {
-    const [, , , eventId, , agentId] = pathname.split("/");
-    return acceptDeal(eventId, agentId) as T;
-  }
-
   if (method === "GET" && pathname === "/api/companies") {
     return clone(db.companyCards) as T;
   }
@@ -589,31 +913,6 @@ export async function mockApiFetch<T>(path: string, init?: RequestInit): Promise
   if (method === "GET" && pathname.match(/^\/api\/companies\/[^/]+\/negotiations$/)) {
     const id = pathname.split("/")[3];
     return clone(companyNegotiations(id)) as T;
-  }
-
-  if (method === "GET" && pathname === "/api/market-insights") {
-    const query: MarketInsightsQuery = {
-      attendees: url.searchParams.get("attendees") ?? "100",
-      eventDetails: url.searchParams.get("eventDetails") ?? "",
-      eventType: url.searchParams.get("eventType") ?? "Corporate Event",
-      location: url.searchParams.get("location") ?? "Chicago, IL",
-      nights: url.searchParams.get("nights") ?? "3",
-      timing: url.searchParams.get("timing") ?? "Flexible",
-    };
-
-    return buildInsights(query) as T;
-  }
-
-  if (method === "POST" && pathname === "/api/market-insights") {
-    const body = (await parseBody(init)) as MarketInsightsQuery;
-    return buildInsights(body) as T;
-  }
-
-  if (method === "GET" && pathname === "/api/market-insights/preview") {
-    return marketPreview(
-      url.searchParams.get("location") ?? "Chicago, IL",
-      url.searchParams.get("dates") ?? "",
-    ) as T;
   }
 
   throw new ApiError(404, pathname, `No mock route matched ${method} ${pathname}`);

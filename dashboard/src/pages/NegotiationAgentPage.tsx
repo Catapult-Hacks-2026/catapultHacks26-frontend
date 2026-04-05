@@ -4,7 +4,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import {
   getAgentDisplayStatus,
   getStatusVariant,
-  isClosedDeal,
 } from "@/lib/dashboard-data";
 import {
   NegotiationPricePath,
@@ -13,6 +12,7 @@ import {
 import { useEvents } from "@/context/EventsContext";
 import {
   useAcceptNegotiation,
+  useIntervene,
   useNegotiationDetail,
 } from "@/hooks/useNegotiationDetail";
 
@@ -26,6 +26,7 @@ export default function NegotiationAgentPage() {
     isLoading,
   } = useNegotiationDetail(id ?? "");
   const acceptNegotiation = useAcceptNegotiation();
+  const intervene = useIntervene();
   const event = getEventForNegotiation(id ?? "");
   const agent = event?.agents.find((item) => item.negotiationId === id);
   const canAccept = event && agent ? canAcceptAgent(event, agent) : false;
@@ -40,26 +41,13 @@ export default function NegotiationAgentPage() {
   const locationLabel = data?.location ?? event?.location ?? "Location unavailable";
   const pricePath: PricePoint[] = data?.pricePath ?? [];
 
-  const agentStatus = (() => {
-    if (!agent) return "Live Negotiation";
-    if (data?.isAccepted) return "Accepted";
-    if (agent.isAccepted) return "Accepted";
-    return displayStatus;
-  })();
+  const agentStatus = data?.status ?? displayStatus;
 
   const agentChipVariant = (!agent || agent.isAccepted ? "success" : getStatusVariant(displayStatus)) as
     | "success"
     | "neutral"
     | "negotiating"
     | "error";
-
-  const actionLabel = (() => {
-    if (!agent) return null;
-    if (agent.isAccepted) return "Deal accepted";
-    if (agent.status !== "Completed") return "Waiting for call completion";
-    if (isClosedDeal(agent)) return "Type already accepted";
-    return displayStatus;
-  })();
 
   if (isLoading) {
     return (
@@ -127,6 +115,9 @@ export default function NegotiationAgentPage() {
               View company profile
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </Link>
+            <p className="mt-4 text-sm font-semibold text-on-surface">
+              Agent Status: <span className="text-secondary">{agentStatus}</span>
+            </p>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-on-surface-variant">
               Autonomous Agent <span className="font-bold text-secondary">Galileo</span> is
               actively negotiating rates, concessions, and commercial terms with the supplier sales team.
@@ -164,7 +155,7 @@ export default function NegotiationAgentPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => acceptNegotiation.mutate(agent.negotiationId)}
+                  onClick={() => acceptNegotiation.mutate({ eventId: event.id, agentId: agent.negotiationId })}
                   className="relative inline-flex w-full items-center justify-center gap-3 rounded-lg bg-white px-6 py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100 xl:w-auto xl:min-w-[220px]"
                 >
                   <span className="material-symbols-outlined text-lg">check</span>
@@ -194,37 +185,28 @@ export default function NegotiationAgentPage() {
               </div>
               <NegotiationPricePath
                 points={pricePath}
-                marketPrice={pricePath[0]?.price ?? 0}
+                marketPrice={data.originalPrice ?? pricePath[0]?.price ?? 0}
                 targetPrice={Number.parseFloat(targetPrice.replace(/[^0-9.]/g, "")) || 0}
               />
             </div>
 
             <div className="space-y-6">
-              {!canAccept ? (
+              {isNegotiating ? (
                 <div className="group relative overflow-hidden rounded-xl bg-primary-container p-8 text-white shadow-2xl">
                   <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-secondary blur-3xl opacity-20 transition-opacity group-hover:opacity-40" />
-                  <h4 className="relative text-2xl font-bold">{isNegotiating ? "Intervene Manually" : "Accept Deal"}</h4>
+                  <h4 className="relative text-2xl font-bold">Intervene Manually</h4>
                   <p className="relative mt-3 text-sm leading-6 text-slate-400">
-                    {isNegotiating
-                      ? `Join the live negotiation with the ${repLabel} to handle pricing pushback, concession tradeoffs, or final commercial alignment.`
-                      : actionLabel ?? "This negotiation is not ready to be accepted yet."}
+                    {`Join the live negotiation with the ${repLabel} to handle pricing pushback, concession tradeoffs, or final commercial alignment.`}
                   </p>
-                  {isNegotiating ? (
-                    <button
-                      type="button"
-                      className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100"
-                    >
-                      <span className="material-symbols-outlined text-lg">call</span>
-                      Talk to Hotel Rep
-                    </button>
-                  ) : (
-                    <div className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/10 py-4 text-sm font-black text-slate-200">
-                      <span className="material-symbols-outlined text-lg">
-                        {agent?.isAccepted ? "check_circle" : agentChipVariant === "error" ? "cancel" : "schedule"}
-                      </span>
-                      {actionLabel ?? "Unavailable"}
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => id && intervene.mutate(id)}
+                    disabled={intervene.isPending}
+                    className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100 disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-lg">call</span>
+                    {intervene.isPending ? "Routing..." : "Talk to Hotel Rep"}
+                  </button>
                 </div>
               ) : null}
 

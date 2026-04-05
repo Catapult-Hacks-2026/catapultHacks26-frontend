@@ -3,8 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
 import { Chip } from "@/components/ui/Chip";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { useEvents } from "@/context/EventsContext";
-import { useCompanyNegotiations, useCompanyProfile } from "@/hooks/useCompanies";
+import { useCompanyEvents, useCompanyNegotiations, useCompanyProfile, useHistoricPricing } from "@/hooks/useCompanies";
 
 type PricingRange = "1Y" | "ALL";
 
@@ -58,7 +57,6 @@ function buildAreaPath(points: Array<{ x: number; y: number }>) {
 
 export default function CompanyDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
-  const { events } = useEvents();
   const {
     data: profile,
     error,
@@ -69,6 +67,8 @@ export default function CompanyDetailPage() {
     data: negotiations = [],
     isLoading: isNegotiationsLoading,
   } = useCompanyNegotiations(id);
+  const { data: companyEvents = [] } = useCompanyEvents(id);
+  const { data: historicPricing = [] } = useHistoricPricing(profile?.displayName);
   const [locationScope, setLocationScope] = useState<string>("all");
   const [pricingRange, setPricingRange] = useState<PricingRange>("ALL");
   const [activePointIndex, setActivePointIndex] = useState<number | null>(null);
@@ -118,7 +118,18 @@ export default function CompanyDetailPage() {
     savingsDelta: "—",
     subtitle: "",
   };
-  const activeSeries = activeLocation.pricing[pricingRange] ?? [];
+  const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const historicSeries = historicPricing
+    .slice()
+    .sort((a, b) => a.year - b.year || a.month - b.month)
+    .map((r) => ({
+      label: `${MONTH_LABELS[r.month - 1]} ${r.year}`,
+      negotiated: r.price_per_night,
+      market: r.price_per_night,
+    }));
+
+  const fallbackSeries = activeLocation.pricing[pricingRange] ?? [];
+  const activeSeries = historicSeries.length > 0 ? historicSeries : fallbackSeries;
   const safeActiveIndex =
     activePointIndex === null ? null : Math.min(activePointIndex, activeSeries.length - 1);
   const activePoint = safeActiveIndex === null ? null : activeSeries[safeActiveIndex];
@@ -140,10 +151,7 @@ export default function CompanyDetailPage() {
   const negotiatedLinePath = buildLinePath(negotiatedPoints);
   const negotiatedAreaPath = buildAreaPath(negotiatedPoints);
   const marketLinePath = buildLinePath(marketPoints);
-  const visibleEventIds = activeLocation.eventIds as readonly string[];
-  const visibleEvents = events.filter((event) =>
-    visibleEventIds.includes(event.id),
-  );
+  const visibleEvents = companyEvents;
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">

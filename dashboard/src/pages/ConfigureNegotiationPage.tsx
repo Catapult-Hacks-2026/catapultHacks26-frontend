@@ -1,12 +1,33 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const serviceTypes = [
   { id: "Hotel", icon: "hotel" },
 ];
 
 export default function ConfigureNegotiationPage() {
+  const navigate = useNavigate();
   const [service, setService] = useState("Hotel");
+  const [eventName, setEventName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [attendees, setAttendees] = useState("");
+  const [requirements, setRequirements] = useState("");
+
+  const handleNext = () => {
+    const params = new URLSearchParams({
+      attendees,
+      endDate,
+      eventName,
+      location,
+      requirements,
+      service,
+      startDate,
+    });
+
+    navigate(`/negotiations/setup?${params.toString()}`);
+  };
 
   return (
     <div className="-mt-16 min-h-screen bg-surface lg:mt-0" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
@@ -28,6 +49,8 @@ export default function ConfigureNegotiationPage() {
                 <input
                   type="text"
                   placeholder="e.g. Q3 Sales Kickoff, Annual Leadership Retreat"
+                  value={eventName}
+                  onChange={(event) => setEventName(event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </label>
@@ -68,6 +91,8 @@ export default function ConfigureNegotiationPage() {
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">calendar_today</span>
                   <input
                     type="date"
+                    value={startDate}
+                    onChange={(event) => setStartDate(event.target.value)}
                     className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/30"
                   />
                 </div>
@@ -81,6 +106,8 @@ export default function ConfigureNegotiationPage() {
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-outline">calendar_today</span>
                   <input
                     type="date"
+                    value={endDate}
+                    onChange={(event) => setEndDate(event.target.value)}
                     className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary/30"
                   />
                 </div>
@@ -95,6 +122,8 @@ export default function ConfigureNegotiationPage() {
                   <input
                     type="text"
                     placeholder="City or airport code"
+                    value={location}
+                    onChange={(event) => setLocation(event.target.value)}
                     className="w-full rounded-lg bg-surface-container-low py-3 pl-9 pr-3 text-sm text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                   />
                 </div>
@@ -110,6 +139,8 @@ export default function ConfigureNegotiationPage() {
                 <input
                   type="number"
                   placeholder="120"
+                  value={attendees}
+                  onChange={(event) => setAttendees(event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </label>
@@ -121,6 +152,8 @@ export default function ConfigureNegotiationPage() {
                 <input
                   type="text"
                   placeholder="Room types, meal plans, AV, baggage handling..."
+                  value={requirements}
+                  onChange={(event) => setRequirements(event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface-container-low px-3 py-3 text-[15px] text-on-surface outline-none placeholder:text-outline focus:ring-2 focus:ring-secondary/30"
                 />
               </label>
@@ -132,13 +165,14 @@ export default function ConfigureNegotiationPage() {
             <Link to="/" className="text-sm text-on-surface-variant hover:text-on-surface">
               Cancel
             </Link>
-            <Link
-              to={`/negotiations/setup?service=${service}`}
+            <button
+              type="button"
+              onClick={handleNext}
               className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary-container"
             >
               Next
               <span className="material-symbols-outlined text-[17px]">arrow_forward</span>
-            </Link>
+            </button>
           </div>
 
         </div>

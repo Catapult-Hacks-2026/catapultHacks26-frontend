@@ -32,9 +32,13 @@ export function useAcceptEventOffer() {
 
   return useMutation({
     mutationFn: ({ eventId, agentId }: { eventId: string; agentId: string }) =>
-      apiFetch<{ success: boolean }>(`/api/galileo/events/${eventId}/agents/${agentId}/accept`, {
-        method: "POST",
-      }),
+      apiFetch<RawGalileoEvent>(
+        `/api/galileo/events/${eventId}/agents/${agentId}/accept`,
+        {
+          body: JSON.stringify({ enterpriseId: ENTERPRISE_ID }),
+          method: "POST",
+        },
+      ),
     onSuccess: async (_, { eventId, agentId }) => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
       queryClient.invalidateQueries({ queryKey: ["events", eventId] });

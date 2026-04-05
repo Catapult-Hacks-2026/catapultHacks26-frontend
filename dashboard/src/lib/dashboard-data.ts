@@ -211,6 +211,7 @@ export type EventStatus = "Active" | "Completed";
 
 export type EventAgent = {
   negotiationId: string;
+  companyId: string;
   company: string;
   type: "Hotel";
   status: EventAgentStatus;
@@ -246,6 +247,7 @@ export const initialEvents: GalileoEvent[] = [
     agents: [
       {
         negotiationId: "hilton",
+        companyId: "hilton",
         company: "Hilton Hotels",
         type: "Hotel",
         status: "Negotiating",
@@ -256,6 +258,7 @@ export const initialEvents: GalileoEvent[] = [
       },
       {
         negotiationId: "marriott",
+        companyId: "marriott",
         company: "Marriott Bonvoy",
         type: "Hotel",
         status: "Completed",
@@ -279,6 +282,7 @@ export const initialEvents: GalileoEvent[] = [
     agents: [
       {
         negotiationId: "hyatt",
+        companyId: "hyatt",
         company: "Hyatt Hotels",
         type: "Hotel",
         status: "Completed",
@@ -290,6 +294,7 @@ export const initialEvents: GalileoEvent[] = [
       },
       {
         negotiationId: "ihg",
+        companyId: "ihg",
         company: "IHG Hotels & Resorts",
         type: "Hotel",
         status: "Completed",
@@ -313,6 +318,7 @@ export const initialEvents: GalileoEvent[] = [
     agents: [
       {
         negotiationId: "langham",
+        companyId: "langham",
         company: "Langham Hotels",
         type: "Hotel",
         status: "Queued",
@@ -323,6 +329,7 @@ export const initialEvents: GalileoEvent[] = [
       },
       {
         negotiationId: "sonesta",
+        companyId: "sonesta",
         company: "Sonesta Hotels",
         type: "Hotel",
         status: "Completed",
