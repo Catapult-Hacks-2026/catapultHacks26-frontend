@@ -42,17 +42,12 @@ const scaleCards = [
   {
     eyebrow: "Global Hotel Blocks",
     body: "Negotiation memory and live rate checks across high-volume urban inventory.",
-    className: "lg:col-span-5",
-  },
-  {
-    eyebrow: "Airline Fleet Management",
-    body: "Carrier pricing monitored continuously for route, timing, and contract leverage.",
-    className: "lg:col-span-3",
+    className: "lg:col-span-4 flex flex-col items-center text-center",
   },
   {
     eyebrow: "Massive Event Logistics",
     body: "Hotels, air, and event travel coordinated as one procurement system instead of siloed workstreams.",
-    className: "lg:col-span-4",
+    className: "lg:col-span-4 flex flex-col items-center text-center",
   },
 ];
 
@@ -745,37 +740,33 @@ export function LandingPage() {
               </p>
             </motion.div>
 
-            <div className="grid gap-5 lg:grid-cols-8">
-              {scaleCards.map((card, index) => (
-                <motion.article
-                  key={card.eyebrow}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.25 }}
-                  variants={fadeUp}
-                  custom={index * 0.08}
-                  className={`panel-shell rounded-[2rem] border border-ink/8 bg-[#f8f4ec] p-8 shadow-card transition hover:-translate-y-1 hover:shadow-float ${card.className}`}
-                >
-                  <div className="flex h-full flex-col justify-between gap-16">
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-full border border-ink/10 bg-[#f8f4ec] px-3 py-2 text-xs uppercase tracking-[0.18em] text-ink/48">
-                        Deployment
-                      </span>
-                      <span className="h-9 w-9 rounded-full border border-ink/10 bg-[#f8f4ec]" />
-                    </div>
-                    <div>
-                      <h3 className="max-w-sm text-[2rem] leading-tight tracking-[-0.03em] text-ink">
-                        {card.eyebrow}
-                      </h3>
-                      <p className="mt-5 max-w-sm text-base leading-8 text-ink/56">
-                        {card.body}
-                      </p>
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          </section>
+        <div className="grid gap-5 lg:grid-cols-8">
+          {scaleCards.map((card, index) => (
+            <motion.article
+              key={card.eyebrow}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+              variants={fadeUp}
+              custom={index * 0.08}
+              className={`panel-shell rounded-[2rem] border border-ink/8 bg-[#f8f4ec] p-8 shadow-card transition hover:-translate-y-1 hover:shadow-float ${card.className}`}
+            >
+              <div className="flex h-full flex-col justify-start gap-16 w-full">
+                <div className="flex items-center justify-between w-full">
+                  <span className="rounded-full border border-ink/10 bg-[#f8f4ec] px-3 py-2 text-xs uppercase tracking-[0.18em] text-ink/48">
+                    Deployment
+                  </span>
+                  <span className="h-9 w-9 rounded-full border border-ink/10 bg-[#f8f4ec]" />
+                </div>
+                <div className="flex flex-col items-center text-center w-full flex-1">
+                  <h3 className="max-w-sm text-[2rem] leading-tight tracking-[-0.03em] text-ink">{card.eyebrow}</h3>
+                  <p className="mt-5 max-w-sm text-base leading-8 text-ink/56">{card.body}</p>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </section>
 
           <section className="mx-auto flex max-w-7xl flex-col items-center justify-center px-6 pb-32 pt-10 text-center lg:px-10">
             <h2 className="mb-10 text-[3rem] leading-tight tracking-[-0.04em] text-ink sm:text-[4rem]">
