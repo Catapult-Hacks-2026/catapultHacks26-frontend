@@ -34,17 +34,12 @@ const scaleCards = [
   {
     eyebrow: "Global Hotel Blocks",
     body: "Negotiation memory and live rate checks across high-volume urban inventory.",
-    className: "lg:col-span-5",
-  },
-  {
-    eyebrow: "Airline Fleet Management",
-    body: "Carrier pricing monitored continuously for route, timing, and contract leverage.",
-    className: "lg:col-span-3",
+    className: "lg:col-span-4 flex flex-col items-center text-center",
   },
   {
     eyebrow: "Massive Event Logistics",
     body: "Hotels, air, and event travel coordinated as one procurement system instead of siloed workstreams.",
-    className: "lg:col-span-4",
+    className: "lg:col-span-4 flex flex-col items-center text-center",
   },
 ];
 
@@ -603,14 +598,14 @@ export function LandingPage() {
               custom={index * 0.08}
               className={`panel-shell rounded-[2rem] border border-ink/8 bg-[#f8f4ec] p-8 shadow-card transition hover:-translate-y-1 hover:shadow-float ${card.className}`}
             >
-              <div className="flex h-full flex-col justify-between gap-16">
-                <div className="flex items-center justify-between">
+              <div className="flex h-full flex-col justify-start gap-16 w-full">
+                <div className="flex items-center justify-between w-full">
                   <span className="rounded-full border border-ink/10 bg-[#f8f4ec] px-3 py-2 text-xs uppercase tracking-[0.18em] text-ink/48">
                     Deployment
                   </span>
                   <span className="h-9 w-9 rounded-full border border-ink/10 bg-[#f8f4ec]" />
                 </div>
-                <div>
+                <div className="flex flex-col items-center text-center w-full flex-1">
                   <h3 className="max-w-sm text-[2rem] leading-tight tracking-[-0.03em] text-ink">{card.eyebrow}</h3>
                   <p className="mt-5 max-w-sm text-base leading-8 text-ink/56">{card.body}</p>
                 </div>
