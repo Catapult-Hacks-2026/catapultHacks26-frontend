@@ -60,8 +60,13 @@ export function useNegotiations() {
 
       return raw.filter((agent) => {
         if (agent.isAccepted) return false;
-        const status = mapNegotiationStatus(agent.outcome ?? agent.status);
-        return status !== "Deal Closed";
+        const statusFromStatus = mapNegotiationStatus(agent.status);
+        const statusFromOutcome = mapNegotiationStatus(agent.outcome ?? agent.status);
+        if (statusFromOutcome === "Deal Closed") return false;
+        if (statusFromStatus === "Completed") return false;
+        if (statusFromStatus === "Failed" || statusFromOutcome === "Failed") return false;
+        if (statusFromOutcome === "Timed Out" || statusFromOutcome === "No Availability") return false;
+        return true;
       }).map((agent) => {
         const company = agent.companyName ?? "Supplier";
         const target = agent.idealPrice ?? null;
@@ -103,9 +108,12 @@ export function useClosedDealsCount() {
       const raw = await apiFetch<EnterpriseAgent[]>(
         `/api/galileo/enterprises/${ENTERPRISE_ID}/agents`,
       );
-      return raw.filter(
-        (agent) => agent.isAccepted || mapNegotiationStatus(agent.outcome ?? agent.status) === "Deal Closed",
-      ).length;
+      return raw.filter((agent) => {
+        if (agent.isAccepted) return true;
+        if (mapNegotiationStatus(agent.outcome ?? agent.status) === "Deal Closed") return true;
+        if (mapNegotiationStatus(agent.status) === "Completed") return true;
+        return false;
+      }).length;
     },
   });
 }

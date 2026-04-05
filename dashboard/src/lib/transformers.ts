@@ -157,12 +157,28 @@ export function mapNegotiationStatus(status?: string | null): AgentStatus {
   return "Queued";
 }
 
-function eventAgentStatus(status?: string | null): EventAgent["status"] {
-  const mapped = mapNegotiationStatus(status);
-  if (mapped === "Ringing" || mapped === "Negotiating" || mapped === "Queued" || mapped === "Finalizing" || mapped === "Completed" || mapped === "Failed") {
+function eventAgentStatus(agent: RawGalileoAgent): EventAgent["status"] {
+  const mapped = mapNegotiationStatus(agent.status);
+  if (mapped === "Ringing" || mapped === "Negotiating" || mapped === "Finalizing" || mapped === "Completed" || mapped === "Failed") {
     return mapped;
   }
-  return mapped === "Deal Closed" ? "Completed" : "Queued";
+  if (mapped === "Deal Closed") return "Completed";
+  // If the raw status mapped to "Queued" (either explicit or fallback),
+  // cross-check outcome/acceptance to recover a more accurate state.
+  if (agent.isAccepted || agent.is_accepted) return "Completed";
+  const rawOutcome = agent.outcome?.toLowerCase() ?? "";
+  if (
+    rawOutcome === "rate_confirmed" ||
+    rawOutcome === "deal_closed" ||
+    rawOutcome === "accepted" ||
+    rawOutcome === "approved"
+  ) {
+    return "Completed";
+  }
+  if (rawOutcome === "failed" || rawOutcome === "timed_out" || rawOutcome === "no_availability") {
+    return "Failed";
+  }
+  return mapped === "Queued" ? "Queued" : "Queued";
 }
 
 function eventAgentOutcome(agent: RawGalileoAgent) {
@@ -459,7 +475,7 @@ export function transformEventAgent(agent: RawGalileoAgent): EventAgent {
     originalPrice: isFiniteNumber(originalPrice) ? `${formatCurrency(originalPrice, 0)}/night` : "—",
     outcome: eventAgentOutcome(agent),
     savings: formatCurrency(savings),
-    status: eventAgentStatus(agent.status),
+    status: eventAgentStatus(agent),
     type: coerceType(agent.type ?? agent.service ?? agent.product_category),
   };
 }
