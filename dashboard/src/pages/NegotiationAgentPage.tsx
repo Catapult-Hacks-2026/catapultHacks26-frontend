@@ -157,7 +157,8 @@ export default function NegotiationAgentPage() {
 
   const callJustEnded = transcriptState.callEnded ?? finalizedSnapshot.callEnded;
   const dealJustFinalized = transcriptState.dealFinalized ?? finalizedSnapshot.dealFinalized;
-  const detailDealClosed = data?.status === "Deal Closed";
+  const detailDealClosed =
+    data?.status === "Deal Closed" || data?.status === "Completed";
   const showOfferSummary = !!(dealJustFinalized || callJustEnded || detailDealClosed);
   const isRateConfirmed = !!(
     dealJustFinalized ||

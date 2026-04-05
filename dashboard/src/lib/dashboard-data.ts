@@ -356,7 +356,18 @@ export function getAgentDisplayStatus(agent: Pick<EventAgent, "status" | "outcom
 }
 
 export function isClosedDeal(agent: Pick<EventAgent, "status" | "outcome">) {
-  return agent.status === "Completed" && agent.outcome === "Deal Closed";
+  if (agent.status === "Completed") {
+    // A finished negotiation is acceptable unless a non-deal outcome is present.
+    const nonDealOutcomes = new Set([
+      "No Availability",
+      "Failure",
+      "Timed Out",
+      "Callback requested",
+      "Moved to higher up",
+    ]);
+    return !agent.outcome || !nonDealOutcomes.has(agent.outcome);
+  }
+  return agent.outcome === "Deal Closed";
 }
 
 export function getStatusVariant(status: AgentStatus): "success" | "negotiating" | "neutral" | "error" {
