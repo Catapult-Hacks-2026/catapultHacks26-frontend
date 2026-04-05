@@ -96,9 +96,13 @@ export default function NegotiationShellPage() {
   const { data, isLoading } = useNegotiationPricing(pricingPayload);
   const launch = useLaunchNegotiation();
 
+  const parsedIdeal = Number.parseFloat(idealPrice);
+  const parsedCeiling = Number.parseFloat(ceilingPrice);
+  const canLaunch = Number.isFinite(parsedIdeal) && parsedIdeal > 0
+    && Number.isFinite(parsedCeiling) && parsedCeiling > 0;
+
   const handleLaunch = () => {
-    const ideal = Number.parseFloat(idealPrice) || 0;
-    const ceiling = Number.parseFloat(ceilingPrice) || 0;
+    if (!canLaunch) return;
     void launch.mutateAsync({
       eventName,
       service,
@@ -106,13 +110,22 @@ export default function NegotiationShellPage() {
       endDate,
       location,
       attendees,
-      budgetPerPerson: 0,
+      idealPrice: parsedIdeal,
+      ceilingPrice: parsedCeiling,
       requirements,
       guardrails: {
-        hotel: { idealPrice: ideal, ceilingPrice: ceiling },
-        airline: { idealPrice: 0, ceilingPrice: 0 },
+        hotel: { idealPrice: parsedIdeal, ceilingPrice: parsedCeiling },
       },
-    }).then(() => navigate("/")).catch(() => {});
+    }).then((event) => {
+      const firstAgent = event.agents?.find(
+        (a) => a.status === "Negotiating",
+      );
+      if (firstAgent) {
+        navigate(`/negotiations/${firstAgent.id}/agent`);
+      } else {
+        navigate(`/events/${event.id}`);
+      }
+    }).catch(() => {});
   };
 
   return (
@@ -175,7 +188,7 @@ export default function NegotiationShellPage() {
           <button
             type="button"
             onClick={handleLaunch}
-            disabled={launch.isPending}
+            disabled={launch.isPending || !canLaunch}
             className="inline-flex items-center gap-2 rounded-xl bg-secondary px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary-container disabled:opacity-50"
           >
             {launch.isPending ? "Launching..." : "Launch Negotiations"}

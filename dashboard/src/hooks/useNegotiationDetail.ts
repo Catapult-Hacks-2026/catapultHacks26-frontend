@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@/lib/queryClient";
 export type PriceStep = {
   label: string;
   price: number;
-  type: "offer" | "negotiated" | "current";
+  type: "offer" | "negotiated" | "current" | "final";
 };
 
 export type ActivityItem = {
@@ -102,6 +102,74 @@ export function useIntervene() {
       ),
     onSuccess: async (_, agentId) => {
       queryClient.invalidateQueries({ queryKey: ["negotiations", agentId] });
+    },
+  });
+}
+
+type PriceChangePayload = {
+  agentId: string;
+  price: number;
+  source: "galileo" | "hotel_rep";
+  round?: number;
+};
+
+type PriceChangeResult = {
+  agentId: string;
+  price: number;
+  previousPrice: number;
+  marketPrice: number;
+  source: "galileo" | "hotel_rep";
+  round: number;
+};
+
+export function usePriceChange() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ agentId, ...body }: PriceChangePayload) =>
+      apiFetch<PriceChangeResult>(
+        `/api/galileo/agents/${agentId}/price-change`,
+        {
+          body: JSON.stringify(body),
+          method: "POST",
+        },
+      ),
+    onSuccess: async (_, { agentId }) => {
+      queryClient.invalidateQueries({ queryKey: ["negotiations", agentId] });
+    },
+  });
+}
+
+type CloseDealPayload = {
+  agentId: string;
+  finalPrice: number;
+};
+
+type CloseDealResult = {
+  agentId: string;
+  finalPrice: number;
+  marketPrice: number;
+  savings: number;
+};
+
+export function useCloseDeal() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ agentId, finalPrice }: CloseDealPayload) =>
+      apiFetch<CloseDealResult>(
+        `/api/galileo/agents/${agentId}/close-deal`,
+        {
+          body: JSON.stringify({ finalPrice, enterpriseId: ENTERPRISE_ID }),
+          method: "POST",
+        },
+      ),
+    onSuccess: async (_, { agentId }) => {
+      queryClient.invalidateQueries({ queryKey: ["negotiations", agentId] });
+      queryClient.invalidateQueries({ queryKey: ["negotiations"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "summary"] });
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
     },
   });
 }

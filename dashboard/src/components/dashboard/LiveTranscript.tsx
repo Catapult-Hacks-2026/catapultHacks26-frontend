@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { TranscriptState } from "@/lib/transcript-types";
+import type { CallEndedData, TranscriptState } from "@/lib/transcript-types";
 import type { ConnectionState } from "@/lib/transcript-types";
 
 function ConnectionDot({ state }: { state: ConnectionState }) {
@@ -24,6 +24,36 @@ function ConnectionDot({ state }: { state: ConnectionState }) {
       <span className={`h-2 w-2 rounded-full ${color}`} />
       {label}
     </span>
+  );
+}
+
+function outcomeStyle(outcome: string) {
+  const o = outcome.toUpperCase();
+  if (o === "RATE_CONFIRMED") return { bg: "bg-secondary/10 border-secondary/20", text: "text-secondary", label: "Rate Confirmed" };
+  if (o === "ESCALATED_TO_HUMAN") return { bg: "bg-orange-50 border-orange-200", text: "text-orange-700", label: "Routed to Human" };
+  if (o === "NO_AVAILABILITY") return { bg: "bg-slate-50 border-slate-200", text: "text-slate-600", label: "No Availability" };
+  if (o === "CALLBACK_REQUESTED") return { bg: "bg-amber-50 border-amber-200", text: "text-amber-700", label: "Callback Scheduled" };
+  if (o === "FAILED" || o === "TIMED_OUT") return { bg: "bg-red-50 border-red-200", text: "text-red-600", label: "Failed" };
+  return { bg: "bg-slate-50 border-slate-200", text: "text-slate-600", label: outcome.replace(/_/g, " ") };
+}
+
+function CallEndedBanner({ data }: { data: CallEndedData }) {
+  const style = outcomeStyle(data.outcome);
+  return (
+    <div className={`mt-4 flex items-center justify-between rounded-xl border p-4 ${style.bg}`}>
+      <div className="flex items-center gap-3">
+        <span className="material-symbols-outlined text-lg text-on-surface-variant">call_end</span>
+        <div>
+          <p className={`text-sm font-bold ${style.text}`}>{style.label}</p>
+          <p className="text-xs text-on-surface-variant">Call ended &middot; Status: {data.status}</p>
+        </div>
+      </div>
+      {data.finalPrice != null && (
+        <p className={`text-lg font-black ${style.text}`}>
+          ${data.finalPrice}/night
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -114,6 +144,8 @@ export function LiveTranscript({ state }: { state: TranscriptState }) {
             </div>
           </div>
         )}
+
+        {state.callEnded && <CallEndedBanner data={state.callEnded} />}
 
         <div ref={bottomRef} />
       </div>

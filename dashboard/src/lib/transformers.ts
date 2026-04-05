@@ -147,8 +147,10 @@ export function mapNegotiationStatus(status?: string | null): AgentStatus {
   if (normalized === "accepted" || normalized === "approved" || normalized === "deal_closed") return "Deal Closed";
   if (normalized === "completed") return "Completed";
   if (normalized === "cancelled") return "Failed";
-  if (normalized === "escalated") return "Moved to higher up";
+  if (normalized === "escalated" || normalized === "escalated_to_human") return "Moved to higher up";
+  if (normalized === "awaiting_callback" || normalized === "awaiting callback") return "Callback requested";
   if (normalized === "callback_requested" || normalized === "callback requested") return "Callback requested";
+  if (normalized === "no_availability" || normalized === "no availability") return "No Availability";
   if (normalized === "timeout" || normalized === "timed_out") return "Timed Out";
   if (normalized === "failed" || normalized === "failure") return "Failed";
 
@@ -198,13 +200,12 @@ function normalizePricePath(raw: RawGalileoPricePoint[] | null | undefined, targ
           return null;
         }
 
-        return {
-          label: point.label ?? `Step ${index + 1}`,
-          price,
-          type: point.type === "negotiated" || point.type === "current" ? point.type : "offer",
-        };
+        const type = point.type === "negotiated" || point.type === "current" || point.type === "final"
+          ? point.type
+          : "offer";
+        return { label: point.label ?? `Step ${index + 1}`, price, type };
       })
-      .filter((point): point is { label: string; price: number; type: "offer" | "negotiated" | "current" } => point !== null) ?? [];
+      .filter((point): point is { label: string; price: number; type: "offer" | "negotiated" | "current" | "final" } => point !== null) ?? [];
 
   if (mapped.length > 0) {
     return mapped;

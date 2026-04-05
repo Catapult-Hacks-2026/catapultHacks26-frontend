@@ -94,8 +94,36 @@ export function useTranscriptStream(agentId: string | null) {
               entry: { role: msg.role, content: msg.content, index: msg.index },
             });
             break;
+          case "price_changed":
+            dispatch({
+              type: "PRICE_CHANGED",
+              event: {
+                price: msg.price,
+                previousPrice: msg.previous_price,
+                source: msg.source,
+                round: msg.round,
+                timestamp: msg.timestamp,
+              },
+            });
+            break;
+          case "deal_finalized":
+            dispatch({
+              type: "DEAL_FINALIZED",
+              event: {
+                finalPrice: msg.final_price,
+                marketPrice: msg.market_price,
+                savings: msg.savings,
+                timestamp: msg.timestamp,
+              },
+            });
+            break;
           case "call_ended":
-            dispatch({ type: "CALL_ENDED" });
+            dispatch({
+              type: "CALL_ENDED",
+              data: msg.status
+                ? { status: msg.status, outcome: msg.outcome ?? "", finalPrice: msg.final_price ?? null }
+                : null,
+            });
             ws.close();
             break;
           case "error":

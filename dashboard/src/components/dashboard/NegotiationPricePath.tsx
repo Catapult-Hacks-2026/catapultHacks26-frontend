@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type DataPointType = "offer" | "negotiated" | "current";
+export type DataPointType = "offer" | "negotiated" | "current" | "final";
 
 export interface PricePoint {
   label: string;
@@ -18,6 +18,7 @@ const COLORS: Record<DataPointType, string> = {
   offer: "#f97316",
   negotiated: "#3b82f6",
   current: "#0f9f6e",
+  final: "#16a34a",
 };
 
 const PAD_L = 52;
@@ -80,6 +81,10 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
         <span className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-secondary" />
           Current
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-green-600" />
+          Final
         </span>
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-px w-5 bg-slate-300" />
@@ -196,7 +201,22 @@ export function NegotiationPricePath({ points, marketPrice, targetPrice }: Props
         )}
 
         {/* Data points */}
-        {points.map((point, i) => {
+        {points.length === 0 ? (
+          <g>
+            <circle cx={PAD_L} cy={marketY} r={6} fill="#cbd5e1" />
+            <circle cx={PAD_L} cy={marketY} r={2.5} fill="white" />
+            <text
+              x={PAD_L}
+              y={VH - 6}
+              textAnchor="middle"
+              fontSize="9.5"
+              fill="#94a3b8"
+              fontWeight="500"
+            >
+              Start
+            </text>
+          </g>
+        ) : points.map((point, i) => {
           const x = px(i);
           const y = py(point.price);
           const color = COLORS[point.type];

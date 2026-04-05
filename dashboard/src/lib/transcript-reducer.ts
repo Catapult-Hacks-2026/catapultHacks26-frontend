@@ -6,6 +6,9 @@ export const initialTranscriptState: TranscriptState = {
   connectionState: "disconnected",
   lastIndex: -1,
   error: null,
+  callEnded: null,
+  priceChanges: [],
+  dealFinalized: null,
 };
 
 export function transcriptReducer(
@@ -50,7 +53,13 @@ export function transcriptReducer(
     }
 
     case "CALL_ENDED":
-      return { ...state, connectionState: "disconnected", partial: null };
+      return { ...state, connectionState: "disconnected", partial: null, callEnded: action.data };
+
+    case "PRICE_CHANGED":
+      return { ...state, priceChanges: [...state.priceChanges, action.event] };
+
+    case "DEAL_FINALIZED":
+      return { ...state, dealFinalized: action.event };
 
     case "RESET":
       return initialTranscriptState;

@@ -41,17 +41,12 @@ export type LaunchNegotiationPayload = {
   endDate: string;
   location: string;
   attendees: number;
-  budgetPerPerson: number;
-  requirements: string;
-  guardrails: {
-    hotel: {
-      idealPrice: number;
-      ceilingPrice: number;
-    };
-    airline: {
-      idealPrice: number;
-      ceilingPrice: number;
-    };
+  idealPrice: number;
+  ceilingPrice: number;
+  budgetPerPerson?: number;
+  requirements?: string;
+  guardrails?: {
+    hotel?: { idealPrice: number; ceilingPrice: number };
   };
 };
 
