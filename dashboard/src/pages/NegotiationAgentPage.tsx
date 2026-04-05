@@ -13,9 +13,9 @@ import {
 import { useEvents } from "@/context/EventsContext";
 import {
   useAcceptNegotiation,
-  useIntervene,
   useNegotiationDetail,
 } from "@/hooks/useNegotiationDetail";
+import { mergeActivityItems, useActivityStream } from "@/hooks/useActivityStream";
 import { useTranscriptStream } from "@/hooks/useTranscriptStream";
 import { LiveTranscript } from "@/components/dashboard/LiveTranscript";
 import { useQueryClient } from "@/lib/queryClient";
@@ -32,13 +32,11 @@ export default function NegotiationAgentPage() {
     isLoading,
   } = useNegotiationDetail(id ?? "");
   const acceptNegotiation = useAcceptNegotiation();
-  const intervene = useIntervene();
   const event = getEventForNegotiation(id ?? "");
   const agent = event?.agents.find((item) => item.negotiationId === id);
   const canAccept = event && agent ? canAcceptAgent(event, agent) : false;
   const isNegotiating = agent?.status === "Negotiating" || agent?.status === "Ringing";
   const displayStatus = agent ? getAgentDisplayStatus(agent) : (data?.status ?? "Negotiating");
-  const repLabel = "hotel sales rep";
   const companyLabel = data?.company ?? agent?.company ?? "Negotiation";
   const companyId = id?.split("-")[0] ?? "";
   const negotiatedPrice = data?.negotiatedPrice ?? agent?.negotiatedPrice ?? "—";
@@ -58,6 +56,7 @@ export default function NegotiationAgentPage() {
   const queryClient = useQueryClient();
   const transcriptAgentId = isNegotiating ? (id ?? null) : null;
   const { state: transcriptState } = useTranscriptStream(transcriptAgentId);
+  const { items: liveServerActivity, rawItems: liveServerActivityRaw } = useActivityStream(transcriptAgentId);
 
   // Snapshot terminal events at the page level so they survive the
   // transcript reducer RESET that fires when isNegotiating flips after
@@ -101,15 +100,57 @@ export default function NegotiationAgentPage() {
     }
   }, [transcriptState.callEnded, transcriptState.dealFinalized, id, queryClient]);
 
-  const livePricePoints: PricePoint[] = useMemo(
-    () =>
-      transcriptState.priceChanges.map((pc: PriceChangeEvent) => ({
+  const livePricePoints: PricePoint[] = useMemo(() => {
+    const pricePointMap = new Map<string, PricePoint>();
+
+    for (const pc of transcriptState.priceChanges) {
+      const point: PricePoint = {
         label: pc.source === "galileo" ? `Galileo R${pc.round}` : `Hotel R${pc.round}`,
         price: pc.price,
-        type: pc.source === "galileo" ? ("negotiated" as const) : ("offer" as const),
-      })),
-    [transcriptState.priceChanges],
-  );
+        type: pc.source === "galileo" ? "negotiated" : "offer",
+      };
+      pricePointMap.set(`${point.type}:${point.label}:${point.price}`, point);
+    }
+
+    for (const item of liveServerActivityRaw) {
+      const price =
+        typeof item.price === "number"
+          ? item.price
+          : typeof item.price === "string"
+            ? Number.parseFloat(item.price.replace(/[^0-9.]/g, ""))
+            : Number.NaN;
+
+      if (!Number.isFinite(price)) {
+        continue;
+      }
+
+      const detail = (item.detail ?? "").toLowerCase();
+      const badge = (item.badge ?? "").toLowerCase();
+
+      let type: PricePoint["type"] | null = null;
+      let label = "Update";
+
+      if (badge.includes("deal closed") || detail.includes("final rate") || detail.includes("deal closed")) {
+        type = "final";
+        label = "Final Accepted";
+      } else if (detail.includes("galileo")) {
+        type = "negotiated";
+        label = "Galileo";
+      } else if (detail.includes("hotel")) {
+        type = "offer";
+        label = "Hotel";
+      }
+
+      if (!type) {
+        continue;
+      }
+
+      const point: PricePoint = { label, price, type };
+      pricePointMap.set(`${point.type}:${point.label}:${point.price}`, point);
+    }
+
+    return [...pricePointMap.values()];
+  }, [liveServerActivityRaw, transcriptState.priceChanges]);
 
   const dealPoint: PricePoint | null = useMemo(
     () =>
@@ -151,8 +192,8 @@ export default function NegotiationAgentPage() {
   }, [transcriptState.priceChanges, transcriptState.dealFinalized]);
 
   const mergedActivity = useMemo(
-    () => [...(data?.activityStream ?? []), ...liveActivityItems],
-    [data?.activityStream, liveActivityItems],
+    () => mergeActivityItems(data?.activityStream, liveServerActivity, liveActivityItems),
+    [data?.activityStream, liveServerActivity, liveActivityItems],
   );
 
   const callJustEnded = transcriptState.callEnded ?? finalizedSnapshot.callEnded;
@@ -398,25 +439,6 @@ export default function NegotiationAgentPage() {
             </div>
 
             <div className="space-y-6">
-              {isNegotiating ? (
-                <div className="group relative overflow-hidden rounded-xl bg-primary-container p-8 text-white shadow-2xl">
-                  <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-secondary blur-3xl opacity-20 transition-opacity group-hover:opacity-40" />
-                  <h4 className="relative text-2xl font-bold">Intervene Manually</h4>
-                  <p className="relative mt-3 text-sm leading-6 text-slate-400">
-                    {`Join the live negotiation with the ${repLabel} to handle pricing pushback, concession tradeoffs, or final commercial alignment.`}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => id && intervene.mutate(id)}
-                    disabled={intervene.isPending}
-                    className="relative mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-white py-4 text-sm font-black text-primary-container transition-colors hover:bg-slate-100 disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined text-lg">call</span>
-                    {intervene.isPending ? "Routing..." : "Talk to Hotel Rep"}
-                  </button>
-                </div>
-              ) : null}
-
               <div className="rounded-xl border border-slate-100 bg-surface-container-lowest p-5 sm:p-6">
                 <p className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
                   Activity Stream

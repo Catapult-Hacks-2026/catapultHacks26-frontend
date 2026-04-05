@@ -1,9 +1,8 @@
 import { useEffect, useReducer, useRef, useCallback } from "react";
 import { transcriptReducer, initialTranscriptState } from "@/lib/transcript-reducer";
 import type { ServerMessage } from "@/lib/transcript-types";
+import { buildRealtimeWebSocketUrl } from "@/lib/realtime";
 
-const BACKEND_HOST = import.meta.env.VITE_BACKEND_HOST ?? "f9be-2a09-bac5-7f22-60a-00-9a-1e.ngrok-free.app";
-const WS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
 const PING_INTERVAL_MS = 30_000;
 const BASE_BACKOFF_MS = 1_000;
 const MAX_BACKOFF_MS = 30_000;
@@ -56,7 +55,15 @@ export function useTranscriptStream(agentId: string | null) {
     function connect() {
       cleanup();
 
-      const url = `${WS_PROTOCOL}://${BACKEND_HOST}/api/galileo/agents/${agentId}/transcript/ws?last_index=${lastIndexRef.current}`;
+      const url = buildRealtimeWebSocketUrl(
+        `/api/galileo/agents/${agentId}/transcript/ws`,
+        new URLSearchParams({ last_index: String(lastIndexRef.current) }),
+      );
+      if (!url) {
+        dispatch({ type: "ERROR", message: "Real-time backend is not configured" });
+        return;
+      }
+
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
