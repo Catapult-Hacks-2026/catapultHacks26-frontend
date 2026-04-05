@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { NegotiationPricePath, type PricePoint } from "@/components/dashboard/NegotiationPricePath";
 import { Chip } from "@/components/ui/Chip";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/context/EventsContext";
 import {
   getAgentDisplayStatus,
@@ -11,12 +12,12 @@ import {
 } from "@/lib/dashboard-data";
 
 const winnerPricePath: PricePoint[] = [
-  { label: "Anchor", price: 310, type: "offer" },
-  { label: "Round 1", price: 275, type: "negotiated" },
-  { label: "Counter", price: 290, type: "offer" },
-  { label: "Round 2", price: 258, type: "negotiated" },
-  { label: "Counter 2", price: 265, type: "offer" },
-  { label: "Final", price: 201, type: "current" },
+  { label: "Market Rate", price: 295, type: "offer" },
+  { label: "Initial Bid", price: 220, type: "negotiated" },
+  { label: "Counter", price: 265, type: "offer" },
+  { label: "Round 2", price: 248, type: "negotiated" },
+  { label: "Counter 2", price: 255, type: "offer" },
+  { label: "Final", price: 245, type: "current" },
 ];
 
 function agentStatusChip(status: AgentStatus) {
@@ -24,26 +25,38 @@ function agentStatusChip(status: AgentStatus) {
   return <Chip variant={variant}>{status}</Chip>;
 }
 
-function agentTypeIcon(type: EventAgent["type"]) {
-  return type === "Hotel" ? "hotel" : "flight";
+function agentTypeIcon(_type: EventAgent["type"]) {
+  return "hotel";
 }
 
-function acceptedProgressLabel(service: "Hotel" | "Airline" | "Both", acceptedCount: number) {
-  if (service === "Both") {
-    return `${acceptedCount}/2 deals accepted`;
-  }
+function acceptedProgressLabel(_service: "Hotel", acceptedCount: number) {
   return acceptedCount === 0 ? "No deal accepted yet" : "Deal accepted";
 }
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { getEvent, canAcceptAgent, acceptOffer } = useEvents();
+  const { error, getEvent, canAcceptAgent, acceptOffer, isLoading } = useEvents();
   const event = getEvent(id ?? "");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-surface px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="mt-4 h-10 w-72" />
+        <Skeleton className="mt-8 h-28 rounded-xl" />
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className="h-64 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!event) {
     return (
       <div className="flex h-screen items-center justify-center text-on-surface-variant">
-        Event not found.
+        {(error as Error)?.message ?? "Event not found."}
       </div>
     );
   }
@@ -102,9 +115,7 @@ export default function EventDetailPage() {
                 <div>
                   <p className="text-sm font-semibold text-on-surface">Accept closed deals</p>
                   <p className="mt-0.5 text-xs text-on-surface-variant">
-                    {event.service === "Both"
-                      ? "Accept one hotel and one airline deal to complete this event. Once a type is accepted, other closed deals of that type are locked."
-                      : `Accept one ${event.service.toLowerCase()} deal to complete this event.`}
+                    Accept one hotel deal to complete this event.
                   </p>
                 </div>
                 <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-on-surface-variant">
@@ -259,7 +270,7 @@ export default function EventDetailPage() {
                       View full agent →
                     </Link>
                   </div>
-                  <NegotiationPricePath points={winnerPricePath} marketPrice={310} targetPrice={200} />
+                  <NegotiationPricePath points={winnerPricePath} marketPrice={295} targetPrice={245} />
                 </div>
 
                 <div className="rounded-xl border border-outline-variant/20 bg-white px-5 py-5 sm:px-6 lg:px-8 lg:py-6">

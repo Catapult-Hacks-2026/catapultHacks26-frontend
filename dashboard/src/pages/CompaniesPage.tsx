@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimateIn } from "@/components/dashboard/AnimateIn";
 import { AvatarMark } from "@/components/dashboard/AvatarMark";
-import { companyCards } from "@/lib/dashboard-data";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { useCompanyCards } from "@/hooks/useCompanies";
 
 export default function CompaniesPage() {
   const [query, setQuery] = useState("");
+  const { data: companyCards = [], error, isError, isLoading } = useCompanyCards();
 
   const filtered = companyCards.filter((c) =>
     c.name.toLowerCase().includes(query.toLowerCase()),
@@ -38,7 +40,32 @@ export default function CompaniesPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {filtered.map((company) => (
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="rounded-xl border border-transparent bg-surface-container-lowest p-8"
+                  >
+                    <div className="mb-8 flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <Skeleton className="h-16 w-16 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-7 w-28" />
+                          <Skeleton className="h-6 w-20 rounded-full" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mb-8">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="mt-3 h-12 w-40" />
+                    </div>
+                    <div className="border-t border-surface-container pt-6">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="mt-2 h-6 w-16" />
+                    </div>
+                  </div>
+                ))
+              : filtered.map((company) => (
               <Link
                 key={company.id}
                 to={`/companies/${company.id}`}
@@ -57,7 +84,7 @@ export default function CompaniesPage() {
                       </h3>
                       <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-surface-container px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
                         <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                          {company.type === "Hotel" ? "hotel" : "flight"}
+                          hotel
                         </span>
                         {company.type}
                       </span>
@@ -93,6 +120,11 @@ export default function CompaniesPage() {
             ))}
           </div>
 
+          {isError ? (
+            <p className="text-center text-sm text-error">
+              {(error as Error)?.message ?? "Unable to load companies."}
+            </p>
+          ) : null}
           {filtered.length === 0 && (
             <p className="text-center text-sm text-on-surface-variant">
               No companies match "{query}"
