@@ -287,15 +287,14 @@ export default function NegotiationAgentPage() {
                   {isRateConfirmed ? "Deal Reached" : "Call Ended"}
                 </h3>
                 {summaryOutcome && (
-                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${
-                    isRateConfirmed
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${isRateConfirmed
                       ? "bg-secondary/10 text-secondary"
                       : summaryOutcome.toLowerCase() === "callback_requested"
                         ? "bg-amber-100 text-amber-800"
                         : summaryOutcome.toLowerCase() === "failed" || summaryOutcome.toLowerCase() === "timed_out"
                           ? "bg-red-100 text-red-700"
                           : "bg-slate-100 text-slate-600"
-                  }`}>
+                    }`}>
                     {summaryOutcome.replace(/_/g, " ")}
                   </span>
                 )}
@@ -315,7 +314,7 @@ export default function NegotiationAgentPage() {
                   {summarySavings != null && summarySavings > 0 && (
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Savings</p>
-                      <p className="mt-1 text-3xl font-black text-secondary">${summarySavings}/night</p>
+                      <p className="mt-1 text-3xl font-black text-secondary">${summarySavings.toFixed(2)}/night</p>
                     </div>
                   )}
                 </div>
@@ -419,30 +418,30 @@ export default function NegotiationAgentPage() {
               ) : null}
 
               <div className="rounded-xl border border-slate-100 bg-surface-container-lowest p-5 sm:p-6">
-              <p className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
-                Activity Stream
-              </p>
-              <div className="mt-6 space-y-4">
-                {mergedActivity.map((item) => (
-                  <div
-                    key={`${item.price}-${item.time}`}
-                    className="relative pl-6 before:absolute before:bottom-[-16px] before:left-0 before:top-2 before:w-[2px] before:bg-slate-100 last:before:hidden"
-                  >
-                    <span
-                      className={`absolute left-[-4px] top-1 h-2.5 w-2.5 rounded-full ring-4 ring-white ${item.active ? "bg-secondary" : "bg-slate-300"}`}
-                    />
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-bold text-on-surface">{item.price}</p>
-                      <span className="text-xs text-on-surface-variant">{item.detail}</span>
+                <p className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
+                  Activity Stream
+                </p>
+                <div className="mt-6 space-y-4">
+                  {mergedActivity.map((item) => (
+                    <div
+                      key={`${item.price}-${item.time}`}
+                      className="relative pl-6 before:absolute before:bottom-[-16px] before:left-0 before:top-2 before:w-[2px] before:bg-slate-100 last:before:hidden"
+                    >
+                      <span
+                        className={`absolute left-[-4px] top-1 h-2.5 w-2.5 rounded-full ring-4 ring-white ${item.active ? "bg-secondary" : "bg-slate-300"}`}
+                      />
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-bold text-on-surface">{item.price}</p>
+                        <span className="text-xs text-on-surface-variant">{item.detail}</span>
+                      </div>
+                      {item.badge ? (
+                        <span className={`mt-1 inline-block rounded-full px-3 py-0.5 text-xs font-bold ${item.badgeTone}`}>
+                          {item.badge}
+                        </span>
+                      ) : null}
                     </div>
-                    {item.badge ? (
-                      <span className={`mt-1 inline-block rounded-full px-3 py-0.5 text-xs font-bold ${item.badgeTone}`}>
-                        {item.badge}
-                      </span>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
