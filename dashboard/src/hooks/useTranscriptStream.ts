@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useCallback } from "react";
 import { transcriptReducer, initialTranscriptState } from "@/lib/transcript-reducer";
 import type { ServerMessage } from "@/lib/transcript-types";
 
-const BACKEND_HOST = import.meta.env.VITE_BACKEND_HOST ?? "localhost:8000";
+const BACKEND_HOST = import.meta.env.VITE_BACKEND_HOST ?? "f9be-2a09-bac5-7f22-60a-00-9a-1e.ngrok-free.app";
 const WS_PROTOCOL = window.location.protocol === "https:" ? "wss" : "ws";
 const PING_INTERVAL_MS = 30_000;
 const BASE_BACKOFF_MS = 1_000;
