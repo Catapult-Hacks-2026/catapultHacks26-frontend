@@ -15,6 +15,8 @@ import {
   useIntervene,
   useNegotiationDetail,
 } from "@/hooks/useNegotiationDetail";
+import { useTranscriptStream } from "@/hooks/useTranscriptStream";
+import { LiveTranscript } from "@/components/dashboard/LiveTranscript";
 
 export default function NegotiationAgentPage() {
   const { id } = useParams<{ id: string }>();
@@ -48,6 +50,9 @@ export default function NegotiationAgentPage() {
     | "neutral"
     | "negotiating"
     | "error";
+
+  const transcriptAgentId = isNegotiating ? (id ?? null) : null;
+  const { state: transcriptState } = useTranscriptStream(transcriptAgentId);
 
   if (isLoading) {
     return (
@@ -250,56 +255,7 @@ export default function NegotiationAgentPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200/50 bg-surface-container-highest/30 p-5 backdrop-blur-sm sm:p-6 lg:p-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            <div>
-              <h2 className="text-2xl font-bold text-on-surface">
-                Negotiation Transcript
-              </h2>
-              <p className="mt-2 text-sm text-on-surface-variant">
-                Last two verified messages exchanged through the supplier portal.
-              </p>
-            </div>
-            <button className="rounded-lg border border-slate-200 bg-surface-container-lowest px-6 py-2.5 text-sm font-bold text-on-surface">
-              Expand to Full Transcript
-            </button>
-          </div>
-
-          <div className="mt-8 space-y-6">
-            {data.transcript.map((message) => {
-              const isAgent = message.sender === "agent";
-
-              return (
-                <div
-                  key={`${message.label}-${message.timestamp}`}
-                  className={`flex items-start gap-4 ${isAgent ? "" : "flex-row-reverse"}`}
-                >
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                      isAgent ? "bg-primary-container text-white" : "bg-secondary text-white"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      {isAgent ? "smart_toy" : "person"}
-                    </span>
-                  </div>
-                  <div
-                    className={`max-w-3xl rounded-2xl border p-4 ${
-                      isAgent
-                        ? "rounded-tl-none border-slate-100 bg-white shadow-sm"
-                        : "rounded-tr-none border-secondary/10 bg-secondary/5 text-right"
-                    }`}
-                  >
-                    <p className="text-sm leading-7 text-on-surface">{message.body}</p>
-                    <p className="mt-3 text-[10px] text-slate-400">
-                      {message.label} • {message.timestamp}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <LiveTranscript state={transcriptState} />
       </div>
     </div>
   );
